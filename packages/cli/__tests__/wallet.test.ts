@@ -1,9 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { generateMnemonic, keypairFromMnemonic, publicKeyToP2TR } from '@ow-cli/core'
-
-function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('')
-}
+import { generateMnemonic, keypairFromMnemonic, publicKeyToP2TR, bytesToHex } from '@ow-cli/core'
 
 describe('wallet commands', () => {
   it('should generate valid mnemonic and derive address', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { signPsbt } from '../src/signer.js'
+import { signPsbt, bytesToHex, hexToBytes } from '../src/signer.js'
 import { keypairFromMnemonic } from '../src/keys.js'
 import { publicKeyToP2TR } from '../src/address.js'
 import * as btc from '@scure/btc-signer'
@@ -7,17 +7,36 @@ import * as secp from '@noble/secp256k1'
 
 const TEST_MNEMONIC = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'
 
-function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('')
-}
+describe('bytesToHex', () => {
+  it('should convert bytes to hex string', () => {
+    expect(bytesToHex(new Uint8Array([0, 1, 15, 16, 255]))).toBe('00010f10ff')
+  })
 
-function hexToBytes(hex: string): Uint8Array {
-  const bytes = new Uint8Array(hex.length / 2)
-  for (let i = 0; i < hex.length; i += 2) {
-    bytes[i / 2] = parseInt(hex.substr(i, 2), 16)
-  }
-  return bytes
-}
+  it('should handle empty array', () => {
+    expect(bytesToHex(new Uint8Array([]))).toBe('')
+  })
+
+  it('should pad single-digit hex values', () => {
+    expect(bytesToHex(new Uint8Array([0]))).toBe('00')
+    expect(bytesToHex(new Uint8Array([9]))).toBe('09')
+  })
+})
+
+describe('hexToBytes', () => {
+  it('should convert hex string to bytes', () => {
+    const result = hexToBytes('00010f10ff')
+    expect(result).toEqual(new Uint8Array([0, 1, 15, 16, 255]))
+  })
+
+  it('should handle empty string', () => {
+    expect(hexToBytes('')).toEqual(new Uint8Array([]))
+  })
+
+  it('should round-trip with bytesToHex', () => {
+    const original = new Uint8Array([10, 20, 30, 40, 50, 100, 200, 255])
+    expect(hexToBytes(bytesToHex(original))).toEqual(original)
+  })
+})
 
 describe('signer', () => {
   it('should sign a simple PSBT and extract raw tx', () => {

@@ -1,33 +1,12 @@
 import { Command } from 'commander'
 import { readFileSync } from 'node:fs'
-import { basename } from 'node:path'
-import { signPsbt, keypairFromMnemonic, keypairFromWIF, publicKeyToP2TR } from '@ow-cli/core'
 import * as api from '@ow-cli/api'
-import { loadKeystore, getPublicInfo } from '../keystore.js'
-import { promptPassword, promptConfirm } from '../utils/prompts.js'
+import { requirePublicInfo, unlockKeypair } from '../keystore.js'
+import { promptPassword, requireConfirm } from '../utils/prompts.js'
 import { formatJson } from '../output.js'
 import { handleError } from '../utils/errors.js'
 import { validateInscriptionId, validateAddress, validateFeeRate } from '../utils/validate.js'
-
-function hexToBytes(hex: string): Uint8Array {
-  const bytes = new Uint8Array(hex.length / 2)
-  for (let i = 0; i < hex.length; i += 2) {
-    bytes[i / 2] = parseInt(hex.substr(i, 2), 16)
-  }
-  return bytes
-}
-
-function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('')
-}
-
-function getKeypair(seed: string) {
-  const words = seed.trim().split(/\s+/)
-  if (words.length >= 12) {
-    return keypairFromMnemonic(seed.trim())
-  }
-  return keypairFromWIF(seed.trim())
-}
+import { signBroadcastAndPrint } from '../utils/tx.js'
 
 export function registerInscriptionCommands(parent: Command): void {
   const inscription = parent.command('inscription').description('Inscription commands')
@@ -70,17 +49,11 @@ export function registerInscriptionCommands(parent: Command): void {
     .action(async (file: string, opts) => {
       try {
         const feeRate = validateFeeRate(opts.feeRate)
-
-        const info = getPublicInfo()
-        if (!info) {
-          console.error('No wallet found.')
-          process.exit(1)
-        }
+        const info = requirePublicInfo()
 
         const fileData = readFileSync(file)
         const contentType = guessContentType(file)
 
-        // Estimate first
         const estimate = await api.inscribe.estimate({
           file_size: fileData.length,
           fee_rate: feeRate,
@@ -91,14 +64,8 @@ export function registerInscriptionCommands(parent: Command): void {
         console.log(`  Inscription fee: ${estimate.inscription_fee} sats`)
         console.log(`  Postage: ${estimate.postage} sats`)
 
-        const confirmed = await promptConfirm('Proceed with inscription?')
-        if (!confirmed) {
-          console.log('Cancelled.')
-          return
-        }
-
-        const password = await promptPassword()
-        const ks = loadKeystore(password)
+        await requireConfirm('Proceed with inscription?')
+        await promptPassword()
 
         const result = await api.inscribe.upload(fileData, {
           fee_rate: feeRate,
@@ -128,28 +95,16 @@ export function registerInscriptionCommands(parent: Command): void {
         validateInscriptionId(id)
         validateAddress(opts.to)
         const feeRate = validateFeeRate(opts.feeRate)
-
-        const pubInfo = getPublicInfo()
-        if (!pubInfo) {
-          console.error('No wallet found.')
-          process.exit(1)
-        }
+        const pubInfo = requirePublicInfo()
 
         console.log(`\nSending inscription ${id}`)
         console.log(`  To: ${opts.to}`)
         console.log(`  Fee rate: ${feeRate} sat/vB`)
 
-        const confirmed = await promptConfirm('Proceed?')
-        if (!confirmed) {
-          console.log('Cancelled.')
-          return
-        }
-
+        await requireConfirm('Proceed?')
         const password = await promptPassword()
-        const ks = loadKeystore(password)
-        const kp = getKeypair(ks.seed)
+        const kp = unlockKeypair(password)
 
-        // Build PSBT
         const { psbt } = await api.transfer.buildInscriptionSend({
           inscription_id: id,
           from: pubInfo.address,
@@ -158,30 +113,14 @@ export function registerInscriptionCommands(parent: Command): void {
           public_key: pubInfo.publicKey,
         })
 
-        // Sign and extract raw tx
-        const rawtx = signPsbt({
-          psbt,
-          privateKey: kp.privateKey,
-          publicKey: kp.publicKey,
-          disableExtract: false,
-        })
-
-        // Broadcast
-        const result = await api.wallet.broadcast(rawtx)
-
-        if (opts.json) {
-          console.log(formatJson(result))
-        } else {
-          console.log(`\nTransaction broadcast!`)
-          console.log(`TXID: ${result.txid}`)
-        }
+        await signBroadcastAndPrint(psbt, kp, opts)
       } catch (err) {
         handleError(err)
       }
     })
 }
 
-function guessContentType(filename: string): string {
+export function guessContentType(filename: string): string {
   const ext = filename.split('.').pop()?.toLowerCase()
   const types: Record<string, string> = {
     png: 'image/png',

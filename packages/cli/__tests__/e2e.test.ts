@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { generateMnemonic, keypairFromMnemonic, publicKeyToP2TR } from '@ow-cli/core'
-
-function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('')
-}
+import { generateMnemonic, keypairFromMnemonic, publicKeyToP2TR, bytesToHex } from '@ow-cli/core'
 
 describe('E2E flow', () => {
   it('should create wallet and derive correct info', () => {

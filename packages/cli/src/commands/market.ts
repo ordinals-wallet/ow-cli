@@ -2,13 +2,11 @@ import { Command } from 'commander'
 import {
   signPsbt,
   signPurchaseFlow,
-  keypairFromMnemonic,
-  keypairFromWIF,
 } from '@ow-cli/core'
 import * as api from '@ow-cli/api'
 import type { WalletInscription } from '@ow-cli/api'
-import { loadKeystore, getPublicInfo } from '../keystore.js'
-import { promptPassword, promptConfirm } from '../utils/prompts.js'
+import { requirePublicInfo, unlockKeypair } from '../keystore.js'
+import { promptPassword, requireConfirm } from '../utils/prompts.js'
 import { formatJson, formatSats } from '../output.js'
 import { handleError } from '../utils/errors.js'
 import {
@@ -17,18 +15,6 @@ import {
   validateFeeRate,
   validatePrice,
 } from '../utils/validate.js'
-
-function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('')
-}
-
-function getKeypair(seed: string) {
-  const words = seed.trim().split(/\s+/)
-  if (words.length >= 12) {
-    return keypairFromMnemonic(seed.trim())
-  }
-  return keypairFromWIF(seed.trim())
-}
 
 export function registerMarketCommands(parent: Command): void {
   const market = parent.command('market').description('Marketplace commands')
@@ -42,27 +28,15 @@ export function registerMarketCommands(parent: Command): void {
       try {
         validateInscriptionId(inscriptionId)
         const feeRate = validateFeeRate(opts.feeRate)
-
-        const pubInfo = getPublicInfo()
-        if (!pubInfo) {
-          console.error('No wallet found.')
-          process.exit(1)
-        }
+        const pubInfo = requirePublicInfo()
 
         console.log(`\nBuying inscription: ${inscriptionId}`)
         console.log(`Fee rate: ${feeRate} sat/vB`)
 
-        const confirmed = await promptConfirm('Proceed with purchase?')
-        if (!confirmed) {
-          console.log('Cancelled.')
-          return
-        }
-
+        await requireConfirm('Proceed with purchase?')
         const password = await promptPassword()
-        const ks = loadKeystore(password)
-        const kp = getKeypair(ks.seed)
+        const kp = unlockKeypair(password)
 
-        // 1. Build purchase PSBTs
         const { setup, purchase } = await api.market.buildPurchase({
           inscription_id: inscriptionId,
           pay_address: pubInfo.address,
@@ -72,7 +46,6 @@ export function registerMarketCommands(parent: Command): void {
           wallet_type: 'ow-cli',
         })
 
-        // 2. Sign setup + purchase flow
         const { signedSetup, signedPurchase } = signPurchaseFlow(
           kp.privateKey,
           kp.publicKey,
@@ -80,7 +53,6 @@ export function registerMarketCommands(parent: Command): void {
           purchase,
         )
 
-        // 3. Submit
         const result = await api.market.submitPurchase({
           setup_rawtx: signedSetup,
           purchase_rawtx: signedPurchase,
@@ -106,22 +78,11 @@ export function registerMarketCommands(parent: Command): void {
       try {
         validateOutpoint(outpoint)
         const feeRate = validateFeeRate(opts.feeRate)
+        const pubInfo = requirePublicInfo()
 
-        const pubInfo = getPublicInfo()
-        if (!pubInfo) {
-          console.error('No wallet found.')
-          process.exit(1)
-        }
-
-        const confirmed = await promptConfirm(`Buy rune at outpoint ${outpoint}?`)
-        if (!confirmed) {
-          console.log('Cancelled.')
-          return
-        }
-
+        await requireConfirm(`Buy rune at outpoint ${outpoint}?`)
         const password = await promptPassword()
-        const ks = loadKeystore(password)
-        const kp = getKeypair(ks.seed)
+        const kp = unlockKeypair(password)
 
         const { setup, purchase } = await api.market.buildPurchaseRunes({
           outpoints: [outpoint],
@@ -165,25 +126,14 @@ export function registerMarketCommands(parent: Command): void {
         const ids = opts.ids.split(',').map((s: string) => s.trim())
         ids.forEach(validateInscriptionId)
         const feeRate = validateFeeRate(opts.feeRate)
-
-        const pubInfo = getPublicInfo()
-        if (!pubInfo) {
-          console.error('No wallet found.')
-          process.exit(1)
-        }
+        const pubInfo = requirePublicInfo()
 
         console.log(`\nBuying ${ids.length} inscription(s)`)
         console.log(`Fee rate: ${feeRate} sat/vB`)
 
-        const confirmed = await promptConfirm('Proceed with bulk purchase?')
-        if (!confirmed) {
-          console.log('Cancelled.')
-          return
-        }
-
+        await requireConfirm('Proceed with bulk purchase?')
         const password = await promptPassword()
-        const ks = loadKeystore(password)
-        const kp = getKeypair(ks.seed)
+        const kp = unlockKeypair(password)
 
         const { setup, purchase } = await api.market.buildPurchaseBulk({
           inscriptions: ids,
@@ -231,25 +181,14 @@ export function registerMarketCommands(parent: Command): void {
           return trimmed
         })
         const feeRate = validateFeeRate(opts.feeRate)
-
-        const pubInfo = getPublicInfo()
-        if (!pubInfo) {
-          console.error('No wallet found.')
-          process.exit(1)
-        }
+        const pubInfo = requirePublicInfo()
 
         console.log(`\nBuying ${outpoints.length} alkane listing(s)`)
         console.log(`Fee rate: ${feeRate} sat/vB`)
 
-        const confirmed = await promptConfirm('Proceed with alkane purchase?')
-        if (!confirmed) {
-          console.log('Cancelled.')
-          return
-        }
-
+        await requireConfirm('Proceed with alkane purchase?')
         const password = await promptPassword()
-        const ks = loadKeystore(password)
-        const kp = getKeypair(ks.seed)
+        const kp = unlockKeypair(password)
 
         const { psbt } = await api.market.buildPurchaseAlkanes({
           outpoints,
@@ -293,26 +232,14 @@ export function registerMarketCommands(parent: Command): void {
       try {
         validateInscriptionId(inscriptionId)
         const price = validatePrice(opts.price)
-
-        const pubInfo = getPublicInfo()
-        if (!pubInfo) {
-          console.error('No wallet found.')
-          process.exit(1)
-        }
+        const pubInfo = requirePublicInfo()
 
         console.log(`\nListing ${inscriptionId} for ${formatSats(price)}`)
 
-        const confirmed = await promptConfirm('Proceed?')
-        if (!confirmed) {
-          console.log('Cancelled.')
-          return
-        }
-
+        await requireConfirm('Proceed?')
         const password = await promptPassword()
-        const ks = loadKeystore(password)
-        const kp = getKeypair(ks.seed)
+        const kp = unlockKeypair(password)
 
-        // Build escrow PSBT
         const { psbt } = await api.market.buildEscrow({
           inscription: inscriptionId,
           from: pubInfo.address,
@@ -323,7 +250,6 @@ export function registerMarketCommands(parent: Command): void {
           force_multi_inscriptions: opts.forceMultiInscriptions || undefined,
         })
 
-        // Sign with disableExtract (PSBT output for escrow)
         const signedPsbt = signPsbt({
           psbt,
           privateKey: kp.privateKey,
@@ -331,7 +257,6 @@ export function registerMarketCommands(parent: Command): void {
           disableExtract: true,
         })
 
-        // Submit escrow
         const result = await api.market.submitEscrow({ psbt: signedPsbt })
 
         if (opts.json) {
@@ -354,17 +279,12 @@ export function registerMarketCommands(parent: Command): void {
     .option('--json', 'Output as JSON')
     .action(async (opts) => {
       try {
-        const pubInfo = getPublicInfo()
-        if (!pubInfo) {
-          console.error('No wallet found.')
-          process.exit(1)
-        }
+        const pubInfo = requirePublicInfo()
 
         let inscriptionIds: string[] = []
         let prices: number[] = []
 
         if (opts.collection) {
-          // Get wallet inscriptions and filter by collection
           const walletData = await api.wallet.getWallet(pubInfo.address)
           const inscriptions = walletData.inscriptions || []
 
@@ -380,7 +300,6 @@ export function registerMarketCommands(parent: Command): void {
           inscriptionIds = collectionInscriptions.map((i: WalletInscription) => i.id)
           console.log(`\nFound ${inscriptionIds.length} inscriptions from ${opts.collection}`)
 
-          // Calculate prices
           if (opts.aboveFloor) {
             const stats = await api.collection.getStats(opts.collection)
             const floor = stats.floor_price
@@ -416,22 +335,14 @@ export function registerMarketCommands(parent: Command): void {
           process.exit(1)
         }
 
-        // Show items
         for (let i = 0; i < inscriptionIds.length; i++) {
           console.log(`  ${i + 1}. ${inscriptionIds[i]} → ${formatSats(prices[i])}`)
         }
 
-        const confirmed = await promptConfirm(`List ${inscriptionIds.length} inscription(s)?`)
-        if (!confirmed) {
-          console.log('Cancelled.')
-          return
-        }
-
+        await requireConfirm(`List ${inscriptionIds.length} inscription(s)?`)
         const password = await promptPassword()
-        const ks = loadKeystore(password)
-        const kp = getKeypair(ks.seed)
+        const kp = unlockKeypair(password)
 
-        // Build bulk escrow PSBT
         const { psbt } = await api.market.buildEscrowBulk({
           inscriptions: inscriptionIds,
           from: pubInfo.address,
@@ -439,7 +350,6 @@ export function registerMarketCommands(parent: Command): void {
           public_key: pubInfo.publicKey,
         })
 
-        // Sign with disableExtract
         const signedPsbt = signPsbt({
           psbt,
           privateKey: kp.privateKey,
@@ -447,7 +357,6 @@ export function registerMarketCommands(parent: Command): void {
           disableExtract: true,
         })
 
-        // Submit escrow
         const result = await api.market.submitEscrow({ psbt: signedPsbt })
 
         if (opts.json) {
@@ -467,26 +376,14 @@ export function registerMarketCommands(parent: Command): void {
     .action(async (inscriptionId: string, opts) => {
       try {
         validateInscriptionId(inscriptionId)
-
-        const pubInfo = getPublicInfo()
-        if (!pubInfo) {
-          console.error('No wallet found.')
-          process.exit(1)
-        }
+        const pubInfo = requirePublicInfo()
 
         console.log(`\nDelisting ${inscriptionId}`)
 
-        const confirmed = await promptConfirm('Proceed?')
-        if (!confirmed) {
-          console.log('Cancelled.')
-          return
-        }
-
+        await requireConfirm('Proceed?')
         const password = await promptPassword()
-        const ks = loadKeystore(password)
-        const kp = getKeypair(ks.seed)
+        const kp = unlockKeypair(password)
 
-        // Build dummy escrow with price 2.1e15 (per frontend wallet/index.tsx:334)
         const { psbt } = await api.market.buildEscrow({
           inscription: inscriptionId,
           from: pubInfo.address,

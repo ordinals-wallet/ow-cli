@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { createCipheriv, createDecipheriv, pbkdf2Sync, randomBytes } from 'node:crypto'
+import { keypairFromMnemonic, keypairFromWIF } from '@ow-cli/core'
 import { getConfigDir } from './config.js'
 
 interface KeystoreData {
@@ -76,10 +77,32 @@ export function loadKeystore(password: string): { seed: string; publicKey: strin
   return { seed, publicKey: data.publicKey, address: data.address }
 }
 
+export function getKeypair(seed: string) {
+  const words = seed.trim().split(/\s+/)
+  if (words.length >= 12) {
+    return keypairFromMnemonic(seed.trim())
+  }
+  return keypairFromWIF(seed.trim())
+}
+
 export function getPublicInfo(): { publicKey: string; address: string } | null {
   if (!hasKeystore()) return null
 
   const raw = readFileSync(KEYSTORE_FILE, 'utf-8')
   const data: KeystoreData = JSON.parse(raw)
   return { publicKey: data.publicKey, address: data.address }
+}
+
+export function requirePublicInfo(): { publicKey: string; address: string } {
+  const info = getPublicInfo()
+  if (!info) {
+    console.error('No wallet found. Run "ow wallet create" or "ow wallet import" first.')
+    process.exit(1)
+  }
+  return info
+}
+
+export function unlockKeypair(password: string) {
+  const ks = loadKeystore(password)
+  return getKeypair(ks.seed)
 }

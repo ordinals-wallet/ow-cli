@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { generateMnemonic, validateMnemonic, keypairFromMnemonic, keypairFromWIF } from '../src/keys.js'
+import { bytesToHex } from '../src/signer.js'
 import * as secp from '@noble/secp256k1'
 
 // Standard test vector: "abandon" x 11 + "about"
@@ -128,10 +129,6 @@ describe('keys', () => {
     })
   })
 })
-
-function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('')
-}
 
 // Helper: encode private key as compressed mainnet WIF for round-trip testing
 function encodeWIF(privateKey: Uint8Array, compressed: boolean): string {

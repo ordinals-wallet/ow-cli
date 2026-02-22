@@ -3,7 +3,7 @@ import * as secp from '@noble/secp256k1'
 import type { SignPsbtOptions, PurchaseFlowResult } from './types.js'
 import { publicKeyToP2TR } from './address.js'
 
-function hexToBytes(hex: string): Uint8Array {
+export function hexToBytes(hex: string): Uint8Array {
   const bytes = new Uint8Array(hex.length / 2)
   for (let i = 0; i < hex.length; i += 2) {
     bytes[i / 2] = parseInt(hex.substr(i, 2), 16)
@@ -11,7 +11,7 @@ function hexToBytes(hex: string): Uint8Array {
   return bytes
 }
 
-function bytesToHex(bytes: Uint8Array): string {
+export function bytesToHex(bytes: Uint8Array): string {
   return Array.from(bytes)
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('')

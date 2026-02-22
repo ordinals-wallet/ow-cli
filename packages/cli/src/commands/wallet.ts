@@ -6,11 +6,12 @@ import {
   keypairFromWIF,
   publicKeyToP2TR,
   signPsbt,
+  bytesToHex,
 } from '@ow-cli/core'
 import * as api from '@ow-cli/api'
 import type { WalletInscription, RuneBalance, Brc20Balance, AlkanesBalance, TapToken } from '@ow-cli/api'
-import { saveKeystore, loadKeystore, getPublicInfo, hasKeystore } from '../keystore.js'
-import { promptPassword, promptConfirm } from '../utils/prompts.js'
+import { saveKeystore, requirePublicInfo, unlockKeypair } from '../keystore.js'
+import { promptPassword, promptConfirm, requireConfirm } from '../utils/prompts.js'
 import { formatTable, formatJson, formatSats } from '../output.js'
 import { handleError } from '../utils/errors.js'
 import { validateFeeRate, validateOutpointWithSats } from '../utils/validate.js'
@@ -18,18 +19,6 @@ import { registerRuneCommands } from './rune.js'
 import { registerAlkaneCommands } from './alkane.js'
 import { registerBrc20Commands } from './brc20.js'
 import { registerTapCommands } from './tap-cmd.js'
-
-function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('')
-}
-
-function getKeypair(seed: string) {
-  const words = seed.trim().split(/\s+/)
-  if (words.length >= 12) {
-    return keypairFromMnemonic(seed.trim())
-  }
-  return keypairFromWIF(seed.trim())
-}
 
 export function registerWalletCommands(parent: Command): void {
   const wallet = parent.command('wallet').description('Wallet management')
@@ -115,12 +104,7 @@ export function registerWalletCommands(parent: Command): void {
     .option('--json', 'Output as JSON')
     .action(async (opts) => {
       try {
-        const info = getPublicInfo()
-        if (!info) {
-          console.error('No wallet found. Run "ow wallet create" or "ow wallet import" first.')
-          process.exit(1)
-        }
-
+        const info = requirePublicInfo()
         const walletData = await api.wallet.getWallet(info.address)
 
         if (opts.json) {
@@ -144,12 +128,7 @@ export function registerWalletCommands(parent: Command): void {
     .option('--json', 'Output as JSON')
     .action(async (opts) => {
       try {
-        const info = getPublicInfo()
-        if (!info) {
-          console.error('No wallet found. Run "ow wallet create" or "ow wallet import" first.')
-          process.exit(1)
-        }
-
+        const info = requirePublicInfo()
         const walletData = await api.wallet.getWallet(info.address)
         const inscriptions = Array.isArray(walletData.inscriptions) ? walletData.inscriptions : []
 
@@ -181,11 +160,7 @@ export function registerWalletCommands(parent: Command): void {
     .option('--json', 'Output as JSON')
     .action(async (opts) => {
       try {
-        const info = getPublicInfo()
-        if (!info) {
-          console.error('No wallet found. Run "ow wallet create" or "ow wallet import" first.')
-          process.exit(1)
-        }
+        const info = requirePublicInfo()
 
         const [runes, brc20, alkanes, tapTokens] = await Promise.all([
           api.wallet.getRuneBalance(info.address),
@@ -199,14 +174,12 @@ export function registerWalletCommands(parent: Command): void {
           return
         }
 
-        // Runes
         if (runes.length > 0) {
           console.log('\nRunes:')
           const rows = runes.map((r: RuneBalance) => [r.name || '', r.amount || '', r.symbol || ''])
           console.log(formatTable(['Rune', 'Balance', 'Symbol'], rows))
         }
 
-        // BRC-20
         if (brc20.length > 0) {
           console.log('\nBRC-20:')
           const rows = brc20.map((t: Brc20Balance) => [
@@ -217,7 +190,6 @@ export function registerWalletCommands(parent: Command): void {
           console.log(formatTable(['Ticker', 'Balance', 'Available'], rows))
         }
 
-        // TAP
         if (tapTokens.length > 0) {
           console.log('\nTAP:')
           const rows = tapTokens.map((t: TapToken) => [
@@ -228,7 +200,6 @@ export function registerWalletCommands(parent: Command): void {
           console.log(formatTable(['Ticker', 'Balance', 'Available'], rows))
         }
 
-        // Alkanes
         if (alkanes.length > 0) {
           console.log('\nAlkanes:')
           const rows = alkanes.map((t: AlkanesBalance) => [t.id || '', t.balance || ''])
@@ -253,12 +224,7 @@ export function registerWalletCommands(parent: Command): void {
     .action(async (opts) => {
       try {
         const feeRate = validateFeeRate(opts.feeRate)
-
-        const pubInfo = getPublicInfo()
-        if (!pubInfo) {
-          console.error('No wallet found.')
-          process.exit(1)
-        }
+        const pubInfo = requirePublicInfo()
 
         let utxos: [string, number, number][]
 
@@ -282,15 +248,9 @@ export function registerWalletCommands(parent: Command): void {
         console.log(`Total value: ${formatSats(totalValue)}`)
         console.log(`Fee rate: ${feeRate} sat/vB`)
 
-        const confirmed = await promptConfirm('Proceed with consolidation?')
-        if (!confirmed) {
-          console.log('Cancelled.')
-          return
-        }
-
+        await requireConfirm('Proceed with consolidation?')
         const password = await promptPassword()
-        const ks = loadKeystore(password)
-        const kp = getKeypair(ks.seed)
+        const kp = unlockKeypair(password)
 
         const { psbt, fees } = await api.wallet.buildConsolidate({
           outputs,

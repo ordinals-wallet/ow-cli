@@ -11,6 +11,7 @@ import {
   validateSplits,
   validateOutpointWithSats,
   validateOutpointWithSatsShort,
+  parseOutpoints,
 } from '../src/utils/validate.js'
 import { CliError } from '../src/utils/errors.js'
 
@@ -235,6 +236,31 @@ describe('validators', () => {
 
     it('should reject short txid', () => {
       expect(() => validateOutpointWithSatsShort('abc:0,546')).toThrow(CliError)
+    })
+  })
+
+  describe('parseOutpoints', () => {
+    it('should parse a single outpoint', () => {
+      const result = parseOutpoints('a'.repeat(64) + ':0,546')
+      expect(result).toHaveLength(1)
+      expect(result[0].outpoint).toBe('a'.repeat(64) + ':0')
+      expect(result[0].sats).toBe(546)
+    })
+
+    it('should parse multiple space-separated outpoints', () => {
+      const raw = 'a'.repeat(64) + ':0,546 ' + 'b'.repeat(64) + ':1,1000'
+      const result = parseOutpoints(raw)
+      expect(result).toHaveLength(2)
+      expect(result[0].outpoint).toBe('a'.repeat(64) + ':0')
+      expect(result[0].sats).toBe(546)
+      expect(result[1].outpoint).toBe('b'.repeat(64) + ':1')
+      expect(result[1].sats).toBe(1000)
+    })
+
+    it('should trim whitespace', () => {
+      const raw = '  ' + 'a'.repeat(64) + ':0,546   ' + 'b'.repeat(64) + ':2,800  '
+      const result = parseOutpoints(raw)
+      expect(result).toHaveLength(2)
     })
   })
 })

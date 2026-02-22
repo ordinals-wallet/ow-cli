@@ -22,6 +22,10 @@ interface AxiosErrorLike extends Error {
 }
 
 export function handleError(err: unknown): never {
+  if (typeof err === 'object' && err !== null && 'cancelled' in err) {
+    process.exit(0)
+  }
+
   if (err instanceof CliError) {
     console.error(`Error: ${err.message}`)
     process.exit(err.exitCode)

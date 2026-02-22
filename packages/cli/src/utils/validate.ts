@@ -1,3 +1,4 @@
+import type { RuneOutpoint } from '@ow-cli/api'
 import { CliError } from './errors.js'
 
 // inscription_id: 64 hex chars + 'i' + non-negative integer
@@ -110,4 +111,8 @@ export function validateOutpointWithSatsShort(value: string): { outpoint: string
   }
   const commaIdx = value.lastIndexOf(',')
   return { outpoint: value.slice(0, commaIdx), sats: parseInt(value.slice(commaIdx + 1), 10) }
+}
+
+export function parseOutpoints(raw: string): RuneOutpoint[] {
+  return raw.trim().split(/\s+/).map((s) => validateOutpointWithSatsShort(s))
 }

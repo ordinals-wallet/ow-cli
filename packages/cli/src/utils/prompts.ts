@@ -26,6 +26,14 @@ export async function promptConfirm(message: string): Promise<boolean> {
   return confirmed
 }
 
+export async function requireConfirm(message: string): Promise<void> {
+  const confirmed = await promptConfirm(message)
+  if (!confirmed) {
+    console.log('Cancelled.')
+    throw { cancelled: true }
+  }
+}
+
 export async function promptInput(message: string): Promise<string> {
   const { default: inquirer } = await import('inquirer')
   const { value } = await inquirer.prompt([

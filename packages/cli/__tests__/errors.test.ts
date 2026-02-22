@@ -63,4 +63,10 @@ describe('handleError', () => {
     expect(mockError).toHaveBeenCalledWith('An unexpected error occurred')
     expect(mockExit).toHaveBeenCalledWith(1)
   })
+
+  it('should handle cancelled object with exit 0', () => {
+    handleError({ cancelled: true })
+    // First exit call should be 0 (silent cancellation)
+    expect(mockExit).toHaveBeenNthCalledWith(1, 0)
+  })
 })
