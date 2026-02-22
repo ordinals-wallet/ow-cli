@@ -57,3 +57,57 @@ export function validateSats(value: string): number {
   }
   return n
 }
+
+// rune_id: block:tx (e.g. "840000:1")
+const RUNE_ID_RE = /^\d+:\d+$/
+
+export function validateRuneId(value: string): string {
+  if (!RUNE_ID_RE.test(value)) {
+    throw new CliError(
+      `Invalid rune ID: "${value}"\nExpected format: <block>:<tx>  (e.g. 840000:1)`
+    )
+  }
+  return value
+}
+
+export function validateAmount(value: string): string {
+  const n = parseFloat(value)
+  if (isNaN(n) || n <= 0) {
+    throw new CliError(`Invalid amount: "${value}" (must be a positive number)`)
+  }
+  return value
+}
+
+export function validateSplits(value: string): number {
+  const n = parseInt(value, 10)
+  if (isNaN(n) || n < 2 || n > 25) {
+    throw new CliError(`Invalid splits: "${value}" (must be an integer between 2 and 25)`)
+  }
+  return n
+}
+
+// outpoint with sats for consolidation: <64hex>:<vout>:<sats>
+const OUTPOINT_WITH_SATS_RE = /^[0-9a-f]{64}:\d+:\d+$/
+
+export function validateOutpointWithSats(value: string): { txid: string; vout: number; sats: number } {
+  if (!OUTPOINT_WITH_SATS_RE.test(value)) {
+    throw new CliError(
+      `Invalid outpoint: "${value}"\nExpected format: <64-char txid>:<vout>:<sats>  (e.g. abc123...ef:0:10000)`
+    )
+  }
+  const parts = value.split(':')
+  return { txid: parts[0], vout: parseInt(parts[1], 10), sats: parseInt(parts[2], 10) }
+}
+
+// outpoint with sats for rune outpoints: <64hex>:<vout>,<sats>
+const OUTPOINT_WITH_SATS_SHORT_RE = /^[0-9a-f]{64}:\d+,\d+$/
+
+export function validateOutpointWithSatsShort(value: string): { outpoint: string; sats: number } {
+  if (!OUTPOINT_WITH_SATS_SHORT_RE.test(value)) {
+    throw new CliError(
+      `Invalid outpoint: "${value}"\nExpected format: <64-char txid>:<vout>,<sats>  (e.g. abc123...ef:0,546)`
+    )
+  }
+  const commaIdx = value.lastIndexOf(',')
+  return { outpoint: value.slice(0, commaIdx), sats: parseInt(value.slice(commaIdx + 1), 10) }
+}

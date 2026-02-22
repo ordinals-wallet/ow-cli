@@ -6,6 +6,11 @@ import {
   validateFeeRate,
   validatePrice,
   validateSats,
+  validateRuneId,
+  validateAmount,
+  validateSplits,
+  validateOutpointWithSats,
+  validateOutpointWithSatsShort,
 } from '../src/utils/validate.js'
 import { CliError } from '../src/utils/errors.js'
 
@@ -127,6 +132,109 @@ describe('validators', () => {
 
     it('should reject negative', () => {
       expect(() => validateSats('-100')).toThrow(CliError)
+    })
+  })
+
+  describe('validateRuneId', () => {
+    it('should accept valid rune ID', () => {
+      expect(validateRuneId('840000:1')).toBe('840000:1')
+    })
+
+    it('should accept rune ID with large values', () => {
+      expect(validateRuneId('999999:42')).toBe('999999:42')
+    })
+
+    it('should reject missing colon', () => {
+      expect(() => validateRuneId('8400001')).toThrow(CliError)
+    })
+
+    it('should reject non-numeric', () => {
+      expect(() => validateRuneId('abc:1')).toThrow(CliError)
+    })
+
+    it('should reject empty string', () => {
+      expect(() => validateRuneId('')).toThrow(CliError)
+    })
+  })
+
+  describe('validateAmount', () => {
+    it('should accept positive integer', () => {
+      expect(validateAmount('100')).toBe('100')
+    })
+
+    it('should accept decimal amount', () => {
+      expect(validateAmount('10.5')).toBe('10.5')
+    })
+
+    it('should reject zero', () => {
+      expect(() => validateAmount('0')).toThrow(CliError)
+    })
+
+    it('should reject negative', () => {
+      expect(() => validateAmount('-5')).toThrow(CliError)
+    })
+
+    it('should reject non-numeric', () => {
+      expect(() => validateAmount('abc')).toThrow(CliError)
+    })
+  })
+
+  describe('validateSplits', () => {
+    it('should accept valid splits', () => {
+      expect(validateSplits('5')).toBe(5)
+    })
+
+    it('should accept minimum splits', () => {
+      expect(validateSplits('2')).toBe(2)
+    })
+
+    it('should accept maximum splits', () => {
+      expect(validateSplits('25')).toBe(25)
+    })
+
+    it('should reject 1', () => {
+      expect(() => validateSplits('1')).toThrow(CliError)
+    })
+
+    it('should reject 26', () => {
+      expect(() => validateSplits('26')).toThrow(CliError)
+    })
+
+    it('should reject non-numeric', () => {
+      expect(() => validateSplits('abc')).toThrow(CliError)
+    })
+  })
+
+  describe('validateOutpointWithSats', () => {
+    it('should accept valid outpoint with sats', () => {
+      const result = validateOutpointWithSats('a'.repeat(64) + ':0:10000')
+      expect(result.txid).toBe('a'.repeat(64))
+      expect(result.vout).toBe(0)
+      expect(result.sats).toBe(10000)
+    })
+
+    it('should reject missing sats', () => {
+      expect(() => validateOutpointWithSats('a'.repeat(64) + ':0')).toThrow(CliError)
+    })
+
+    it('should reject short txid', () => {
+      expect(() => validateOutpointWithSats('abc:0:10000')).toThrow(CliError)
+    })
+  })
+
+  describe('validateOutpointWithSatsShort', () => {
+    it('should accept valid outpoint with sats (comma format)', () => {
+      const result = validateOutpointWithSatsShort('a'.repeat(64) + ':0,546')
+      expect(result.outpoint).toBe('a'.repeat(64) + ':0')
+      expect(result.sats).toBe(546)
+    })
+
+    it('should reject missing comma', () => {
+      expect(() => validateOutpointWithSatsShort('a'.repeat(64) + ':0:546')).toThrow(CliError)
+    })
+
+    it('should reject short txid', () => {
+      expect(() => validateOutpointWithSatsShort('abc:0,546')).toThrow(CliError)
     })
   })
 })

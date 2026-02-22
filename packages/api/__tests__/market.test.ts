@@ -96,4 +96,15 @@ describe('market API', () => {
     })
     expect(result.success).toBe(true)
   })
+
+  it('should build purchase alkanes', async () => {
+    const result = await marketApi.buildPurchaseAlkanes({
+      outpoints: ['a'.repeat(64) + ':0'],
+      pay_address: 'bc1ptest',
+      receive_address: 'bc1ptest',
+      public_key: '02abc',
+      fee_rate: 20,
+    })
+    expect(result.psbt).toBe('alkane_purchase_psbt_hex')
+  })
 })

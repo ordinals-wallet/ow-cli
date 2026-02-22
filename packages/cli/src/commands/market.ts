@@ -4,7 +4,6 @@ import {
   signPurchaseFlow,
   keypairFromMnemonic,
   keypairFromWIF,
-  publicKeyToP2TR,
 } from '@ow-cli/core'
 import * as api from '@ow-cli/api'
 import type { WalletInscription } from '@ow-cli/api'
@@ -149,6 +148,134 @@ export function registerMarketCommands(parent: Command): void {
           console.log(formatJson(result))
         } else {
           console.log(`\nRune purchase submitted!`)
+        }
+      } catch (err) {
+        handleError(err)
+      }
+    })
+
+  market
+    .command('buy-bulk')
+    .description('Buy multiple inscriptions')
+    .requiredOption('--ids <ids>', 'Comma-separated inscription IDs')
+    .requiredOption('--fee-rate <n>', 'Fee rate in sat/vB')
+    .option('--json', 'Output as JSON')
+    .action(async (opts) => {
+      try {
+        const ids = opts.ids.split(',').map((s: string) => s.trim())
+        ids.forEach(validateInscriptionId)
+        const feeRate = validateFeeRate(opts.feeRate)
+
+        const pubInfo = getPublicInfo()
+        if (!pubInfo) {
+          console.error('No wallet found.')
+          process.exit(1)
+        }
+
+        console.log(`\nBuying ${ids.length} inscription(s)`)
+        console.log(`Fee rate: ${feeRate} sat/vB`)
+
+        const confirmed = await promptConfirm('Proceed with bulk purchase?')
+        if (!confirmed) {
+          console.log('Cancelled.')
+          return
+        }
+
+        const password = await promptPassword()
+        const ks = loadKeystore(password)
+        const kp = getKeypair(ks.seed)
+
+        const { setup, purchase } = await api.market.buildPurchaseBulk({
+          inscriptions: ids,
+          pay_address: pubInfo.address,
+          receive_address: pubInfo.address,
+          public_key: pubInfo.publicKey,
+          fee_rate: feeRate,
+          wallet_type: 'ow-cli',
+        })
+
+        const { signedSetup, signedPurchase } = signPurchaseFlow(
+          kp.privateKey,
+          kp.publicKey,
+          setup,
+          purchase,
+        )
+
+        const result = await api.market.submitPurchase({
+          setup_rawtx: signedSetup,
+          purchase_rawtx: signedPurchase,
+          wallet_type: 'ow-cli',
+        })
+
+        if (opts.json) {
+          console.log(formatJson(result))
+        } else {
+          console.log(`\nBulk purchase submitted!`)
+        }
+      } catch (err) {
+        handleError(err)
+      }
+    })
+
+  market
+    .command('buy-alkane')
+    .description('Buy alkane listings')
+    .requiredOption('--outpoints <list>', 'Comma-separated outpoints')
+    .requiredOption('--fee-rate <n>', 'Fee rate in sat/vB')
+    .option('--json', 'Output as JSON')
+    .action(async (outpointsArg: unknown, opts) => {
+      try {
+        const outpoints = opts.outpoints.split(',').map((s: string) => {
+          const trimmed = s.trim()
+          validateOutpoint(trimmed)
+          return trimmed
+        })
+        const feeRate = validateFeeRate(opts.feeRate)
+
+        const pubInfo = getPublicInfo()
+        if (!pubInfo) {
+          console.error('No wallet found.')
+          process.exit(1)
+        }
+
+        console.log(`\nBuying ${outpoints.length} alkane listing(s)`)
+        console.log(`Fee rate: ${feeRate} sat/vB`)
+
+        const confirmed = await promptConfirm('Proceed with alkane purchase?')
+        if (!confirmed) {
+          console.log('Cancelled.')
+          return
+        }
+
+        const password = await promptPassword()
+        const ks = loadKeystore(password)
+        const kp = getKeypair(ks.seed)
+
+        const { psbt } = await api.market.buildPurchaseAlkanes({
+          outpoints,
+          pay_address: pubInfo.address,
+          receive_address: pubInfo.address,
+          public_key: pubInfo.publicKey,
+          fee_rate: feeRate,
+          wallet_type: 'ow-cli',
+        })
+
+        const rawtx = signPsbt({
+          psbt,
+          privateKey: kp.privateKey,
+          publicKey: kp.publicKey,
+          disableExtract: false,
+        })
+
+        const result = await api.market.submitPurchaseRune({
+          rawtx,
+          wallet_type: 'ow-cli',
+        })
+
+        if (opts.json) {
+          console.log(formatJson(result))
+        } else {
+          console.log(`\nAlkane purchase submitted!`)
         }
       } catch (err) {
         handleError(err)

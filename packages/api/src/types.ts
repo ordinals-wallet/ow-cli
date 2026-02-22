@@ -149,7 +149,8 @@ export interface BuildPurchaseResponse {
 }
 
 export interface BuildPurchaseBulkRequest {
-  escrows: string[]
+  escrows?: string[]
+  inscriptions?: string[]
   pay_address: string
   receive_address: string
   public_key: string
@@ -272,6 +273,64 @@ export interface BuildRuneTransferRequest {
   amount: string
   fee_rate: number
   public_key: string
+}
+
+// Edict-based rune/alkane transfers
+export interface RuneEdict {
+  rune_id: string
+  amount: string
+  divisibility: number
+  destination: string
+}
+
+export interface RuneOutpoint {
+  outpoint: string
+  sats: number
+}
+
+export interface BuildRuneEdictTransferRequest {
+  fee_rate: number
+  from: string
+  public_key: string
+  edicts: RuneEdict[]
+  outpoints: RuneOutpoint[]
+}
+
+export interface BuildAlkaneTransferRequest {
+  fee_rate: number
+  from: string
+  public_key: string
+  edicts: RuneEdict[]
+  outpoints: RuneOutpoint[]
+}
+
+// UTXO consolidation
+export interface BuildConsolidateRequest {
+  outputs: [string, number][]
+  public_key: string
+  from: string
+  fee_rate: number
+  utxos: [string, number, number][]
+}
+
+export interface BuildConsolidateResponse {
+  psbt: string
+  fees: number
+}
+
+// Alkane purchases
+export interface BuildPurchaseAlkanesRequest {
+  outpoints: string[]
+  pay_address: string
+  receive_address: string
+  public_key: string
+  fee_rate: number
+  wallet_type?: string
+}
+
+// Bulk broadcast
+export interface BroadcastBulkResult {
+  txids: string[]
 }
 
 // Search types

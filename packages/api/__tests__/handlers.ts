@@ -36,6 +36,18 @@ export const handlers = [
     return HttpResponse.json({ psbt: 'inscription_send_psbt_hex' })
   }),
 
+  http.post(`${BASE}/wallet/build`, () => {
+    return HttpResponse.json({ psbt: 'consolidate_psbt_hex', fees: 1500 })
+  }),
+
+  http.post(`${BASE}/wallet/purchase-bulk-alkanes`, () => {
+    return HttpResponse.json({ psbt: 'alkane_purchase_psbt_hex' })
+  }),
+
+  http.post(`${BASE}/wallet/broadcast-bulk`, () => {
+    return HttpResponse.json({ txids: ['txid1', 'txid2'] })
+  }),
+
   http.get(`${BASE}/wallet/fee-estimates`, () => {
     return HttpResponse.json({
       fastestFee: 50,
@@ -213,6 +225,10 @@ export const handlers = [
   // Transfer
   http.post(`${BASE}/rune/transfer`, () => {
     return HttpResponse.json({ psbt: 'rune_transfer_psbt_hex' })
+  }),
+
+  http.post(`${BASE}/alkane/transfer`, () => {
+    return HttpResponse.json({ psbt: 'alkane_transfer_psbt_hex' })
   }),
 
   // Search

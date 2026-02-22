@@ -38,4 +38,34 @@ describe('transfer API', () => {
     })
     expect(result.psbt).toBe('rune_transfer_psbt_hex')
   })
+
+  it('should build rune edict transfer', async () => {
+    const result = await transferApi.buildRuneEdictTransfer({
+      fee_rate: 20,
+      from: 'bc1ptest',
+      public_key: '02abc',
+      edicts: [
+        { rune_id: '840000:1', amount: '500', divisibility: 0, destination: 'bc1preceiver' },
+      ],
+      outpoints: [
+        { outpoint: 'a'.repeat(64) + ':0', sats: 546 },
+      ],
+    })
+    expect(result.psbt).toBe('rune_transfer_psbt_hex')
+  })
+
+  it('should build alkane transfer', async () => {
+    const result = await transferApi.buildAlkaneTransfer({
+      fee_rate: 20,
+      from: 'bc1ptest',
+      public_key: '02abc',
+      edicts: [
+        { rune_id: '200:1', amount: '100', divisibility: 0, destination: 'bc1preceiver' },
+      ],
+      outpoints: [
+        { outpoint: 'b'.repeat(64) + ':0', sats: 546 },
+      ],
+    })
+    expect(result.psbt).toBe('alkane_transfer_psbt_hex')
+  })
 })

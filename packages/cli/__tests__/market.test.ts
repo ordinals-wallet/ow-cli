@@ -37,4 +37,20 @@ describe('market commands', () => {
     expect(formatSats(50000)).toContain('sats')
     expect(formatSats(200000000)).toContain('BTC')
   })
+
+  it('should validate multiple inscription IDs for bulk buy', () => {
+    const ids = ['a'.repeat(64) + 'i0', 'b'.repeat(64) + 'i1']
+    ids.forEach((id) => expect(validateInscriptionId(id)).toBe(id))
+  })
+
+  it('should reject invalid IDs in bulk buy list', () => {
+    expect(() => validateInscriptionId('invalid')).toThrow(CliError)
+  })
+
+  it('should validate multiple outpoints for alkane buy', () => {
+    const op1 = 'a'.repeat(64) + ':0'
+    const op2 = 'b'.repeat(64) + ':1'
+    expect(validateOutpoint(op1)).toBe(op1)
+    expect(validateOutpoint(op2)).toBe(op2)
+  })
 })

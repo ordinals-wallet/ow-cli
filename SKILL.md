@@ -18,9 +18,12 @@ description: Build, debug, and extend the Ordinals Wallet CLI (ow-cli) — a Bit
 ## Key commands
 
 ```
-ow wallet create|import|info|inscriptions|runes|brc20|tap|alkanes|tokens
+ow wallet create|import|info|inscriptions|tokens
+ow wallet consolidate --fee-rate N [--utxos txid:vout:value,...]
 ow market buy <inscription_id> --fee-rate N
 ow market buy-rune <txid:vout> --fee-rate N
+ow market buy-bulk --ids <id1,id2,...> --fee-rate N
+ow market buy-alkane --outpoints <op1,op2,...> --fee-rate N
 ow market list <inscription_id> --price N
 ow market list-bulk --collection <slug> --above-floor <pct>
 ow market delist <inscription_id>
@@ -30,6 +33,18 @@ ow inscription send <id> --to <addr> --fee-rate N
 ow collection info|listings|history|search
 ow send <sats> --to <addr> --fee-rate N
 ow fee-estimate
+ow wallet rune balance
+ow wallet rune send --rune-id <block:tx> --amount N --divisibility N --to <addr> --fee-rate N --outpoints <list>
+ow wallet rune split --rune-id <block:tx> --amount N --splits N --divisibility N --fee-rate N --outpoints <list>
+ow wallet alkane balance
+ow wallet alkane send --rune-id <block:tx> --amount N --divisibility N --to <addr> --fee-rate N --outpoints <list>
+ow wallet alkane split --rune-id <block:tx> --amount N --splits N --divisibility N --fee-rate N --outpoints <list>
+ow wallet brc20 balance
+ow wallet brc20 inscribe-transfer --ticker <name> --amount N --fee-rate N [--splits N]
+ow wallet brc20 send [inscription_id] --to <addr> --fee-rate N
+ow wallet tap balance
+ow wallet tap inscribe-transfer --ticker <name> --amount N --fee-rate N [--splits N]
+ow wallet tap send [inscription_id] --to <addr> --fee-rate N
 ```
 
 All commands accept `--json` for machine output and `--debug` for full API errors.
@@ -47,7 +62,11 @@ Key endpoints:
 - `POST /wallet/purchase|purchase-bulk|purchase-bulk-runes` — build purchase PSBTs
 - `POST /wallet/escrow|escrow-bulk` — build escrow PSBTs
 - `POST /wallet/send|inscription/send` — build send PSBTs
-- `POST /rune/transfer` — build rune transfer PSBT
+- `POST /rune/transfer` — build rune transfer PSBT (simple or edict-based)
+- `POST /alkane/transfer` — build alkane transfer PSBT
+- `POST /wallet/build` — build consolidation PSBT
+- `POST /wallet/broadcast-bulk` — broadcast multiple raw txs
+- `POST /wallet/purchase-bulk-alkanes` — build alkane purchase PSBT
 - `POST /market/purchase|purchase-rune` — submit signed purchase
 - `POST /market/escrow-bulk` — submit signed escrow listing
 - `POST /market/cancel-escrow` — cancel listing
@@ -85,6 +104,8 @@ All API types live in `packages/api/src/types.ts`. No `any` types — everything
 - `BuildEscrowRequest/Response`, `SubmitEscrowRequest/Response`
 - `SearchResult`, `SearchCollection`
 - `InscribeEstimateRequest/Response`, `InscribeUploadResponse`
+- `RuneEdict`, `RuneOutpoint`, `BuildRuneEdictTransferRequest`, `BuildAlkaneTransferRequest`
+- `BuildConsolidateRequest/Response`, `BuildPurchaseAlkanesRequest`, `BroadcastBulkResult`
 
 TAP protocol types are in `packages/api/src/tap.ts` (`TapToken`).
 

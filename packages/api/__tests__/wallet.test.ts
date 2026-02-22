@@ -76,4 +76,21 @@ describe('wallet API', () => {
     expect(result.success).toBe(true)
     expect(result.txid).toBe('broadcasted_txid')
   })
+
+  it('should build consolidate', async () => {
+    const result = await walletApi.buildConsolidate({
+      outputs: [['bc1ptest', 50000]],
+      public_key: '02abc',
+      from: 'bc1ptest',
+      fee_rate: 20,
+      utxos: [['a'.repeat(64), 0, 30000], ['b'.repeat(64), 1, 20000]],
+    })
+    expect(result.psbt).toBe('consolidate_psbt_hex')
+    expect(result.fees).toBe(1500)
+  })
+
+  it('should broadcast bulk', async () => {
+    const result = await walletApi.broadcastBulk(['rawtx1', 'rawtx2'])
+    expect(result.txids).toEqual(['txid1', 'txid2'])
+  })
 })

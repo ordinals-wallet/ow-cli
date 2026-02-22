@@ -4,6 +4,7 @@ import type {
   BuildPurchaseResponse,
   BuildPurchaseBulkRequest,
   BuildPurchaseRunesRequest,
+  BuildPurchaseAlkanesRequest,
   SubmitPurchaseRequest,
   SubmitPurchaseResponse,
   SubmitPurchaseRuneRequest,
@@ -27,6 +28,11 @@ export async function buildPurchaseBulk(params: BuildPurchaseBulkRequest): Promi
 
 export async function buildPurchaseRunes(params: BuildPurchaseRunesRequest): Promise<BuildPurchaseResponse> {
   const { data } = await getClient().post('/wallet/purchase-bulk-runes', params)
+  return data
+}
+
+export async function buildPurchaseAlkanes(params: BuildPurchaseAlkanesRequest): Promise<{ psbt: string }> {
+  const { data } = await getClient().post('/wallet/purchase-bulk-alkanes', params)
   return data
 }
 

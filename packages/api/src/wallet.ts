@@ -1,5 +1,5 @@
 import { getClient } from './client.js'
-import type { WalletInfo, Utxo, Brc20Balance, RuneBalance, AlkanesBalance, FeeEstimates, BroadcastResult, InscriptionDetail } from './types.js'
+import type { WalletInfo, Utxo, Brc20Balance, RuneBalance, AlkanesBalance, FeeEstimates, BroadcastResult, BroadcastBulkResult, InscriptionDetail, BuildConsolidateRequest, BuildConsolidateResponse } from './types.js'
 
 export async function getWallet(address: string): Promise<WalletInfo> {
   const { data } = await getClient().get(`/wallet/${address}`)
@@ -38,5 +38,15 @@ export async function getFeeEstimates(): Promise<FeeEstimates> {
 
 export async function broadcast(rawtx: string): Promise<BroadcastResult> {
   const { data } = await getClient().post('/wallet/broadcast', { rawtx })
+  return data
+}
+
+export async function buildConsolidate(params: BuildConsolidateRequest): Promise<BuildConsolidateResponse> {
+  const { data } = await getClient().post('/wallet/build', params)
+  return data
+}
+
+export async function broadcastBulk(rawtxs: string[]): Promise<BroadcastBulkResult> {
+  const { data } = await getClient().post('/wallet/broadcast-bulk', { rawtxs })
   return data
 }
