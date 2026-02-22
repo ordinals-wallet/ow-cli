@@ -40,6 +40,30 @@ ow wallet tokens                  # All token balances (runes, BRC-20, TAP, alka
 ow wallet consolidate --fee-rate 10  # Merge UTXOs into a single output
 ```
 
+### Tokens
+
+#### TAP
+
+```bash
+ow wallet tap balance             # TAP token balances
+ow wallet tap inscribe-transfer \
+  --ticker <ticker> --amount 10 --fee-rate 10
+ow wallet tap send [inscription_id] \
+  --to <address> --fee-rate 10
+```
+
+#### BRC-20
+
+```bash
+ow wallet brc20 balance           # BRC-20 balances
+ow wallet brc20 inscribe-transfer \
+  --ticker ordi --amount 10 --fee-rate 10
+ow wallet brc20 inscribe-transfer \
+  --ticker ordi --amount 100 --splits 5 --fee-rate 10  # Split into 5 inscriptions
+ow wallet brc20 send [inscription_id] \
+  --to <address> --fee-rate 10    # Send transfer inscription (interactive picker if no ID)
+```
+
 #### Runes
 
 ```bash
@@ -64,28 +88,6 @@ ow wallet alkane send \
 ow wallet alkane split \
   --rune-id <id> --amount 100 --splits 5 --divisibility 0 \
   --fee-rate 10 --outpoints "<txid>:<vout>,<sats>"
-```
-
-#### BRC-20
-
-```bash
-ow wallet brc20 balance           # BRC-20 balances
-ow wallet brc20 inscribe-transfer \
-  --ticker ordi --amount 10 --fee-rate 10
-ow wallet brc20 inscribe-transfer \
-  --ticker ordi --amount 100 --splits 5 --fee-rate 10  # Split into 5 inscriptions
-ow wallet brc20 send [inscription_id] \
-  --to <address> --fee-rate 10    # Send transfer inscription (interactive picker if no ID)
-```
-
-#### TAP
-
-```bash
-ow wallet tap balance             # TAP token balances
-ow wallet tap inscribe-transfer \
-  --ticker <ticker> --amount 10 --fee-rate 10
-ow wallet tap send [inscription_id] \
-  --to <address> --fee-rate 10
 ```
 
 ### Marketplace
