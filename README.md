@@ -40,6 +40,25 @@ ow wallet tokens                  # All token balances (runes, BRC-20, TAP, alka
 ow wallet consolidate --fee-rate 10  # Merge UTXOs into a single output
 ```
 
+### Marketplace
+
+```bash
+# Buy inscriptions (one or more)
+ow market buy --ids <id1>,<id2>,<id3> --fee-rate 10
+
+# Buy runes / alkanes
+ow market buy-rune <txid:vout> --fee-rate 10
+ow market buy-alkane --outpoints <txid:vout>,<txid:vout> --fee-rate 10
+
+# List for sale (one or more)
+ow market list --ids <id1>,<id2> --price 50000
+ow market list --collection bitmap --above-floor 30
+ow market list --collection bitmap --price 50000
+
+# Cancel listing
+ow market delist <inscription_id>
+```
+
 ### Tokens
 
 #### TAP
@@ -88,25 +107,6 @@ ow wallet alkane send \
 ow wallet alkane split \
   --rune-id <id> --amount 100 --splits 5 --divisibility 0 \
   --fee-rate 10 --outpoints "<txid>:<vout>,<sats>"
-```
-
-### Marketplace
-
-```bash
-# Buy inscriptions (one or more)
-ow market buy --ids <id1>,<id2>,<id3> --fee-rate 10
-
-# Buy runes / alkanes
-ow market buy-rune <txid:vout> --fee-rate 10
-ow market buy-alkane --outpoints <txid:vout>,<txid:vout> --fee-rate 10
-
-# List for sale (one or more)
-ow market list --ids <id1>,<id2> --price 50000
-ow market list --collection bitmap --above-floor 30
-ow market list --collection bitmap --price 50000
-
-# Cancel listing
-ow market delist <inscription_id>
 ```
 
 ### Inscriptions
