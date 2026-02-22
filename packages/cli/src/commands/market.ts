@@ -20,25 +20,27 @@ export function registerMarketCommands(parent: Command): void {
   const market = parent.command('market').description('Marketplace commands')
 
   market
-    .command('buy <inscription_id>')
-    .description('Purchase an inscription')
+    .command('buy')
+    .description('Purchase one or more inscriptions')
+    .requiredOption('--ids <ids>', 'Comma-separated inscription IDs')
     .requiredOption('--fee-rate <n>', 'Fee rate in sat/vB')
     .option('--json', 'Output as JSON')
-    .action(async (inscriptionId: string, opts) => {
+    .action(async (opts) => {
       try {
-        validateInscriptionId(inscriptionId)
+        const ids = opts.ids.split(',').map((s: string) => s.trim())
+        ids.forEach(validateInscriptionId)
         const feeRate = validateFeeRate(opts.feeRate)
         const pubInfo = requirePublicInfo()
 
-        console.log(`\nBuying inscription: ${inscriptionId}`)
+        console.log(`\nBuying ${ids.length} inscription(s)`)
         console.log(`Fee rate: ${feeRate} sat/vB`)
 
         await requireConfirm('Proceed with purchase?')
         const password = await promptPassword()
         const kp = unlockKeypair(password)
 
-        const { setup, purchase } = await api.market.buildPurchase({
-          inscription_id: inscriptionId,
+        const { setup, purchase } = await api.market.buildPurchaseBulk({
+          inscriptions: ids,
           pay_address: pubInfo.address,
           receive_address: pubInfo.address,
           public_key: pubInfo.publicKey,
@@ -116,58 +118,6 @@ export function registerMarketCommands(parent: Command): void {
     })
 
   market
-    .command('buy-bulk')
-    .description('Buy multiple inscriptions')
-    .requiredOption('--ids <ids>', 'Comma-separated inscription IDs')
-    .requiredOption('--fee-rate <n>', 'Fee rate in sat/vB')
-    .option('--json', 'Output as JSON')
-    .action(async (opts) => {
-      try {
-        const ids = opts.ids.split(',').map((s: string) => s.trim())
-        ids.forEach(validateInscriptionId)
-        const feeRate = validateFeeRate(opts.feeRate)
-        const pubInfo = requirePublicInfo()
-
-        console.log(`\nBuying ${ids.length} inscription(s)`)
-        console.log(`Fee rate: ${feeRate} sat/vB`)
-
-        await requireConfirm('Proceed with bulk purchase?')
-        const password = await promptPassword()
-        const kp = unlockKeypair(password)
-
-        const { setup, purchase } = await api.market.buildPurchaseBulk({
-          inscriptions: ids,
-          pay_address: pubInfo.address,
-          receive_address: pubInfo.address,
-          public_key: pubInfo.publicKey,
-          fee_rate: feeRate,
-          wallet_type: 'ow-cli',
-        })
-
-        const { signedSetup, signedPurchase } = signPurchaseFlow(
-          kp.privateKey,
-          kp.publicKey,
-          setup,
-          purchase,
-        )
-
-        const result = await api.market.submitPurchase({
-          setup_rawtx: signedSetup,
-          purchase_rawtx: signedPurchase,
-          wallet_type: 'ow-cli',
-        })
-
-        if (opts.json) {
-          console.log(formatJson(result))
-        } else {
-          console.log(`\nBulk purchase submitted!`)
-        }
-      } catch (err) {
-        handleError(err)
-      }
-    })
-
-  market
     .command('buy-alkane')
     .description('Buy alkane listings')
     .requiredOption('--outpoints <list>', 'Comma-separated outpoints')
@@ -222,56 +172,8 @@ export function registerMarketCommands(parent: Command): void {
     })
 
   market
-    .command('list <inscription_id>')
-    .description('List inscription for sale')
-    .requiredOption('--price <sats>', 'Price in satoshis')
-    .option('--force-excess-sats', 'Force listing even if UTXO has excess sats')
-    .option('--force-multi-inscriptions', 'Force listing even if UTXO has multiple inscriptions')
-    .option('--json', 'Output as JSON')
-    .action(async (inscriptionId: string, opts) => {
-      try {
-        validateInscriptionId(inscriptionId)
-        const price = validatePrice(opts.price)
-        const pubInfo = requirePublicInfo()
-
-        console.log(`\nListing ${inscriptionId} for ${formatSats(price)}`)
-
-        await requireConfirm('Proceed?')
-        const password = await promptPassword()
-        const kp = unlockKeypair(password)
-
-        const { psbt } = await api.market.buildEscrow({
-          inscription: inscriptionId,
-          from: pubInfo.address,
-          price,
-          public_key: pubInfo.publicKey,
-          dummy: false,
-          force_excess_sats: opts.forceExcessSats || undefined,
-          force_multi_inscriptions: opts.forceMultiInscriptions || undefined,
-        })
-
-        const signedPsbt = signPsbt({
-          psbt,
-          privateKey: kp.privateKey,
-          publicKey: kp.publicKey,
-          disableExtract: true,
-        })
-
-        const result = await api.market.submitEscrow({ psbt: signedPsbt })
-
-        if (opts.json) {
-          console.log(formatJson(result))
-        } else {
-          console.log(`\nInscription listed!`)
-        }
-      } catch (err) {
-        handleError(err)
-      }
-    })
-
-  market
-    .command('list-bulk')
-    .description('List multiple inscriptions for sale')
+    .command('list')
+    .description('List one or more inscriptions for sale')
     .option('--collection <slug>', 'List all owned inscriptions from a collection')
     .option('--ids <ids>', 'Comma-separated inscription IDs to list')
     .option('--price <sats>', 'Price in satoshis (applies to all)')
@@ -321,15 +223,15 @@ export function registerMarketCommands(parent: Command): void {
             process.exit(1)
           }
         } else if (opts.ids) {
-          inscriptionIds = opts.ids.split(',')
+          inscriptionIds = opts.ids.split(',').map((s: string) => s.trim())
           inscriptionIds.forEach(validateInscriptionId)
           if (!opts.price) {
             console.error('Must specify --price when using --ids')
             process.exit(1)
           }
-          const p = parseInt(opts.price)
+          const p = validatePrice(opts.price)
           prices = inscriptionIds.map(() => p)
-          console.log(`\nListing ${inscriptionIds.length} inscriptions at ${formatSats(p)} each`)
+          console.log(`\nListing ${inscriptionIds.length} inscription(s) at ${formatSats(p)} each`)
         } else {
           console.error('Must specify --collection or --ids')
           process.exit(1)

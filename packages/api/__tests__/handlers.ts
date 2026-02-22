@@ -8,10 +8,6 @@ export const handlers = [
     return HttpResponse.json({ txid: 'broadcasted_txid', success: true })
   }),
 
-  http.post(`${BASE}/wallet/purchase`, () => {
-    return HttpResponse.json({ setup: 'psbt_setup_hex', purchase: 'psbt_purchase_hex' })
-  }),
-
   http.post(`${BASE}/wallet/purchase-bulk`, () => {
     return HttpResponse.json({ setup: 'psbt_setup_hex', purchase: 'psbt_purchase_hex' })
   }),

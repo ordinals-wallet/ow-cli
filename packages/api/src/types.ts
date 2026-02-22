@@ -134,15 +134,6 @@ export interface CollectionStats {
 }
 
 // Market types
-export interface BuildPurchaseRequest {
-  inscription_id: string
-  pay_address: string
-  receive_address: string
-  public_key: string
-  fee_rate: number
-  wallet_type?: string
-}
-
 export interface BuildPurchaseResponse {
   setup: string
   purchase: string

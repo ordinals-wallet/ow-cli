@@ -1,6 +1,5 @@
 import { getClient } from './client.js'
 import type {
-  BuildPurchaseRequest,
   BuildPurchaseResponse,
   BuildPurchaseBulkRequest,
   BuildPurchaseRunesRequest,
@@ -15,11 +14,6 @@ import type {
   SubmitEscrowResponse,
   CancelEscrowRequest,
 } from './types.js'
-
-export async function buildPurchase(params: BuildPurchaseRequest): Promise<BuildPurchaseResponse> {
-  const { data } = await getClient().post('/wallet/purchase', params)
-  return data
-}
 
 export async function buildPurchaseBulk(params: BuildPurchaseBulkRequest): Promise<BuildPurchaseResponse> {
   const { data } = await getClient().post('/wallet/purchase-bulk', params)

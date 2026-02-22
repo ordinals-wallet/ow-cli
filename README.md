@@ -91,18 +91,17 @@ ow wallet tap send [inscription_id] \
 ### Marketplace
 
 ```bash
-# Buy inscriptions
-ow market buy <inscription_id> --fee-rate 10
-ow market buy-bulk --ids <id1>,<id2>,<id3> --fee-rate 10
+# Buy inscriptions (one or more)
+ow market buy --ids <id1>,<id2>,<id3> --fee-rate 10
 
 # Buy runes / alkanes
 ow market buy-rune <txid:vout> --fee-rate 10
 ow market buy-alkane --outpoints <txid:vout>,<txid:vout> --fee-rate 10
 
-# List for sale
-ow market list <inscription_id> --price 50000
-ow market list-bulk --collection bitmap --above-floor 30
-ow market list-bulk --ids <id1>,<id2>,<id3> --price 50000
+# List for sale (one or more)
+ow market list --ids <id1>,<id2> --price 50000
+ow market list --collection bitmap --above-floor 30
+ow market list --collection bitmap --price 50000
 
 # Cancel listing
 ow market delist <inscription_id>
