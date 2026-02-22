@@ -32,20 +32,72 @@ Your seed is encrypted with AES-256-GCM and stored at `~/.ow-cli/keystore.json`.
 ### Wallet
 
 ```bash
+ow wallet create                  # Generate a new 12-word mnemonic wallet
+ow wallet import                  # Import from mnemonic or WIF
 ow wallet info                    # Address, balance, UTXOs
 ow wallet inscriptions            # Owned inscriptions
-ow wallet runes                   # Rune balances
-ow wallet brc20                   # BRC-20 balances
-ow wallet alkanes                 # Alkanes balances
-ow wallet tokens                  # All token balances
+ow wallet tokens                  # All token balances (runes, BRC-20, TAP, alkanes)
+ow wallet consolidate --fee-rate 10  # Merge UTXOs into a single output
+```
+
+#### Runes
+
+```bash
+ow wallet rune balance            # Rune balances
+ow wallet rune send \
+  --rune-id 840000:1 --amount 100 --divisibility 0 \
+  --to <address> --fee-rate 10 \
+  --outpoints "<txid>:<vout>,<sats>"
+ow wallet rune split \
+  --rune-id 840000:1 --amount 100 --splits 5 --divisibility 0 \
+  --fee-rate 10 --outpoints "<txid>:<vout>,<sats>"
+```
+
+#### Alkanes
+
+```bash
+ow wallet alkane balance          # Alkane balances
+ow wallet alkane send \
+  --rune-id <id> --amount 100 --divisibility 0 \
+  --to <address> --fee-rate 10 \
+  --outpoints "<txid>:<vout>,<sats>"
+ow wallet alkane split \
+  --rune-id <id> --amount 100 --splits 5 --divisibility 0 \
+  --fee-rate 10 --outpoints "<txid>:<vout>,<sats>"
+```
+
+#### BRC-20
+
+```bash
+ow wallet brc20 balance           # BRC-20 balances
+ow wallet brc20 inscribe-transfer \
+  --ticker ordi --amount 10 --fee-rate 10
+ow wallet brc20 inscribe-transfer \
+  --ticker ordi --amount 100 --splits 5 --fee-rate 10  # Split into 5 inscriptions
+ow wallet brc20 send [inscription_id] \
+  --to <address> --fee-rate 10    # Send transfer inscription (interactive picker if no ID)
+```
+
+#### TAP
+
+```bash
+ow wallet tap balance             # TAP token balances
+ow wallet tap inscribe-transfer \
+  --ticker <ticker> --amount 10 --fee-rate 10
+ow wallet tap send [inscription_id] \
+  --to <address> --fee-rate 10
 ```
 
 ### Marketplace
 
 ```bash
-# Buy
+# Buy inscriptions
 ow market buy <inscription_id> --fee-rate 10
+ow market buy-bulk --ids <id1>,<id2>,<id3> --fee-rate 10
+
+# Buy runes / alkanes
 ow market buy-rune <txid:vout> --fee-rate 10
+ow market buy-alkane --outpoints <txid:vout>,<txid:vout> --fee-rate 10
 
 # List for sale
 ow market list <inscription_id> --price 50000
