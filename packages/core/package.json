@@ -1,0 +1,30 @@
+{
+  "name": "@ow-cli/core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "@scure/bip32": "^1.6.0",
+    "@scure/bip39": "^1.5.0",
+    "@scure/btc-signer": "^1.5.0",
+    "@noble/secp256k1": "^1.7.1",
+    "@noble/hashes": "^1.7.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  }
+}
