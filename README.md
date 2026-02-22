@@ -25,7 +25,25 @@ ow wallet create
 ow wallet import
 ```
 
-Your seed is encrypted with AES-256-GCM and stored at `~/.ow-cli/keystore.json`. The public key and address are stored unencrypted for read-only operations.
+Your seed is encrypted with AES-256-GCM and stored in `~/.ow-cli/wallets/`. The public key and address are stored unencrypted for read-only operations.
+
+### Multiple wallets
+
+```bash
+# Create a named wallet
+ow wallet create --name trading
+
+# List all wallets (* marks active)
+ow wallet list
+
+# Switch active wallet
+ow wallet select trading
+
+# Interactive wallet picker
+ow wallet select
+```
+
+Existing single-wallet setups are automatically migrated to `wallets/default.json` on first run.
 
 ## Usage
 
@@ -33,7 +51,12 @@ Your seed is encrypted with AES-256-GCM and stored at `~/.ow-cli/keystore.json`.
 
 ```bash
 ow wallet create                  # Generate a new 12-word mnemonic wallet
+ow wallet create --name trading   # Create a named wallet
 ow wallet import                  # Import from mnemonic or WIF
+ow wallet import --name savings   # Import into a named wallet
+ow wallet list                    # List all wallets (* marks active)
+ow wallet select trading          # Switch active wallet
+ow wallet select                  # Interactive wallet picker
 ow wallet info                    # Address, balance, UTXOs
 ow wallet inscriptions            # Owned inscriptions
 ow wallet tokens                  # All token balances (runes, BRC-20, TAP, alkanes)

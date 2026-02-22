@@ -10,7 +10,8 @@ import {
 } from '@ow-cli/core'
 import * as api from '@ow-cli/api'
 import type { WalletInscription, RuneBalance, Brc20Balance, AlkanesBalance, TapToken } from '@ow-cli/api'
-import { saveKeystore, requirePublicInfo, unlockKeypair } from '../keystore.js'
+import { saveKeystore, requirePublicInfo, unlockKeypair, listWallets, migrateKeystore } from '../keystore.js'
+import { loadConfig, saveConfig } from '../config.js'
 import { promptPassword, promptConfirm, requireConfirm } from '../utils/prompts.js'
 import { formatTable, formatJson, formatSats } from '../output.js'
 import { handleError } from '../utils/errors.js'
@@ -21,12 +22,30 @@ import { registerBrc20Commands } from './brc20.js'
 import { registerTapCommands } from './tap-cmd.js'
 
 export function registerWalletCommands(parent: Command): void {
+  migrateKeystore()
+
   const wallet = parent.command('wallet').description('Wallet management')
 
   wallet
     .command('create')
     .description('Generate a new 12-word mnemonic wallet')
-    .action(async () => {
+    .option('--name <name>', 'Wallet name')
+    .action(async (opts) => {
+      let walletName: string = opts.name
+
+      if (!walletName) {
+        const existing = listWallets()
+        if (existing.length === 0) {
+          walletName = 'default'
+        } else {
+          const { default: inquirer } = await import('inquirer')
+          const { name } = await inquirer.prompt([
+            { type: 'input', name: 'name', message: 'Wallet name:' },
+          ])
+          walletName = name.trim() || 'default'
+        }
+      }
+
       const mnemonic = generateMnemonic()
       console.log('\nYour 12-word recovery phrase:\n')
       console.log(`  ${mnemonic}\n`)
@@ -43,16 +62,33 @@ export function registerWalletCommands(parent: Command): void {
       const kp = keypairFromMnemonic(mnemonic)
       const addr = publicKeyToP2TR(kp.publicKey)
 
-      saveKeystore(mnemonic, password, bytesToHex(kp.publicKey), addr.address)
+      const id = saveKeystore(mnemonic, password, bytesToHex(kp.publicKey), addr.address, walletName)
+      saveConfig({ activeWallet: id })
 
-      console.log(`\nWallet created!`)
+      console.log(`\nWallet "${walletName}" created!`)
       console.log(`Address: ${addr.address}`)
     })
 
   wallet
     .command('import')
     .description('Import wallet from mnemonic or WIF')
-    .action(async () => {
+    .option('--name <name>', 'Wallet name')
+    .action(async (opts) => {
+      let walletName: string = opts.name
+
+      if (!walletName) {
+        const existing = listWallets()
+        if (existing.length === 0) {
+          walletName = 'default'
+        } else {
+          const { default: inquirer } = await import('inquirer')
+          const { name } = await inquirer.prompt([
+            { type: 'input', name: 'name', message: 'Wallet name:' },
+          ])
+          walletName = name.trim() || 'default'
+        }
+      }
+
       const { default: inquirer } = await import('inquirer')
       const { seed } = await inquirer.prompt([
         {
@@ -92,10 +128,78 @@ export function registerWalletCommands(parent: Command): void {
         process.exit(1)
       }
 
-      saveKeystore(trimmed, password, bytesToHex(kp.publicKey), addr.address)
+      const id = saveKeystore(trimmed, password, bytesToHex(kp.publicKey), addr.address, walletName)
+      saveConfig({ activeWallet: id })
 
-      console.log(`\nWallet imported!`)
+      console.log(`\nWallet "${walletName}" imported!`)
       console.log(`Address: ${addr.address}`)
+    })
+
+  wallet
+    .command('list')
+    .description('List all wallets')
+    .option('--json', 'Output as JSON')
+    .action(async (opts) => {
+      const wallets = listWallets()
+      if (wallets.length === 0) {
+        console.log('No wallets found. Run "ow wallet create" to get started.')
+        return
+      }
+
+      const active = loadConfig().activeWallet
+
+      if (opts.json) {
+        console.log(formatJson(wallets.map((w) => ({ ...w, active: w.id === active }))))
+        return
+      }
+
+      console.log('')
+      for (const w of wallets) {
+        const marker = w.id === active ? ' *' : ''
+        console.log(`  ${w.name}${marker}  ${w.address}`)
+      }
+      console.log('')
+    })
+
+  wallet
+    .command('select [id]')
+    .description('Switch active wallet')
+    .action(async (idArg?: string) => {
+      const wallets = listWallets()
+      if (wallets.length === 0) {
+        console.log('No wallets found. Run "ow wallet create" to get started.')
+        return
+      }
+
+      let selected: string
+
+      if (idArg) {
+        const match = wallets.find((w) => w.id === idArg || w.name === idArg)
+        if (!match) {
+          console.error(`Wallet "${idArg}" not found.`)
+          process.exit(1)
+        }
+        selected = match.id
+      } else {
+        const { default: inquirer } = await import('inquirer')
+        const active = loadConfig().activeWallet
+        const { choice } = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'choice',
+            message: 'Select wallet:',
+            choices: wallets.map((w) => ({
+              name: `${w.name}${w.id === active ? ' *' : ''}  ${w.address}`,
+              value: w.id,
+            })),
+          },
+        ])
+        selected = choice
+      }
+
+      saveConfig({ activeWallet: selected })
+      const w = wallets.find((w) => w.id === selected)!
+      console.log(`\nActive wallet: ${w.name} (${w.address})`)
     })
 
   wallet

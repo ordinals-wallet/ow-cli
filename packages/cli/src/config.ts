@@ -5,6 +5,7 @@ import { homedir } from 'node:os'
 export interface Config {
   apiUrl: string
   network: string
+  activeWallet: string
 }
 
 const CONFIG_DIR = join(homedir(), '.ow-cli')
@@ -13,6 +14,7 @@ const CONFIG_FILE = join(CONFIG_DIR, 'config.json')
 const DEFAULT_CONFIG: Config = {
   apiUrl: 'https://turbo.ordinalswallet.com',
   network: 'mainnet',
+  activeWallet: 'default',
 }
 
 export function getConfigDir(): string {
@@ -29,6 +31,10 @@ export function loadConfig(): Config {
   } catch {
     return { ...DEFAULT_CONFIG }
   }
+}
+
+export function getWalletsDir(): string {
+  return join(CONFIG_DIR, 'wallets')
 }
 
 export function saveConfig(config: Partial<Config>): void {

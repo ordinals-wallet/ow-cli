@@ -1,10 +1,12 @@
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, renameSync } from 'node:fs'
 import { join } from 'node:path'
 import { createCipheriv, createDecipheriv, pbkdf2Sync, randomBytes } from 'node:crypto'
 import { keypairFromMnemonic, keypairFromWIF } from '@ow-cli/core'
-import { getConfigDir } from './config.js'
+import { getConfigDir, getWalletsDir, loadConfig, saveConfig } from './config.js'
 
 interface KeystoreData {
+  id: string
+  name: string
   encrypted: string
   iv: string
   salt: string
@@ -13,7 +15,12 @@ interface KeystoreData {
   address: string
 }
 
-const KEYSTORE_FILE = join(getConfigDir(), 'keystore.json')
+export interface WalletInfo {
+  id: string
+  name: string
+  address: string
+}
+
 const PBKDF2_ITERATIONS = 100000
 const KEY_LENGTH = 32
 const ALGORITHM = 'aes-256-gcm'
@@ -22,8 +29,33 @@ function deriveKey(password: string, salt: Buffer): Buffer {
   return pbkdf2Sync(password, salt, PBKDF2_ITERATIONS, KEY_LENGTH, 'sha256')
 }
 
-export function hasKeystore(): boolean {
-  return existsSync(KEYSTORE_FILE)
+function generateId(): string {
+  return randomBytes(8).toString('hex')
+}
+
+export function getKeystorePath(id?: string): string {
+  const walletId = id ?? loadConfig().activeWallet
+  return join(getWalletsDir(), `${walletId}.json`)
+}
+
+export function migrateKeystore(): void {
+  const oldPath = join(getConfigDir(), 'keystore.json')
+  const walletsDir = getWalletsDir()
+
+  if (existsSync(oldPath) && !existsSync(walletsDir)) {
+    mkdirSync(walletsDir, { recursive: true })
+    const id = generateId()
+    const raw = readFileSync(oldPath, 'utf-8')
+    const old = JSON.parse(raw)
+    const data: KeystoreData = { id, name: 'default', ...old }
+    writeFileSync(join(walletsDir, `${id}.json`), JSON.stringify(data, null, 2))
+    renameSync(oldPath, join(getConfigDir(), 'keystore.json.bak'))
+    saveConfig({ activeWallet: id })
+  }
+}
+
+export function hasKeystore(id?: string): boolean {
+  return existsSync(getKeystorePath(id))
 }
 
 export function saveKeystore(
@@ -31,8 +63,12 @@ export function saveKeystore(
   password: string,
   publicKey: string,
   address: string,
-): void {
-  mkdirSync(getConfigDir(), { recursive: true })
+  name: string,
+  id?: string,
+): string {
+  mkdirSync(getWalletsDir(), { recursive: true })
+
+  const walletId = id ?? generateId()
 
   const salt = randomBytes(32)
   const iv = randomBytes(16)
@@ -44,6 +80,8 @@ export function saveKeystore(
   const tag = cipher.getAuthTag()
 
   const data: KeystoreData = {
+    id: walletId,
+    name,
     encrypted,
     iv: iv.toString('hex'),
     salt: salt.toString('hex'),
@@ -52,15 +90,17 @@ export function saveKeystore(
     address,
   }
 
-  writeFileSync(KEYSTORE_FILE, JSON.stringify(data, null, 2))
+  writeFileSync(join(getWalletsDir(), `${walletId}.json`), JSON.stringify(data, null, 2))
+  return walletId
 }
 
-export function loadKeystore(password: string): { seed: string; publicKey: string; address: string } {
-  if (!hasKeystore()) {
+export function loadKeystore(password: string, id?: string): { seed: string; publicKey: string; address: string } {
+  const path = getKeystorePath(id)
+  if (!existsSync(path)) {
     throw new Error('No wallet found. Run "ow wallet create" or "ow wallet import" first.')
   }
 
-  const raw = readFileSync(KEYSTORE_FILE, 'utf-8')
+  const raw = readFileSync(path, 'utf-8')
   const data: KeystoreData = JSON.parse(raw)
 
   const salt = Buffer.from(data.salt, 'hex')
@@ -85,10 +125,11 @@ export function getKeypair(seed: string) {
   return keypairFromWIF(seed.trim())
 }
 
-export function getPublicInfo(): { publicKey: string; address: string } | null {
-  if (!hasKeystore()) return null
+export function getPublicInfo(id?: string): { publicKey: string; address: string } | null {
+  const path = getKeystorePath(id)
+  if (!existsSync(path)) return null
 
-  const raw = readFileSync(KEYSTORE_FILE, 'utf-8')
+  const raw = readFileSync(path, 'utf-8')
   const data: KeystoreData = JSON.parse(raw)
   return { publicKey: data.publicKey, address: data.address }
 }
@@ -105,4 +146,16 @@ export function requirePublicInfo(): { publicKey: string; address: string } {
 export function unlockKeypair(password: string) {
   const ks = loadKeystore(password)
   return getKeypair(ks.seed)
+}
+
+export function listWallets(): WalletInfo[] {
+  const walletsDir = getWalletsDir()
+  if (!existsSync(walletsDir)) return []
+
+  const files = readdirSync(walletsDir).filter((f) => f.endsWith('.json'))
+  return files.map((f) => {
+    const raw = readFileSync(join(walletsDir, f), 'utf-8')
+    const data: KeystoreData = JSON.parse(raw)
+    return { id: data.id, name: data.name, address: data.address }
+  })
 }
