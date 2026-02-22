@@ -14,7 +14,7 @@ import { saveKeystore, requirePublicInfo, unlockKeypair } from '../keystore.js'
 import { promptPassword, promptConfirm, requireConfirm } from '../utils/prompts.js'
 import { formatTable, formatJson, formatSats } from '../output.js'
 import { handleError } from '../utils/errors.js'
-import { validateFeeRate, validateOutpointWithSats } from '../utils/validate.js'
+import { validateFeeRate, validateOutpointWithSats, validateOutputPair, validateSplits, validateSats } from '../utils/validate.js'
 import { registerRuneCommands } from './rune.js'
 import { registerAlkaneCommands } from './alkane.js'
 import { registerBrc20Commands } from './brc20.js'
@@ -217,9 +217,11 @@ export function registerWalletCommands(parent: Command): void {
 
   wallet
     .command('consolidate')
-    .description('Merge UTXOs into a single output')
+    .description('Build a custom transaction from wallet UTXOs')
     .requiredOption('--fee-rate <n>', 'Fee rate in sat/vB')
     .option('--utxos <list>', 'Comma-separated txid:vout:value (omit to use all)')
+    .option('--outputs <list>', 'Comma-separated address:sats pairs for custom outputs')
+    .option('--max-inputs <n>', 'Limit number of UTXOs to consume (largest first)', '2000')
     .option('--json', 'Output as JSON')
     .action(async (opts) => {
       try {
@@ -236,19 +238,35 @@ export function registerWalletCommands(parent: Command): void {
           utxos = fetched.map((u) => [u.txid, u.vout, u.value] as [string, number, number])
         }
 
-        if (utxos.length < 2) {
+        const maxInputs = parseInt(opts.maxInputs, 10)
+        if (isNaN(maxInputs) || maxInputs < 1) {
+          console.error('--max-inputs must be a positive integer')
+          process.exit(1)
+        }
+        utxos.sort((a, b) => b[2] - a[2])
+        utxos = utxos.slice(0, maxInputs)
+
+        if (utxos.length < 2 && !opts.outputs) {
           console.log('Need at least 2 UTXOs to consolidate.')
           return
         }
 
         const totalValue = utxos.reduce((sum, u) => sum + u[2], 0)
-        const outputs: [string, number][] = [[pubInfo.address, totalValue]]
 
-        console.log(`\nConsolidating ${utxos.length} UTXOs`)
-        console.log(`Total value: ${formatSats(totalValue)}`)
+        let outputs: [string, number][]
+        if (opts.outputs) {
+          const parsed = opts.outputs.split(',').map((s: string) => validateOutputPair(s.trim()))
+          outputs = parsed.map((o: { address: string; sats: number }) => [o.address, o.sats] as [string, number])
+        } else {
+          outputs = [[pubInfo.address, totalValue]]
+        }
+
+        console.log(`\nBuilding transaction from ${utxos.length} UTXOs`)
+        console.log(`Total input value: ${formatSats(totalValue)}`)
+        console.log(`Outputs: ${outputs.length}`)
         console.log(`Fee rate: ${feeRate} sat/vB`)
 
-        await requireConfirm('Proceed with consolidation?')
+        await requireConfirm('Proceed?')
         const password = await promptPassword()
         const kp = unlockKeypair(password)
 
@@ -272,7 +290,89 @@ export function registerWalletCommands(parent: Command): void {
         if (opts.json) {
           console.log(formatJson({ ...result, fees }))
         } else {
-          console.log(`\nConsolidation broadcast!`)
+          console.log(`\nTransaction broadcast!`)
+          console.log(`TXID: ${result.txid}`)
+          console.log(`Fees: ${formatSats(fees)}`)
+        }
+      } catch (err) {
+        handleError(err)
+      }
+    })
+
+  wallet
+    .command('split')
+    .description('Split UTXOs into multiple equal outputs')
+    .requiredOption('--fee-rate <n>', 'Fee rate in sat/vB')
+    .requiredOption('--splits <n>', 'Number of outputs (2-25)')
+    .option('--utxos <list>', 'Comma-separated txid:vout:value (omit to use all)')
+    .option('--amount <sats>', 'Amount per output in sats (omit to divide evenly)')
+    .option('--json', 'Output as JSON')
+    .action(async (opts) => {
+      try {
+        const feeRate = validateFeeRate(opts.feeRate)
+        const splits = validateSplits(opts.splits)
+        const pubInfo = requirePublicInfo()
+
+        let utxos: [string, number, number][]
+
+        if (opts.utxos) {
+          const parsed = opts.utxos.split(',').map((s: string) => validateOutpointWithSats(s.trim()))
+          utxos = parsed.map((u: { txid: string; vout: number; sats: number }) => [u.txid, u.vout, u.sats] as [string, number, number])
+        } else {
+          const fetched = await api.wallet.getUtxos(pubInfo.address)
+          utxos = fetched.map((u) => [u.txid, u.vout, u.value] as [string, number, number])
+        }
+
+        if (utxos.length === 0) {
+          console.log('No UTXOs available.')
+          return
+        }
+
+        const totalValue = utxos.reduce((sum, u) => sum + u[2], 0)
+
+        let amountPerOutput: number
+        if (opts.amount) {
+          amountPerOutput = validateSats(opts.amount)
+        } else {
+          amountPerOutput = Math.floor(totalValue / splits)
+        }
+
+        if (amountPerOutput < 546) {
+          console.log('Output amount too small (below dust limit of 546 sats).')
+          return
+        }
+
+        const outputs: [string, number][] = Array.from({ length: splits }, () => [pubInfo.address, amountPerOutput] as [string, number])
+
+        console.log(`\nSplitting into ${splits} outputs of ${formatSats(amountPerOutput)} each`)
+        console.log(`Total input value: ${formatSats(totalValue)}`)
+        console.log(`Fee rate: ${feeRate} sat/vB`)
+
+        await requireConfirm('Proceed with split?')
+        const password = await promptPassword()
+        const kp = unlockKeypair(password)
+
+        const { psbt, fees } = await api.wallet.buildConsolidate({
+          outputs,
+          public_key: pubInfo.publicKey,
+          from: pubInfo.address,
+          fee_rate: feeRate,
+          utxos,
+        })
+
+        const rawtx = signPsbt({
+          psbt,
+          privateKey: kp.privateKey,
+          publicKey: kp.publicKey,
+          disableExtract: false,
+        })
+
+        const result = await api.wallet.broadcast(rawtx)
+
+        if (opts.json) {
+          console.log(formatJson({ ...result, fees }))
+        } else {
+          console.log(`\nSplit broadcast!`)
           console.log(`TXID: ${result.txid}`)
           console.log(`Fees: ${formatSats(fees)}`)
         }

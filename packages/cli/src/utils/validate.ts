@@ -113,6 +113,25 @@ export function validateOutpointWithSatsShort(value: string): { outpoint: string
   return { outpoint: value.slice(0, commaIdx), sats: parseInt(value.slice(commaIdx + 1), 10) }
 }
 
+export function validateOutputPair(value: string): { address: string; sats: number } {
+  const idx = value.lastIndexOf(':')
+  if (idx === -1) {
+    throw new CliError(
+      `Invalid output pair: "${value}"\nExpected format: <address>:<sats>  (e.g. bc1p...abc:10000)`
+    )
+  }
+  const address = value.slice(0, idx)
+  const satsStr = value.slice(idx + 1)
+  if (!address) {
+    throw new CliError(`Invalid output pair: "${value}"\nAddress cannot be empty`)
+  }
+  const sats = parseInt(satsStr, 10)
+  if (isNaN(sats) || sats < 1) {
+    throw new CliError(`Invalid output pair: "${value}"\nSats must be a positive integer`)
+  }
+  return { address, sats }
+}
+
 export function parseOutpoints(raw: string): RuneOutpoint[] {
   return raw.trim().split(/\s+/).map((s) => validateOutpointWithSatsShort(s))
 }

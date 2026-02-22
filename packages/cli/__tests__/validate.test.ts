@@ -12,6 +12,7 @@ import {
   validateOutpointWithSats,
   validateOutpointWithSatsShort,
   parseOutpoints,
+  validateOutputPair,
 } from '../src/utils/validate.js'
 import { CliError } from '../src/utils/errors.js'
 
@@ -236,6 +237,40 @@ describe('validators', () => {
 
     it('should reject short txid', () => {
       expect(() => validateOutpointWithSatsShort('abc:0,546')).toThrow(CliError)
+    })
+  })
+
+  describe('validateOutputPair', () => {
+    it('should accept valid address:sats pair', () => {
+      const result = validateOutputPair('bc1p' + 'a'.repeat(58) + ':10000')
+      expect(result.address).toBe('bc1p' + 'a'.repeat(58))
+      expect(result.sats).toBe(10000)
+    })
+
+    it('should accept legacy address:sats pair', () => {
+      const result = validateOutputPair('1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2:50000')
+      expect(result.address).toBe('1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2')
+      expect(result.sats).toBe(50000)
+    })
+
+    it('should reject missing colon', () => {
+      expect(() => validateOutputPair('bc1paaaa10000')).toThrow(CliError)
+    })
+
+    it('should reject empty address', () => {
+      expect(() => validateOutputPair(':10000')).toThrow(CliError)
+    })
+
+    it('should reject non-numeric sats', () => {
+      expect(() => validateOutputPair('bc1paaa:abc')).toThrow(CliError)
+    })
+
+    it('should reject zero sats', () => {
+      expect(() => validateOutputPair('bc1paaa:0')).toThrow(CliError)
+    })
+
+    it('should reject negative sats', () => {
+      expect(() => validateOutputPair('bc1paaa:-100')).toThrow(CliError)
     })
   })
 

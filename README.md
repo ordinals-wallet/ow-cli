@@ -37,7 +37,10 @@ ow wallet import                  # Import from mnemonic or WIF
 ow wallet info                    # Address, balance, UTXOs
 ow wallet inscriptions            # Owned inscriptions
 ow wallet tokens                  # All token balances (runes, BRC-20, TAP, alkanes)
-ow wallet consolidate --fee-rate 10  # Merge UTXOs into a single output
+ow wallet consolidate --fee-rate 10  # Merge all UTXOs into a single output
+ow wallet consolidate --fee-rate 10 --outputs <addr:sats>,<addr:sats>  # Custom outputs
+ow wallet split --fee-rate 10 --splits 5   # Split balance into 5 equal outputs
+ow wallet split --fee-rate 10 --splits 5 --amount 10000  # 5 outputs of 10000 sats each
 ```
 
 ### Marketplace
