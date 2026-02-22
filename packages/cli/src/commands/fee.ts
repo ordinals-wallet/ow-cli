@@ -10,7 +10,7 @@ export function registerFeeCommand(parent: Command): void {
     .option('--json', 'Output as JSON')
     .action(async (opts) => {
       try {
-        const fees: any = await api.wallet.getFeeEstimates()
+        const fees = await api.wallet.getFeeEstimates()
 
         if (opts.json) {
           console.log(formatJson(fees))

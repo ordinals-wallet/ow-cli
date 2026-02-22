@@ -7,6 +7,7 @@ import {
   publicKeyToP2TR,
 } from '@ow-cli/core'
 import * as api from '@ow-cli/api'
+import type { WalletInscription, RuneBalance, Brc20Balance, AlkanesBalance, TapToken } from '@ow-cli/api'
 import { saveKeystore, getPublicInfo, hasKeystore } from '../keystore.js'
 import { promptPassword, promptConfirm } from '../utils/prompts.js'
 import { formatTable, formatJson, formatSats } from '../output.js'
@@ -71,8 +72,9 @@ export function registerWalletCommands(parent: Command): void {
       } else {
         try {
           kp = keypairFromWIF(trimmed)
-        } catch (e: any) {
-          console.error(`Invalid WIF: ${e.message}`)
+        } catch (e: unknown) {
+          const message = e instanceof Error ? e.message : String(e)
+          console.error(`Invalid WIF: ${message}`)
           process.exit(1)
         }
       }
@@ -147,7 +149,7 @@ export function registerWalletCommands(parent: Command): void {
           return
         }
 
-        const rows = inscriptions.map((i: any) => [
+        const rows = inscriptions.map((i: WalletInscription) => [
           String(i.num ?? ''),
           i.id,
           i.content_type || '',
@@ -183,7 +185,7 @@ export function registerWalletCommands(parent: Command): void {
           return
         }
 
-        const rows = runes.map((r: any) => [r.name || '', r.amount || '', r.symbol || ''])
+        const rows = runes.map((r: RuneBalance) => [r.name || '', r.amount || '', r.symbol || ''])
         console.log(formatTable(['Rune', 'Balance', 'Symbol'], rows))
       } catch (err) {
         handleError(err)
@@ -214,7 +216,7 @@ export function registerWalletCommands(parent: Command): void {
           return
         }
 
-        const rows = tokens.map((t: any) => [
+        const rows = tokens.map((t: Brc20Balance) => [
           t.ticker || '',
           t.overall_balance || '',
           t.available_balance || '',
@@ -250,7 +252,7 @@ export function registerWalletCommands(parent: Command): void {
           return
         }
 
-        const rows = tokens.map((t: any) => [
+        const rows = tokens.map((t: TapToken) => [
           t.ticker || '',
           String(t.overall_balance ?? ''),
           String(t.available_balance ?? ''),
@@ -286,7 +288,7 @@ export function registerWalletCommands(parent: Command): void {
           return
         }
 
-        const rows = tokens.map((t: any) => [t.id || '', t.balance || ''])
+        const rows = tokens.map((t: AlkanesBalance) => [t.id || '', t.balance || ''])
         console.log(formatTable(['ID', 'Balance'], rows))
       } catch (err) {
         handleError(err)
@@ -309,7 +311,7 @@ export function registerWalletCommands(parent: Command): void {
           api.wallet.getRuneBalance(info.address),
           api.wallet.getBrc20Balance(info.address),
           api.wallet.getAlkanesBalance(info.address),
-          api.tap.getTapBalance(info.address).catch(() => [] as any[]),
+          api.tap.getTapBalance(info.address).catch((): TapToken[] => []),
         ])
 
         if (opts.json) {
@@ -320,14 +322,14 @@ export function registerWalletCommands(parent: Command): void {
         // Runes
         if (runes.length > 0) {
           console.log('\nRunes:')
-          const rows = runes.map((r: any) => [r.name || '', r.amount || '', r.symbol || ''])
+          const rows = runes.map((r: RuneBalance) => [r.name || '', r.amount || '', r.symbol || ''])
           console.log(formatTable(['Rune', 'Balance', 'Symbol'], rows))
         }
 
         // BRC-20
         if (brc20.length > 0) {
           console.log('\nBRC-20:')
-          const rows = brc20.map((t: any) => [
+          const rows = brc20.map((t: Brc20Balance) => [
             t.ticker || '',
             t.overall_balance || '',
             t.available_balance || '',
@@ -338,7 +340,7 @@ export function registerWalletCommands(parent: Command): void {
         // TAP
         if (tapTokens.length > 0) {
           console.log('\nTAP:')
-          const rows = tapTokens.map((t: any) => [
+          const rows = tapTokens.map((t: TapToken) => [
             t.ticker || '',
             String(t.overall_balance ?? ''),
             String(t.available_balance ?? ''),
@@ -349,7 +351,7 @@ export function registerWalletCommands(parent: Command): void {
         // Alkanes
         if (alkanes.length > 0) {
           console.log('\nAlkanes:')
-          const rows = alkanes.map((t: any) => [t.id || '', t.balance || ''])
+          const rows = alkanes.map((t: AlkanesBalance) => [t.id || '', t.balance || ''])
           console.log(formatTable(['ID', 'Balance'], rows))
         }
 

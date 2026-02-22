@@ -5,11 +5,13 @@ import type {
   BuildPurchaseBulkRequest,
   BuildPurchaseRunesRequest,
   SubmitPurchaseRequest,
+  SubmitPurchaseResponse,
   SubmitPurchaseRuneRequest,
   BuildEscrowRequest,
   BuildEscrowBulkRequest,
   BuildEscrowResponse,
   SubmitEscrowRequest,
+  SubmitEscrowResponse,
   CancelEscrowRequest,
 } from './types.js'
 
@@ -28,12 +30,12 @@ export async function buildPurchaseRunes(params: BuildPurchaseRunesRequest): Pro
   return data
 }
 
-export async function submitPurchase(params: SubmitPurchaseRequest): Promise<any> {
+export async function submitPurchase(params: SubmitPurchaseRequest): Promise<SubmitPurchaseResponse> {
   const { data } = await getClient().post('/market/purchase', params)
   return data
 }
 
-export async function submitPurchaseRune(params: SubmitPurchaseRuneRequest): Promise<any> {
+export async function submitPurchaseRune(params: SubmitPurchaseRuneRequest): Promise<SubmitPurchaseResponse> {
   const { data } = await getClient().post('/market/purchase-rune', params)
   return data
 }
@@ -48,14 +50,14 @@ export async function buildEscrowBulk(params: BuildEscrowBulkRequest): Promise<B
   return data
 }
 
-export async function submitEscrow(params: SubmitEscrowRequest): Promise<any> {
+export async function submitEscrow(params: SubmitEscrowRequest): Promise<SubmitEscrowResponse> {
   // Use escrow-bulk endpoint — handles single listings and is more resilient
   // (the non-bulk /market/escrow endpoint hard-fails if ord indexer is behind)
   const { data } = await getClient().post('/market/escrow-bulk', params)
   return data
 }
 
-export async function cancelEscrow(params: CancelEscrowRequest): Promise<any> {
+export async function cancelEscrow(params: CancelEscrowRequest): Promise<SubmitEscrowResponse> {
   const { data } = await getClient().post('/market/cancel-escrow', params)
   return data
 }

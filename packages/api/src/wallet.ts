@@ -1,5 +1,5 @@
 import { getClient } from './client.js'
-import type { WalletInfo, Utxo, Inscription, RuneBalance, AlkanesBalance, FeeEstimates, BroadcastResult } from './types.js'
+import type { WalletInfo, Utxo, Brc20Balance, RuneBalance, AlkanesBalance, FeeEstimates, BroadcastResult, InscriptionDetail } from './types.js'
 
 export async function getWallet(address: string): Promise<WalletInfo> {
   const { data } = await getClient().get(`/wallet/${address}`)
@@ -16,7 +16,7 @@ export async function getRuneBalance(address: string): Promise<RuneBalance[]> {
   return data
 }
 
-export async function getBrc20Balance(address: string): Promise<any[]> {
+export async function getBrc20Balance(address: string): Promise<Brc20Balance[]> {
   const { data } = await getClient().get(`/wallet/${address}/brc20-balance`)
   return data
 }
@@ -26,7 +26,7 @@ export async function getAlkanesBalance(address: string): Promise<AlkanesBalance
   return data
 }
 
-export async function getInscription(id: string): Promise<any> {
+export async function getInscription(id: string): Promise<InscriptionDetail> {
   const { data } = await getClient().get(`/inscription/${id}`)
   return data
 }

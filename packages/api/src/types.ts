@@ -1,9 +1,34 @@
 // Wallet types
+
+export interface WalletInscription {
+  id: string
+  num: number
+  content_type: string
+  meta?: { name?: string; [key: string]: unknown }
+  collection?: { slug: string; name: string }
+  escrow?: { id: string; satoshi_price: number } | null
+  outpoint?: string
+}
+
+export interface Brc20Balance {
+  ticker: string
+  overall_balance: string
+  available_balance: string
+  transferable_balance: string
+  collection?: { slug: string; name: string } | null
+}
+
 export interface WalletInfo {
   address: string
   balance: number
+  unconfirmed_balance: number
+  confirmed_balance: number
+  inscription_balance: number
+  frozen_balance: number
   inscription_count: number
-  [key: string]: any
+  utxo_count: number
+  inscriptions: WalletInscription[]
+  brc20: Brc20Balance[]
 }
 
 export interface Utxo {
@@ -17,28 +42,47 @@ export interface Inscription {
   id: string
   number: number
   content_type: string
-  [key: string]: any
+}
+
+export interface InscriptionDetail {
+  id: string
+  num: number
+  content_type: string
+  content_length: number
+  genesis_height: number
+  genesis_fee: number
+  sat: { value: number; rarity: string } | null
+  meta?: { name?: string; [key: string]: unknown }
+  collection?: { slug: string; name: string } | null
+  outpoint?: string
 }
 
 export interface RuneBalance {
-  rune: string
-  balance: string
+  name: string
+  rune_id: string
+  amount: string
   symbol: string
-  [key: string]: any
+  divisibility: number
+  collection?: { slug: string; name: string } | null
 }
 
 export interface AlkanesBalance {
+  rune_id: string
   id: string
+  outpoint: string
+  amount: string
   balance: string
-  [key: string]: any
+  address: string
+  sats: number
+  escrow?: boolean
 }
 
 export interface FeeEstimates {
-  fastest: number
-  halfHour: number
-  hour: number
-  economy: number
-  minimum: number
+  fastestFee: number
+  halfHourFee: number
+  hourFee: number
+  economyFee: number
+  minimumFee: number
 }
 
 export interface BroadcastResult {
@@ -54,22 +98,39 @@ export interface CollectionMetadata {
   image_url: string
   banner_url: string
   supply: number
-  [key: string]: any
+  icon?: string
+  active?: boolean
+  total_supply?: number
+  socials?: Record<string, string>
+  creator_address?: string
 }
 
 export interface Escrow {
   id: string
   inscription_id: string
+  name?: string
+  outpoint?: string
+  seller_address?: string
+  buyer_address?: string
+  satoshi_price: number
   price: number
-  seller: string
-  [key: string]: any
+  seller?: string
+  buyer?: string
+  created?: string
+  price_per?: number
+  amount?: number
 }
 
 export interface CollectionStats {
-  floor_price: number
-  total_volume: number
-  listed_count: number
-  [key: string]: any
+  total_supply?: number | null
+  floor_price: number | null
+  volume_total?: number | null
+  volume_day?: number | null
+  listed?: number | null
+  listed_count?: number | null
+  sales?: number | null
+  owners?: number | null
+  total_volume?: number | null
 }
 
 // Market types
@@ -111,6 +172,11 @@ export interface SubmitPurchaseRequest {
   wallet_type?: string
 }
 
+export interface SubmitPurchaseResponse {
+  success: boolean
+  txid?: string
+}
+
 export interface SubmitPurchaseRuneRequest {
   rawtx: string
   wallet_type?: string
@@ -143,6 +209,16 @@ export interface SubmitEscrowRequest {
   psbt: string
 }
 
+export interface SubmitEscrowResponse {
+  success: boolean
+  escrow_id?: string
+}
+
+export interface CreateEscrowResponse {
+  psbt: string
+  escrow_id: string
+}
+
 export interface CancelEscrowRequest {
   inscription_id: string
   signature: string
@@ -157,8 +233,18 @@ export interface InscribeEstimateRequest {
 
 export interface InscribeEstimateResponse {
   total_fees: number
+  network_fee?: number
+  base_fee?: number
+  size_fee?: number
+  total_cost?: number
   inscription_fee: number
   postage: number
+}
+
+export interface InscribeUploadResponse {
+  inscription_id?: string
+  txid?: string
+  success: boolean
 }
 
 // Transfer types
@@ -177,7 +263,6 @@ export interface BuildInscriptionSendRequest {
   to: string
   fee_rate: number
   public_key: string
-  utxos?: any[]
 }
 
 export interface BuildRuneTransferRequest {
@@ -190,8 +275,14 @@ export interface BuildRuneTransferRequest {
 }
 
 // Search types
+export interface SearchCollection {
+  slug: string
+  name: string
+  icon?: string
+}
+
 export interface SearchResult {
-  collections: any[]
-  inscriptions: any[]
-  addresses: any[]
+  collections: SearchCollection[]
+  inscriptions: Inscription[]
+  addresses: string[]
 }

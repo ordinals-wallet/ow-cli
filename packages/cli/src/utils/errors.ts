@@ -9,6 +9,18 @@ export class CliError extends Error {
   }
 }
 
+interface AxiosErrorLike extends Error {
+  response?: {
+    status: number
+    statusText: string
+    data: unknown
+  }
+  config?: {
+    url?: string
+    data?: string
+  }
+}
+
 export function handleError(err: unknown): never {
   if (err instanceof CliError) {
     console.error(`Error: ${err.message}`)
@@ -23,7 +35,7 @@ export function handleError(err: unknown): never {
 
     // Show full API error details in debug mode
     if (isDebug() && 'response' in err) {
-      const axiosErr = err as any
+      const axiosErr = err as AxiosErrorLike
       console.error(`\nAPI Error: ${axiosErr.response?.status} ${axiosErr.response?.statusText}`)
       console.error('URL:', axiosErr.config?.url)
       console.error('Request body:', JSON.stringify(axiosErr.config?.data ? JSON.parse(axiosErr.config.data) : null, null, 2))

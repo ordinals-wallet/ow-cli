@@ -17,9 +17,10 @@ function bytesToHex(bytes: Uint8Array): string {
     .join('')
 }
 
-function getInputScriptHex(input: Record<string, any>): string | undefined {
-  if (input.witnessUtxo) {
-    return bytesToHex(new Uint8Array(input.witnessUtxo.script))
+function getInputScriptHex(input: Record<string, unknown>): string | undefined {
+  const witnessUtxo = input.witnessUtxo as { script: Uint8Array } | undefined
+  if (witnessUtxo) {
+    return bytesToHex(new Uint8Array(witnessUtxo.script))
   }
   return undefined
 }
@@ -74,8 +75,8 @@ export function signPsbt(opts: SignPsbtOptions): string {
 
     const tapKeySig = input.tapKeySig
     if (tapKeySig) {
-      // Use _ignoreSignStatus=true to bypass sign status validation
-      tx.updateInput(i, { finalScriptWitness: [tapKeySig] } as any, true)
+      // finalScriptWitness + _ignoreSignStatus bypass sign status validation
+      tx.updateInput(i, { finalScriptWitness: [tapKeySig] } as Record<string, unknown>, true)
     }
   }
 

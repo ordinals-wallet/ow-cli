@@ -13,7 +13,7 @@ export function formatTable(headers: string[], rows: string[][]): string {
   return [headerLine, separator, ...bodyLines].join('\n')
 }
 
-export function formatJson(data: any): string {
+export function formatJson(data: unknown): string {
   return JSON.stringify(data, null, 2)
 }
 

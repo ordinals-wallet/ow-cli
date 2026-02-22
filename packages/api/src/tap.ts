@@ -43,9 +43,9 @@ export async function getTapBalance(address: string, timeoutMs = 15000): Promise
       reject(new Error(`TAP connection failed: ${err.message}`))
     })
 
-    socket.on('response', (value: any) => {
+    socket.on('response', (value: { func: string; args: string[]; result: unknown }) => {
       if (value.func === 'accountTokens') {
-        const tickers: string[] = value.result || []
+        const tickers = (value.result as string[] | null) || []
         tickersReceived = true
 
         if (tickers.length === 0) {
@@ -69,7 +69,7 @@ export async function getTapBalance(address: string, timeoutMs = 15000): Promise
         pendingBalances--
         const ticker = value.args[1]
         const isDmt = ticker.startsWith('dmt')
-        const balance = parseInt(value.result, 10) / (isDmt ? 1 : 1e18)
+        const balance = parseInt(value.result as string, 10) / (isDmt ? 1 : 1e18)
 
         tokens.set(ticker.toUpperCase(), {
           ticker: ticker.toUpperCase(),
@@ -92,7 +92,7 @@ export async function getTapBalance(address: string, timeoutMs = 15000): Promise
         pendingTransfers--
         const ticker = value.args[1].toUpperCase()
         const isDmt = value.args[1].startsWith('dmt')
-        const transferable = parseInt(value.result || '0', 10) / (isDmt ? 1 : 1e18)
+        const transferable = parseInt((value.result as string) || '0', 10) / (isDmt ? 1 : 1e18)
         const existing = tokens.get(ticker)
 
         if (existing) {

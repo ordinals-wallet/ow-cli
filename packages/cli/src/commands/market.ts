@@ -7,6 +7,7 @@ import {
   publicKeyToP2TR,
 } from '@ow-cli/core'
 import * as api from '@ow-cli/api'
+import type { WalletInscription } from '@ow-cli/api'
 import { loadKeystore, getPublicInfo } from '../keystore.js'
 import { promptPassword, promptConfirm } from '../utils/prompts.js'
 import { formatJson, formatSats } from '../output.js'
@@ -241,7 +242,7 @@ export function registerMarketCommands(parent: Command): void {
           const inscriptions = walletData.inscriptions || []
 
           const collectionInscriptions = inscriptions.filter(
-            (i: any) => i.collection?.slug === opts.collection
+            (i: WalletInscription) => i.collection?.slug === opts.collection
           )
 
           if (collectionInscriptions.length === 0) {
@@ -249,13 +250,13 @@ export function registerMarketCommands(parent: Command): void {
             process.exit(1)
           }
 
-          inscriptionIds = collectionInscriptions.map((i: any) => i.id)
+          inscriptionIds = collectionInscriptions.map((i: WalletInscription) => i.id)
           console.log(`\nFound ${inscriptionIds.length} inscriptions from ${opts.collection}`)
 
           // Calculate prices
           if (opts.aboveFloor) {
             const stats = await api.collection.getStats(opts.collection)
-            const floor = stats.floor_price || (stats as any).floor
+            const floor = stats.floor_price
             if (!floor) {
               console.error('Could not determine floor price.')
               process.exit(1)

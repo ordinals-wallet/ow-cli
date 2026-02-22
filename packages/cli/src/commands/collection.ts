@@ -1,5 +1,6 @@
 import { Command } from 'commander'
 import * as api from '@ow-cli/api'
+import type { Escrow, SearchCollection } from '@ow-cli/api'
 import { formatTable, formatJson, formatSats } from '../output.js'
 import { handleError } from '../utils/errors.js'
 
@@ -22,16 +23,15 @@ export function registerCollectionCommands(parent: Command): void {
           return
         }
 
-        const s: any = stats
         console.log(`\n${meta.name}`)
         console.log(`Slug: ${meta.slug}`)
-        console.log(`Supply: ${s.total_supply ?? meta.total_supply ?? 'N/A'}`)
+        console.log(`Supply: ${stats.total_supply ?? meta.total_supply ?? 'N/A'}`)
         console.log(`Description: ${meta.description || 'N/A'}`)
         console.log(`\nStats:`)
-        console.log(`  Floor: ${formatSats(s.floor_price)}`)
-        console.log(`  Volume: ${formatSats(s.volume_total)}`)
-        console.log(`  Listed: ${s.listed ?? 'N/A'}`)
-        console.log(`  Sales: ${s.sales ?? 'N/A'}`)
+        console.log(`  Floor: ${formatSats(stats.floor_price)}`)
+        console.log(`  Volume: ${formatSats(stats.volume_total)}`)
+        console.log(`  Listed: ${stats.listed ?? 'N/A'}`)
+        console.log(`  Sales: ${stats.sales ?? 'N/A'}`)
       } catch (err) {
         handleError(err)
       }
@@ -55,7 +55,7 @@ export function registerCollectionCommands(parent: Command): void {
           return
         }
 
-        const rows = escrows.map((e: any) => [
+        const rows = escrows.map((e: Escrow) => [
           e.inscription_id,
           e.name || '',
           formatSats(e.satoshi_price ?? e.price),
@@ -86,7 +86,7 @@ export function registerCollectionCommands(parent: Command): void {
           return
         }
 
-        const rows = sold.map((e: any) => [
+        const rows = sold.map((e: Escrow) => [
           e.inscription_id || '',
           e.name || '',
           formatSats(e.satoshi_price ?? e.price),
@@ -116,7 +116,7 @@ export function registerCollectionCommands(parent: Command): void {
           return
         }
 
-        const rows = results.collections.map((c: any) => [c.slug || '', c.name || ''])
+        const rows = results.collections.map((c: SearchCollection) => [c.slug || '', c.name || ''])
         console.log(formatTable(['Slug', 'Name'], rows))
       } catch (err) {
         handleError(err)

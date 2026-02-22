@@ -20,6 +20,7 @@
     "socket.io-client": "^4.8.0"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^2.1.0",
     "msw": "^2.7.0",
     "tsup": "^8.3.0",
     "typescript": "^5.7.0",
