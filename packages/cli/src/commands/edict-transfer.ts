@@ -11,7 +11,7 @@ import {
   validateFeeRate,
   parseOutpoints,
 } from '../utils/validate.js'
-import { buildSplitEdicts } from './rune.js'
+import { buildSplitEdicts } from '@ow-cli/shared'
 import { signBroadcastAndPrint } from '../utils/tx.js'
 
 interface EdictConfig {

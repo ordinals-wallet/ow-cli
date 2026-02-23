@@ -1,14 +1,13 @@
 import { Command } from 'commander'
 import * as api from '@ow-cli/api'
 import type { TapToken } from '@ow-cli/api'
+import { buildTapPayload } from '@ow-cli/shared'
 import { requirePublicInfo } from '../keystore.js'
 import { formatTable, formatJson } from '../output.js'
 import { handleError } from '../utils/errors.js'
 import { registerInscribeTransfer, registerTokenSend } from './token-transfer.js'
 
-export function buildTapPayload(ticker: string, amount: string): string {
-  return JSON.stringify({ p: 'tap', op: 'token-transfer', tick: ticker, amt: amount })
-}
+export { buildTapPayload } from '@ow-cli/shared'
 
 export function registerTapCommands(parent: Command): void {
   const tap = parent.command('tap').description('TAP token commands')

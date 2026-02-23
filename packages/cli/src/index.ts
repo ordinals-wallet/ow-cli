@@ -14,6 +14,14 @@ program
   .version('0.1.0')
   .option('--debug', 'Show debug output including full API errors')
 
+program
+  .command('tui')
+  .description('Launch interactive terminal UI')
+  .action(async () => {
+    const { launch } = await import('@ow-cli/tui')
+    await launch()
+  })
+
 registerWalletCommands(program)
 registerCollectionCommands(program)
 registerInscriptionCommands(program)

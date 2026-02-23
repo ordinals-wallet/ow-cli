@@ -1,137 +1,45 @@
 import type { RuneOutpoint } from '@ow-cli/api'
 import { CliError } from './errors.js'
+import {
+  validateInscriptionId as _validateInscriptionId,
+  validateOutpoint as _validateOutpoint,
+  validateAddress as _validateAddress,
+  validateFeeRate as _validateFeeRate,
+  validatePrice as _validatePrice,
+  validateSats as _validateSats,
+  validateRuneId as _validateRuneId,
+  validateAmount as _validateAmount,
+  validateSplits as _validateSplits,
+  validateOutpointWithSats as _validateOutpointWithSats,
+  validateOutpointWithSatsShort as _validateOutpointWithSatsShort,
+  validateOutputPair as _validateOutputPair,
+  parseOutpoints as _parseOutpoints,
+  ValidationError,
+} from '@ow-cli/shared'
 
-// inscription_id: 64 hex chars + 'i' + non-negative integer
-const INSCRIPTION_ID_RE = /^[0-9a-f]{64}i\d+$/
-
-// outpoint: 64 hex chars + ':' + non-negative integer
-const OUTPOINT_RE = /^[0-9a-f]{64}:\d+$/
-
-// Bitcoin address: mainnet bech32/bech32m (bc1), legacy (1), p2sh (3)
-const BTC_ADDRESS_RE = /^(bc1[a-z0-9]{25,90}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/
-
-export function validateInscriptionId(value: string): string {
-  if (!INSCRIPTION_ID_RE.test(value)) {
-    throw new CliError(
-      `Invalid inscription ID: "${value}"\nExpected format: <64-char txid>i<index>  (e.g. abc123...i0)`
-    )
+function wrapValidation<T>(fn: (...args: any[]) => T): (...args: any[]) => T {
+  return (...args: any[]) => {
+    try {
+      return fn(...args)
+    } catch (err) {
+      if (err instanceof ValidationError) {
+        throw new CliError(err.message)
+      }
+      throw err
+    }
   }
-  return value
 }
 
-export function validateOutpoint(value: string): string {
-  if (!OUTPOINT_RE.test(value)) {
-    throw new CliError(
-      `Invalid outpoint: "${value}"\nExpected format: <64-char txid>:<vout>  (e.g. abc123...ef:0)`
-    )
-  }
-  return value
-}
-
-export function validateAddress(value: string): string {
-  if (!BTC_ADDRESS_RE.test(value)) {
-    throw new CliError(`Invalid Bitcoin address: "${value}"`)
-  }
-  return value
-}
-
-export function validateFeeRate(value: string): number {
-  const n = parseInt(value, 10)
-  if (isNaN(n) || n < 1) {
-    throw new CliError(`Invalid fee rate: "${value}" (must be a positive integer)`)
-  }
-  return n
-}
-
-export function validatePrice(value: string): number {
-  const n = parseInt(value, 10)
-  if (isNaN(n) || n < 1) {
-    throw new CliError(`Invalid price: "${value}" (must be a positive integer in sats)`)
-  }
-  return n
-}
-
-export function validateSats(value: string): number {
-  const n = parseInt(value, 10)
-  if (isNaN(n) || n < 1) {
-    throw new CliError(`Invalid amount: "${value}" (must be a positive integer in sats)`)
-  }
-  return n
-}
-
-// rune_id: block:tx (e.g. "840000:1")
-const RUNE_ID_RE = /^\d+:\d+$/
-
-export function validateRuneId(value: string): string {
-  if (!RUNE_ID_RE.test(value)) {
-    throw new CliError(
-      `Invalid rune ID: "${value}"\nExpected format: <block>:<tx>  (e.g. 840000:1)`
-    )
-  }
-  return value
-}
-
-export function validateAmount(value: string): string {
-  const n = parseFloat(value)
-  if (isNaN(n) || n <= 0) {
-    throw new CliError(`Invalid amount: "${value}" (must be a positive number)`)
-  }
-  return value
-}
-
-export function validateSplits(value: string): number {
-  const n = parseInt(value, 10)
-  if (isNaN(n) || n < 2 || n > 25) {
-    throw new CliError(`Invalid splits: "${value}" (must be an integer between 2 and 25)`)
-  }
-  return n
-}
-
-// outpoint with sats for consolidation: <64hex>:<vout>:<sats>
-const OUTPOINT_WITH_SATS_RE = /^[0-9a-f]{64}:\d+:\d+$/
-
-export function validateOutpointWithSats(value: string): { txid: string; vout: number; sats: number } {
-  if (!OUTPOINT_WITH_SATS_RE.test(value)) {
-    throw new CliError(
-      `Invalid outpoint: "${value}"\nExpected format: <64-char txid>:<vout>:<sats>  (e.g. abc123...ef:0:10000)`
-    )
-  }
-  const parts = value.split(':')
-  return { txid: parts[0], vout: parseInt(parts[1], 10), sats: parseInt(parts[2], 10) }
-}
-
-// outpoint with sats for rune outpoints: <64hex>:<vout>,<sats>
-const OUTPOINT_WITH_SATS_SHORT_RE = /^[0-9a-f]{64}:\d+,\d+$/
-
-export function validateOutpointWithSatsShort(value: string): { outpoint: string; sats: number } {
-  if (!OUTPOINT_WITH_SATS_SHORT_RE.test(value)) {
-    throw new CliError(
-      `Invalid outpoint: "${value}"\nExpected format: <64-char txid>:<vout>,<sats>  (e.g. abc123...ef:0,546)`
-    )
-  }
-  const commaIdx = value.lastIndexOf(',')
-  return { outpoint: value.slice(0, commaIdx), sats: parseInt(value.slice(commaIdx + 1), 10) }
-}
-
-export function validateOutputPair(value: string): { address: string; sats: number } {
-  const idx = value.lastIndexOf(':')
-  if (idx === -1) {
-    throw new CliError(
-      `Invalid output pair: "${value}"\nExpected format: <address>:<sats>  (e.g. bc1p...abc:10000)`
-    )
-  }
-  const address = value.slice(0, idx)
-  const satsStr = value.slice(idx + 1)
-  if (!address) {
-    throw new CliError(`Invalid output pair: "${value}"\nAddress cannot be empty`)
-  }
-  const sats = parseInt(satsStr, 10)
-  if (isNaN(sats) || sats < 1) {
-    throw new CliError(`Invalid output pair: "${value}"\nSats must be a positive integer`)
-  }
-  return { address, sats }
-}
-
-export function parseOutpoints(raw: string): RuneOutpoint[] {
-  return raw.trim().split(/\s+/).map((s) => validateOutpointWithSatsShort(s))
-}
+export const validateInscriptionId = wrapValidation(_validateInscriptionId) as (value: string) => string
+export const validateOutpoint = wrapValidation(_validateOutpoint) as (value: string) => string
+export const validateAddress = wrapValidation(_validateAddress) as (value: string) => string
+export const validateFeeRate = wrapValidation(_validateFeeRate) as (value: string) => number
+export const validatePrice = wrapValidation(_validatePrice) as (value: string) => number
+export const validateSats = wrapValidation(_validateSats) as (value: string) => number
+export const validateRuneId = wrapValidation(_validateRuneId) as (value: string) => string
+export const validateAmount = wrapValidation(_validateAmount) as (value: string) => string
+export const validateSplits = wrapValidation(_validateSplits) as (value: string) => number
+export const validateOutpointWithSats = wrapValidation(_validateOutpointWithSats) as (value: string) => { txid: string; vout: number; sats: number }
+export const validateOutpointWithSatsShort = wrapValidation(_validateOutpointWithSatsShort) as (value: string) => { outpoint: string; sats: number }
+export const validateOutputPair = wrapValidation(_validateOutputPair) as (value: string) => { address: string; sats: number }
+export const parseOutpoints = wrapValidation(_parseOutpoints) as (raw: string) => RuneOutpoint[]

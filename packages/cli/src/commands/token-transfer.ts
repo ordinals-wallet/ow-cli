@@ -6,7 +6,7 @@ import { promptPassword, requireConfirm } from '../utils/prompts.js'
 import { formatTable, formatJson, formatSats } from '../output.js'
 import { handleError, CliError } from '../utils/errors.js'
 import { validateAmount, validateFeeRate, validateSplits, validateAddress, validateInscriptionId } from '../utils/validate.js'
-import { splitAmount } from './brc20.js'
+import { splitAmount } from '@ow-cli/shared'
 import { signBroadcastAndPrint } from '../utils/tx.js'
 
 function isTextPlain(i: WalletInscription): boolean {

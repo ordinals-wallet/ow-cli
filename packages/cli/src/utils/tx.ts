@@ -1,6 +1,5 @@
-import { signPsbt } from '@ow-cli/core'
 import type { KeyPair } from '@ow-cli/core'
-import * as api from '@ow-cli/api'
+import { signAndBroadcast } from '@ow-cli/shared'
 import { formatJson } from '../output.js'
 
 export async function signBroadcastAndPrint(
@@ -8,14 +7,7 @@ export async function signBroadcastAndPrint(
   kp: KeyPair,
   opts: { json?: boolean },
 ): Promise<void> {
-  const rawtx = signPsbt({
-    psbt,
-    privateKey: kp.privateKey,
-    publicKey: kp.publicKey,
-    disableExtract: false,
-  })
-
-  const result = await api.wallet.broadcast(rawtx)
+  const result = await signAndBroadcast(psbt, kp)
 
   if (opts.json) {
     console.log(formatJson(result))
