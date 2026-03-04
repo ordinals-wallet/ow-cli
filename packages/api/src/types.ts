@@ -255,6 +255,9 @@ export interface BuildInscriptionSendRequest {
   to: string
   fee_rate: number
   public_key: string
+  utxos?: [string, number, number][]
+  inscription_public_key?: string
+  inscription_address?: string
 }
 
 export interface BuildRuneTransferRequest {

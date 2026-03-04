@@ -37,13 +37,21 @@ export function handleError(err: unknown): never {
       process.exit(1)
     }
 
-    // Show full API error details in debug mode
-    if (isDebug() && 'response' in err) {
+    if ('response' in err) {
       const axiosErr = err as AxiosErrorLike
+      const responseData = axiosErr.response?.data
+      const detail = typeof responseData === 'string'
+        ? responseData
+        : typeof responseData === 'object' && responseData !== null && 'message' in (responseData as Record<string, unknown>)
+          ? (responseData as Record<string, unknown>).message
+          : null
       console.error(`\nAPI Error: ${axiosErr.response?.status} ${axiosErr.response?.statusText}`)
-      console.error('URL:', axiosErr.config?.url)
-      console.error('Request body:', JSON.stringify(axiosErr.config?.data ? JSON.parse(axiosErr.config.data) : null, null, 2))
-      console.error('Response:', JSON.stringify(axiosErr.response?.data, null, 2))
+      if (detail) console.error(`Message: ${detail}`)
+      if (isDebug()) {
+        console.error('URL:', axiosErr.config?.url)
+        console.error('Request body:', JSON.stringify(axiosErr.config?.data ? JSON.parse(axiosErr.config.data) : null, null, 2))
+        console.error('Response:', JSON.stringify(responseData, null, 2))
+      }
       process.exit(1)
     }
 
