@@ -215,38 +215,7 @@ export function registerInscriptionCommands(parent: Command): void {
         if (opts.json) {
           console.log(formatJson(preview))
         } else {
-          // Display transaction preview
-          console.log(`\nTransaction Preview${isSingleBatch ? '' : ' (batch 1)'}`)
-          console.log('─'.repeat(40))
-
-          // Inputs table
-          console.log(`\nInputs (${preview.inputs.length}):`)
-          const inputRows = preview.inputs.map((inp, i) => {
-            const shortTxid = inp.txid === 'unknown' ? 'unknown' : `${inp.txid.slice(0, 8)}…${inp.txid.slice(-4)}:${inp.vout}`
-            const label = inp.inscriptionId ?? '(fee input)'
-            return [String(i), shortTxid, formatSats(inp.value), label]
-          })
-          console.log(formatTable(['#', 'Outpoint', 'Value', 'Inscription'], inputRows))
-
-          // Outputs table
-          console.log(`\nOutputs (${preview.outputs.length}):`)
-          const outputRows = preview.outputs.map((out, i) => {
-            const shortAddr = out.address === 'unknown' ? 'unknown' : `${out.address.slice(0, 8)}…${out.address.slice(-4)}`
-            let label = ''
-            if (out.inscriptions.length > 0) {
-              label = out.inscriptions.map((id) => `${id} ✓`).join(', ')
-            } else {
-              label = '(change)'
-            }
-            return [String(i), shortAddr, formatSats(out.value), label]
-          })
-          console.log(formatTable(['#', 'Address', 'Value', 'Inscription'], outputRows))
-
-          const changeValue = preview.outputs
-            .filter((o) => o.inscriptions.length === 0)
-            .reduce((s, o) => s + o.value, 0)
-          console.log(`\nFee: ${formatSats(preview.fee)}`)
-          console.log(`Recovered to change: ${formatSats(changeValue)}`)
+          printPsbtPreview(preview, `Transaction Preview${isSingleBatch ? '' : ' (batch 1)'}`)
         }
 
         const confirmMsg = isSingleBatch
@@ -278,6 +247,134 @@ export function registerInscriptionCommands(parent: Command): void {
         handleError(err)
       }
     })
+
+  inscription
+    .command('consolidate')
+    .description('Consolidate inscription UTXOs into a single output')
+    .requiredOption('--to <address>', 'Destination address')
+    .option('--collection <slug>', 'Collection slug to consolidate')
+    .option('--ids <ids>', 'Comma-separated inscription IDs')
+    .requiredOption('--fee-rate <n>', 'Fee rate in sat/vB')
+    .option('--json', 'Output as JSON')
+    .action(async (opts) => {
+      try {
+        if (!opts.collection && !opts.ids) {
+          throw new CliError('Must specify --collection or --ids')
+        }
+        if (opts.collection && opts.ids) {
+          throw new CliError('Cannot specify both --collection and --ids')
+        }
+        validateAddress(opts.to)
+
+        const feeRate = validateFeeRate(opts.feeRate)
+        const pubInfo = requirePublicInfo()
+
+        const [walletInfo, cardinalUtxos] = await Promise.all([
+          api.wallet.getWallet(pubInfo.address),
+          api.wallet.getUtxos(pubInfo.address),
+        ])
+
+        let inscriptions: WalletInscription[]
+        if (opts.collection) {
+          inscriptions = walletInfo.inscriptions.filter(
+            (ins) => ins.collection?.slug === opts.collection,
+          )
+          if (inscriptions.length === 0) {
+            throw new CliError(`No inscriptions found for collection "${opts.collection}"`)
+          }
+        } else {
+          const ids = (opts.ids as string).split(',').map((s) => s.trim())
+          for (const id of ids) validateInscriptionId(id)
+          inscriptions = walletInfo.inscriptions.filter((ins) => ids.includes(ins.id))
+          const found = new Set(inscriptions.map((ins) => ins.id))
+          const missing = ids.filter((id) => !found.has(id))
+          if (missing.length > 0) {
+            throw new CliError(`Inscriptions not found in wallet: ${missing.join(', ')}`)
+          }
+        }
+
+        console.log(`\nConsolidating ${inscriptions.length} inscription(s) into 1 output`)
+        console.log(`  To: ${opts.to}`)
+        console.log(`  Fee rate: ${feeRate} sat/vB`)
+
+        const utxos: [string, number, number][] = cardinalUtxos.map(
+          (u) => [u.txid, u.vout, u.value],
+        )
+
+        const { psbt } = await api.transfer.buildInscriptionSend({
+          inscriptions: inscriptions.map((ins) => ins.id),
+          from: pubInfo.address,
+          to: opts.to,
+          fee_rate: feeRate,
+          public_key: pubInfo.publicKey,
+          utxos,
+          consolidate: true,
+        })
+
+        // Build inscription map and preview
+        const inscriptionMap = new Map<string, string>()
+        for (const ins of inscriptions) {
+          if (ins.outpoint) {
+            const label = ins.meta?.name || ins.collection?.name
+              ? `${ins.meta?.name ?? ins.collection?.name} (#${ins.num})`
+              : ins.id
+            inscriptionMap.set(ins.outpoint, label)
+          }
+        }
+
+        const preview = decodePsbtPreview(psbt, inscriptionMap)
+
+        if (opts.json) {
+          console.log(formatJson(preview))
+        } else {
+          printPsbtPreview(preview)
+        }
+
+        await requireConfirm('Broadcast this transaction?')
+        const password = await promptPassword()
+        const kp = unlockKeypair(password)
+        await signBroadcastAndPrint(psbt, kp, opts)
+      } catch (err) {
+        handleError(err)
+      }
+    })
+}
+
+function printPsbtPreview(
+  preview: ReturnType<typeof decodePsbtPreview>,
+  title = 'Transaction Preview',
+) {
+  console.log(`\n${title}`)
+  console.log('─'.repeat(40))
+
+  console.log(`\nInputs (${preview.inputs.length}):`)
+  const inputRows = preview.inputs.map((inp, i) => {
+    const shortTxid = inp.txid === 'unknown' ? 'unknown' : `${inp.txid.slice(0, 8)}…${inp.txid.slice(-4)}:${inp.vout}`
+    const label = inp.inscriptionId ?? '(fee input)'
+    return [String(i), shortTxid, formatSats(inp.value), label]
+  })
+  console.log(formatTable(['#', 'Outpoint', 'Value', 'Inscription'], inputRows))
+
+  console.log(`\nOutputs (${preview.outputs.length}):`)
+  const outputRows = preview.outputs.map((out, i) => {
+    const shortAddr = out.address === 'unknown' ? 'unknown' : `${out.address.slice(0, 8)}…${out.address.slice(-4)}`
+    let label = ''
+    if (out.inscriptions.length > 0) {
+      label = out.inscriptions.map((id) => `${id} ✓`).join(', ')
+    } else {
+      label = '(change)'
+    }
+    return [String(i), shortAddr, formatSats(out.value), label]
+  })
+  console.log(formatTable(['#', 'Address', 'Value', 'Inscription'], outputRows))
+
+  const changeValue = preview.outputs
+    .filter((o) => o.inscriptions.length === 0)
+    .reduce((s, o) => s + o.value, 0)
+  console.log(`\nFee: ${formatSats(preview.fee)}`)
+  if (changeValue > 0) {
+    console.log(`Change: ${formatSats(changeValue)}`)
+  }
 }
 
 function decodePsbtPreview(psbtHex: string, inscriptionMap: Map<string, string>) {

@@ -260,6 +260,7 @@ export interface BuildInscriptionSendRequest {
   inscription_public_key?: string
   inscription_address?: string
   postage?: number
+  consolidate?: boolean
 }
 
 export interface BuildRuneTransferRequest {
