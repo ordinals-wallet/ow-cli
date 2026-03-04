@@ -13,5 +13,6 @@ export async function signAndBroadcast(
     disableExtract: false,
   })
 
-  return api.wallet.broadcast(rawtx)
+  const res = await api.wallet.broadcast(rawtx)
+  return { txid: res.result }
 }

@@ -169,19 +169,6 @@ export function registerInscriptionCommands(parent: Command): void {
 
         console.log(`\nFound ${inscriptions.length} inscription(s) to strip`)
 
-        // Build PSBT: send inscriptions to self
-        const utxos: [string, number, number][] = cardinalUtxos.map(
-          (u) => [u.txid, u.vout, u.value],
-        )
-        const { psbt } = await api.transfer.buildInscriptionSend({
-          inscriptions: inscriptions.map((ins) => ins.id),
-          from: pubInfo.address,
-          to: pubInfo.address,
-          fee_rate: feeRate,
-          public_key: pubInfo.publicKey,
-          utxos,
-        })
-
         // Build inscription outpoint → label map
         const inscriptionMap = new Map<string, string>()
         for (const ins of inscriptions) {
@@ -193,14 +180,43 @@ export function registerInscriptionCommands(parent: Command): void {
           }
         }
 
+        const utxos: [string, number, number][] = cardinalUtxos.map(
+          (u) => [u.txid, u.vout, u.value],
+        )
+
+        // Auto-batch: each inscription adds ~150 vbytes (input + postage + padding outputs).
+        // The last inscription's excess (~V-330) funds fees via the builder's change output.
+        // Keep batch size small enough that fee < excess so no cardinal UTXOs are needed.
+        const batchSize = Math.max(1, Math.floor(8000 / (150 * feeRate)))
+        const batches: WalletInscription[][] = []
+        for (let i = 0; i < inscriptions.length; i += batchSize) {
+          batches.push(inscriptions.slice(i, i + batchSize))
+        }
+        const isSingleBatch = batches.length === 1
+
+        if (!isSingleBatch) {
+          console.log(`Splitting into ${batches.length} batches of up to ${batchSize}`)
+        }
+
+        // Build first batch for preview
+        const { psbt: firstPsbt } = await api.transfer.buildInscriptionSend({
+          inscriptions: batches[0].map((ins) => ins.id),
+          from: pubInfo.address,
+          to: pubInfo.address,
+          fee_rate: feeRate,
+          public_key: pubInfo.publicKey,
+          utxos: isSingleBatch ? utxos : [],
+          postage: 330,
+        })
+
         // Decode and trace PSBT
-        const preview = decodePsbtPreview(psbt, inscriptionMap)
+        const preview = decodePsbtPreview(firstPsbt, inscriptionMap)
 
         if (opts.json) {
           console.log(formatJson(preview))
         } else {
           // Display transaction preview
-          console.log(`\nTransaction Preview`)
+          console.log(`\nTransaction Preview${isSingleBatch ? '' : ' (batch 1)'}`)
           console.log('─'.repeat(40))
 
           // Inputs table
@@ -233,10 +249,31 @@ export function registerInscriptionCommands(parent: Command): void {
           console.log(`Recovered to change: ${formatSats(changeValue)}`)
         }
 
-        await requireConfirm('Broadcast this transaction?')
+        const confirmMsg = isSingleBatch
+          ? 'Broadcast this transaction?'
+          : `Broadcast ${batches.length} transactions?`
+        await requireConfirm(confirmMsg)
         const password = await promptPassword()
         const kp = unlockKeypair(password)
-        await signBroadcastAndPrint(psbt, kp, opts)
+
+        // Sign and broadcast first batch
+        await signBroadcastAndPrint(firstPsbt, kp, opts)
+
+        // Process remaining batches
+        for (let b = 1; b < batches.length; b++) {
+          const batch = batches[b]
+          console.log(`\nBatch ${b + 1} of ${batches.length} (${batch.length} inscriptions)...`)
+          const { psbt } = await api.transfer.buildInscriptionSend({
+            inscriptions: batch.map((ins) => ins.id),
+            from: pubInfo.address,
+            to: pubInfo.address,
+            fee_rate: feeRate,
+            public_key: pubInfo.publicKey,
+            utxos: [],
+            postage: 330,
+          })
+          await signBroadcastAndPrint(psbt, kp, opts)
+        }
       } catch (err) {
         handleError(err)
       }

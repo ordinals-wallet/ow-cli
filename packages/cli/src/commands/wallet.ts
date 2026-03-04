@@ -395,7 +395,7 @@ export function registerWalletCommands(parent: Command): void {
           console.log(formatJson({ ...result, fees }))
         } else {
           console.log(`\nTransaction broadcast!`)
-          console.log(`TXID: ${result.txid}`)
+          console.log(`TXID: ${result.result}`)
           console.log(`Fees: ${formatSats(fees)}`)
         }
       } catch (err) {
@@ -477,7 +477,7 @@ export function registerWalletCommands(parent: Command): void {
           console.log(formatJson({ ...result, fees }))
         } else {
           console.log(`\nSplit broadcast!`)
-          console.log(`TXID: ${result.txid}`)
+          console.log(`TXID: ${result.result}`)
           console.log(`Fees: ${formatSats(fees)}`)
         }
       } catch (err) {

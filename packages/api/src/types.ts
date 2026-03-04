@@ -86,8 +86,9 @@ export interface FeeEstimates {
 }
 
 export interface BroadcastResult {
-  txid: string
-  success: boolean
+  result: string
+  id: string
+  error?: { code: number; message: string } | null
 }
 
 // Collection types
@@ -258,6 +259,7 @@ export interface BuildInscriptionSendRequest {
   utxos?: [string, number, number][]
   inscription_public_key?: string
   inscription_address?: string
+  postage?: number
 }
 
 export interface BuildRuneTransferRequest {
