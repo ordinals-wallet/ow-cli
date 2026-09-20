@@ -19,6 +19,9 @@ import {
   type SaleParent,
 } from '../src/passthrough.js'
 
+/** Re-exported so other packages' tests can parse PSBTs without their own dependency. */
+export { btc }
+
 const TEST_MNEMONIC = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'
 
 function party(fill: number) {
