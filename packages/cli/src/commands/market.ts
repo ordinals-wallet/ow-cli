@@ -9,6 +9,8 @@ import { requirePublicInfo, unlockKeypair } from '../keystore.js'
 import { promptPassword, requireConfirm } from '../utils/prompts.js'
 import { formatJson, formatSats } from '../output.js'
 import { handleError } from '../utils/errors.js'
+import { planPurchase, buildPassthroughPurchase, executePurchase } from '@ow-cli/shared'
+import type { PassthroughQuote } from '@ow-cli/shared'
 import {
   validateInscriptionId,
   validateOutpoint,
@@ -32,39 +34,61 @@ export function registerMarketCommands(parent: Command): void {
         const feeRate = validateFeeRate(opts.feeRate)
         const pubInfo = requirePublicInfo()
 
+        // Listings come in two kinds with separate endpoints; look them up and route each.
+        const plan = await planPurchase(ids, pubInfo.address)
+
         console.log(`\nBuying ${ids.length} inscription(s)`)
+        for (const item of plan.items) {
+          const kind = item.kind === 'protected' ? 'snipe-protected' : 'standard'
+          console.log(`  ${item.inscriptionId}  ${formatSats(item.priceSat)}  (${kind})`)
+        }
+        console.log(`Listed total: ${formatSats(plan.listedTotalSat)}`)
         console.log(`Fee rate: ${feeRate} sat/vB`)
+
+        // A protected purchase is built and verified before anything is signed,
+        // so the amounts below come from the transactions themselves.
+        let quote: PassthroughQuote | undefined
+        if (plan.protectedItems.length > 0) {
+          quote = await buildPassthroughPurchase({
+            items: plan.protectedItems,
+            feeRate,
+            address: pubInfo.address,
+            publicKey: pubInfo.publicKey,
+          })
+          const v = quote.verified
+          console.log(`\nProtected purchase, verified (${plan.protectedItems.length} item(s)):`)
+          console.log(`  To seller(s):     ${formatSats(v.sellerProceedsSat)}`)
+          console.log(`  Marketplace fee:  ${formatSats(v.marketFeeSat)}`)
+          if (v.creatorRoyaltySat > 0) console.log(`  Creator royalty:  ${formatSats(v.creatorRoyaltySat)}`)
+          console.log(`  Network fees:     ${formatSats(v.networkFeeSat)}`)
+          console.log(`  Total:            ${formatSats(v.totalSat)}`)
+        }
 
         await requireConfirm('Proceed with purchase?')
         const password = await promptPassword()
         const kp = unlockKeypair(password)
 
-        const { setup, purchase } = await api.market.buildPurchaseBulk({
-          inscriptions: ids,
-          pay_address: pubInfo.address,
-          receive_address: pubInfo.address,
-          public_key: pubInfo.publicKey,
-          fee_rate: feeRate,
-          wallet_type: 'ow-cli',
-        })
-
-        const { signedSetup, signedPurchase } = signPurchaseFlow(
-          kp.privateKey,
-          kp.publicKey,
-          setup,
-          purchase,
-        )
-
-        const result = await api.market.submitPurchase({
-          setup_rawtx: signedSetup,
-          purchase_rawtx: signedPurchase,
-          wallet_type: 'ow-cli',
+        const { result } = await executePurchase({
+          ids,
+          feeRate,
+          address: pubInfo.address,
+          publicKey: pubInfo.publicKey,
+          privateKey: kp.privateKey,
+          publicKeyBytes: kp.publicKey,
+          plan,
+          quote,
         })
 
         if (opts.json) {
           console.log(formatJson(result))
         } else {
-          console.log(`\nPurchase submitted!`)
+          if (result.protected) {
+            console.log(`\nProtected purchase submitted: ${result.protected.txid}`)
+            if (result.protected.partial) {
+              console.log('Only part of the chain was broadcast; check your wallet before retrying the rest.')
+            }
+          }
+          if (result.legacy) console.log(`\nPurchase submitted!`)
         }
       } catch (err) {
         handleError(err)
