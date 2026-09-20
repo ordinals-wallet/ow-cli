@@ -175,6 +175,116 @@ export interface SubmitPurchaseRuneRequest {
   wallet_type?: string
 }
 
+// Passthrough v4 (snipe-protected listings)
+
+/** `GET /market/escrow/:inscription_id`: the live listing, with its protection markers. */
+export interface MarketListing {
+  inscription_id: string
+  /** Either `txid:vout` or the 36-byte wire form in hex, depending on the endpoint. */
+  outpoint: string
+  seller_address: string
+  buyer_address?: string | null
+  /** What the buyer pays, marketplace fee included. */
+  satoshi_price: number
+  escrow_price?: number
+  market_royalty?: number | null
+  creator_royalty?: number | null
+  creator_address?: string | null
+  secure_purchase_version?: number | null
+  secure_purchase_state?: string | null
+  protected?: boolean
+}
+
+export interface SecurePurchaseCapabilities {
+  version?: number
+  mode?: string
+  customer_enabled?: boolean
+  listing_enabled?: boolean
+  build_enabled?: boolean
+  submit_enabled?: boolean
+  escrow_policy?: string
+  policy?: string
+  cosigner_public_key?: string
+  max_items_per_purchase?: number
+  protocols?: string[]
+  protocol_status?: Record<string, string>
+}
+
+export interface SecurePurchaseCapabilitiesResponse {
+  secure_purchase?: SecurePurchaseCapabilities
+  error?: boolean
+  code?: string
+  message?: string
+}
+
+export interface BuildSecurePurchaseRequest {
+  outpoints: string[]
+  protocol: 'ordinal'
+  from: string
+  public_key: string
+  to?: string
+  fee_rate: number
+  wallet_type?: string
+}
+
+export interface SecurePurchaseParent {
+  txid: string
+  raw: string
+  source_outpoint: string
+}
+
+export interface SecurePurchaseSale {
+  sale_txid: string
+  chain_index?: number
+  psbt: string
+  parent: SecurePurchaseParent
+  miner_fee_sats?: number
+}
+
+export interface BuildSecurePurchaseResponse {
+  version: number
+  policy: string
+  sale_txid: string
+  setup?: { txid: string; psbt: string; fee_sats?: number } | null
+  /** One single-item sale per outpoint, in order; each after the first spends the previous one. */
+  sales: SecurePurchaseSale[]
+  economics?: {
+    total_price_sats?: number
+    ow_fee_sats?: number
+    creator_royalty_sats?: number
+    miner_fee_sats?: number
+    setup_fee_sats?: number
+    buyer_total_sats?: number
+  }
+  buyer_address?: string
+  recipient_address?: string
+  cosigner_public_key?: string
+  expires_at?: string
+}
+
+export interface SubmitSecurePurchaseLink {
+  sale_txid: string
+  /** The sale PSBT with ONLY the buyer's inputs signed, unfinalized. */
+  psbt: string
+  /** The signed setup PSBT; first link only. */
+  setup_psbt?: string
+}
+
+export interface SubmitSecurePurchaseRequest {
+  sales: SubmitSecurePurchaseLink[]
+}
+
+export interface SubmitSecurePurchaseResponse {
+  accepted: boolean
+  txid: string
+  state?: string
+  parents?: string[]
+  sales?: unknown[]
+  /** Set when a chain was only partly broadcast. */
+  stopped_at?: number
+  stopped_code?: string
+}
+
 export interface BuildEscrowRequest {
   inscription: string
   from: string

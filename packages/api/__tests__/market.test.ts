@@ -95,4 +95,46 @@ describe('market API', () => {
     })
     expect(result.psbt).toBe('alkane_purchase_psbt_hex')
   })
+
+  it('should fetch a listing with its protection markers', async () => {
+    const listing = await marketApi.getListing('a'.repeat(64) + 'i0')
+    expect(listing?.protected).toBe(true)
+    expect(listing?.satoshi_price).toBe(50000)
+  })
+
+  it('should return null for an inscription that is not listed', async () => {
+    expect(await marketApi.getListing('0'.repeat(64) + 'i0')).toBeNull()
+  })
+
+  it('should fetch secure purchase capabilities', async () => {
+    const caps = await marketApi.getSecurePurchaseCapabilities()
+    expect(caps.escrow_policy).toBe('passthrough_v4')
+    expect(caps.cosigner_public_key).toHaveLength(64)
+  })
+
+  it('should build a secure purchase with one sale per outpoint', async () => {
+    const outpoints = ['c'.repeat(64) + ':0', 'd'.repeat(64) + ':1']
+    const built = await marketApi.buildSecurePurchase({
+      outpoints,
+      protocol: 'ordinal',
+      from: 'bc1ptest',
+      public_key: '02abc',
+      fee_rate: 20,
+      wallet_type: 'ow-cli',
+    })
+    expect(built.policy).toBe('passthrough_v4')
+    expect(built.sales.map((s) => s.parent.source_outpoint)).toEqual(outpoints)
+  })
+
+  it('should surface the build error code', async () => {
+    await expect(
+      marketApi.buildSecurePurchase({ outpoints: [], protocol: 'ordinal', from: 'bc1ptest', public_key: '02abc', fee_rate: 20 }),
+    ).rejects.toMatchObject({ response: { status: 400, data: { code: 'no_outpoints' } } })
+  })
+
+  it('should submit a secure purchase', async () => {
+    const result = await marketApi.submitSecurePurchase({ sales: [{ sale_txid: 'a'.repeat(64), psbt: 'signed_psbt_hex' }] })
+    expect(result.accepted).toBe(true)
+    expect(result.txid).toBe('a'.repeat(64))
+  })
 })

@@ -12,6 +12,55 @@ export const handlers = [
     return HttpResponse.json({ setup: 'psbt_setup_hex', purchase: 'psbt_purchase_hex' })
   }),
 
+  http.post(`${BASE}/wallet/secure-purchase/build`, async ({ request }) => {
+    const body = (await request.json()) as { outpoints?: string[] }
+    if (!body.outpoints?.length) {
+      return HttpResponse.json({ error: true, code: 'no_outpoints', message: 'Select at least one item' }, { status: 400 })
+    }
+    return HttpResponse.json({
+      version: 4,
+      policy: 'passthrough_v4',
+      sale_txid: 'a'.repeat(64),
+      sales: body.outpoints.map((outpoint, i) => ({
+        sale_txid: 'a'.repeat(64),
+        chain_index: i,
+        psbt: 'sale_psbt_hex',
+        parent: { txid: 'b'.repeat(64), raw: 'parent_raw_hex', source_outpoint: outpoint },
+      })),
+    })
+  }),
+
+  http.post(`${BASE}/market/secure-purchase/submit`, () => {
+    return HttpResponse.json({ accepted: true, txid: 'a'.repeat(64), state: 'broadcast' })
+  }),
+
+  http.get(`${BASE}/market/secure-purchase/capabilities`, () => {
+    return HttpResponse.json({
+      secure_purchase: {
+        version: 2,
+        escrow_policy: 'passthrough_v4',
+        build_enabled: true,
+        submit_enabled: true,
+        cosigner_public_key: '1d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7dee',
+      },
+    })
+  }),
+
+  http.get(`${BASE}/market/escrow/:id`, ({ params }) => {
+    if (String(params.id).startsWith('0')) {
+      return HttpResponse.json({ error: true, message: 'not found' }, { status: 404 })
+    }
+    return HttpResponse.json({
+      inscription_id: params.id,
+      outpoint: 'c'.repeat(64) + ':0',
+      seller_address: 'bc1pseller',
+      satoshi_price: 50000,
+      secure_purchase_version: 2,
+      secure_purchase_state: 'listed',
+      protected: true,
+    })
+  }),
+
   http.post(`${BASE}/wallet/purchase-bulk-runes`, () => {
     return HttpResponse.json({ setup: 'psbt_setup_hex', purchase: 'psbt_purchase_hex' })
   }),
