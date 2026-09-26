@@ -260,7 +260,7 @@ Node the SDK also sets `User-Agent: ow-cli/<version>` (browsers do not allow it)
 | Caller | `x-ow-client` |
 |--------|---------------|
 | SDK, no app name | `ow-cli/0.1.0` |
-| `ow` CLI / TUI | `ow-cli-cli/0.1.0 ow-cli/0.1.0` |
+| `ow` CLI | `ow-cli-cli/0.1.0 ow-cli/0.1.0` |
 | Your app | `my-bot/1.2 ow-cli/0.1.0` |
 
 Identify your own integration with `appName`:

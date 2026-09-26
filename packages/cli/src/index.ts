@@ -11,7 +11,7 @@ import { registerFeeCommand } from './commands/fee.js'
 import { registerAuthCommands } from './commands/auth.js'
 import { registerOffersCommands } from './commands/offers.js'
 
-// Tag all CLI/TUI API traffic: `x-ow-client: ow-cli-cli/<v> ow-cli/<v>`
+// Tag all CLI API traffic: `x-ow-client: ow-cli-cli/<v> ow-cli/<v>`
 setClient({ appName: CLI_APP_NAME })
 
 export const program = new Command()
@@ -21,14 +21,6 @@ program
   .description('Ordinals Wallet CLI')
   .version(CLI_VERSION)
   .option('--debug', 'Show debug output including full API errors')
-
-program
-  .command('tui')
-  .description('Launch interactive terminal UI')
-  .action(async () => {
-    const { launch } = await import('@ow-cli/tui')
-    await launch()
-  })
 
 registerWalletCommands(program)
 registerCollectionCommands(program)
