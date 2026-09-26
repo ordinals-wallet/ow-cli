@@ -8,6 +8,8 @@ import { registerInscriptionCommands } from './commands/inscription.js'
 import { registerMarketCommands } from './commands/market.js'
 import { registerSendCommand } from './commands/send.js'
 import { registerFeeCommand } from './commands/fee.js'
+import { registerAuthCommands } from './commands/auth.js'
+import { registerOffersCommands } from './commands/offers.js'
 
 // Tag all CLI/TUI API traffic: `x-ow-client: ow-cli-cli/<v> ow-cli/<v>`
 setClient({ appName: CLI_APP_NAME })
@@ -35,6 +37,8 @@ registerInscriptionCommands(program)
 registerMarketCommands(program)
 registerSendCommand(program)
 registerFeeCommand(program)
+registerAuthCommands(program)
+registerOffersCommands(program)
 
 export function isDebug(): boolean {
   return program.opts().debug === true

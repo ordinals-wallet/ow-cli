@@ -162,6 +162,15 @@ ow send 10000 --to <address> --fee-rate 10
 ow fee-estimate
 ```
 
+### Sign-in & Offers
+
+```bash
+ow auth login                      # BIP-322 sign-in; prints the session expiry (--show-token to print it)
+ow offers list <slug>              # item, collection and trait offers on a collection
+ow offers list <inscription-id>    # offers on one item, plus collection offers it could fill
+ow offers list <address> --json    # offers a wallet received and sent
+```
+
 ### Flags
 
 All commands support `--json` for machine-readable output. Use `--debug` for full API error details.
@@ -237,6 +246,88 @@ outpointToTxidVout(loc.inscription.outpoint)
 Other read helpers: `wallet.getBalance`, `wallet.getWalletInscriptions`,
 `wallet.getAlkanesOutpoints`, `wallet.getRuneOutpoints`, and
 `collection.getSoldEscrows(slug, { limit, offset })`.
+
+### Wallet sign-in
+
+Endpoints that need proof of ownership take a 24-hour session token. Sign the
+sign-in message with BIP-322 (taproot key path or native segwit) and exchange
+it at `POST /auth/session`:
+
+```ts
+import { auth, SessionManager } from '@ow-cli/api'
+import { signBip322Simple } from '@ow-cli/core'
+import { signInWithKey, sessionManagerForKey } from '@ow-cli/shared'
+
+// With a key the SDK manages (keypair, { mnemonic } or { wif }); defaults to its bc1p address
+const session = await signInWithKey({ mnemonic })   // { token, address, expires_at }
+
+// With any wallet that can BIP-322 sign
+const s = await auth.signIn({ address, sign: (message) => wallet.signMessage(message) })
+
+// Cache one token per address; signs in again within 5 minutes of expiry
+const sessions = sessionManagerForKey({ mnemonic })  // or new SessionManager({ sign: (address, m) => ... })
+const token = await sessions.getToken(address)       // use in `signature` / `creator_signature` fields
+```
+
+`auth.signInMessage(address, nonce, issuedAtMs)` returns the exact message the
+API rebuilds. Nonces are single use, signatures expire after 5 minutes, and the
+sign-in POST is never retried. Keep tokens in memory and out of logs.
+
+### Offers
+
+Funded bids on an item, a collection or a trait (`/market/offers`). The server
+builds every PSBT; the `@ow-cli/core` helpers check each one against values you
+already trust (your keys and addresses, the agreed price, the pinned co-signer
+`1d08b7c7…7dee`) and throw `OfferVerificationError` instead of signing anything
+else.
+
+```ts
+import { offers } from '@ow-cli/api'
+import { signOfferFunding, signOfferPresign, signAcceptPsbt, signOfferCancel } from '@ow-cli/core'
+
+await offers.forCollection('bitmap')        // { summary, offers, collection_offers, trait_offers }
+await offers.forInscription(id)             // { offers, collection_offers }
+await offers.forWallet(address)             // { received, sent }
+
+// Place (buyer): build → sign funding → prepare → pre-sign escrow leaf → activate
+const b = await offers.build({ inscription_id: id, buyer_address, buyer_public_key,
+  buyer_payment_address, buyer_payment_public_key, price_sats: 250_000, fee_rate: 10 })
+const funding = signOfferFunding(b.funding_psbt, kp.privateKey, { buyerPublicKey: kp.publicKey,
+  paymentAddress: buyer_payment_address, escrowValue: b.escrow_value, recoveryDelayBlocks: b.recovery_delay_blocks })
+const p = await offers.prepare(b.offer_id, funding)
+const accept = signOfferPresign(p.accept_psbt, { privateKey: kp.privateKey, scope: p.scope,
+  signInputIndex: p.sign_input_index, sighash: p.sighash, recoveryDelayBlocks: b.recovery_delay_blocks,
+  escrowValue: b.escrow_value, buyerAddress: buyer_address, priceSats: b.price_sats, marketFeeSats: b.market_fee_sats })
+await offers.activate(b.offer_id, { funding_psbt: funding, accept_psbt: accept })
+
+// Accept (seller). For collection/trait offers use buildFill/fill with the same verifier.
+const a = await offers.buildAccept(offerId, { seller_address: me, seller_public_key })
+const signed = signAcceptPsbt(a.accept_psbt, kp.privateKey,
+  { myAddress: me, inscriptionOutpoint: 'txid:vout', priceSats: a.offer.price_sats, buyerAddress: a.offer.buyer_address })
+await offers.accept(offerId, { seller_address: me, signed_psbt: signed })
+
+// Reject (seller, off-chain) with a session token; cancel (buyer) refunds the escrow
+await offers.reject(offerId, { address: me, token: await sessions.getToken(me) })
+const c = await offers.buildCancel(offerId, { buyer_address, fee_rate: 3 })
+await offers.cancel(offerId, { buyer_address, signed_psbt: signOfferCancel(c.cancel_psbt, { privateKey: kp.privateKey,
+  buyerPaymentAddress: offer.buyer_payment_address, escrowValue: offer.escrow_value, recoveryDelayBlocks: offer.recovery_delay_blocks }) })
+await offers.reconcile(offerId, refundTxid?)  // record a timelock refund / settle an in-flight broadcast
+```
+
+The seller check (`verifyAcceptPsbt`) requires: input 0 is your item and no
+other input is yours; output 0 carries the whole item to the buyer; an output
+pays you at least `price_sats`; exactly one output pays the marketplace fee;
+at most one other output (buyer change); input 0 signs `SIGHASH_ALL`. Buyer
+pre-signatures must be `0x01` for item offers and `0x82` for collection and
+trait offers.
+
+Error codes map to typed errors, all `OfferError` (an `OwApiError`):
+`OfferExpiredError` (`offer_expired`), `OfferNotActiveError`
+(`offer_not_active`), `OfferItemMovedError` (`item_moved`, `stale`),
+`OfferNotOwnerError` (`not_the_owner`), `OfferItemNotEligibleError`
+(`item_not_eligible`), `OfferAttemptPendingError` (`offer_attempt_pending`, call
+`reconcile`), `OfferUnauthorizedError` (`unauthorized`). Offer POSTs are never
+retried.
 
 ## Testing
 

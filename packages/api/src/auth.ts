@@ -1,4 +1,5 @@
 import { getClient } from './client.js'
+import { OwApiError, toOwApiError } from './errors.js'
 import type { AuthSession, CreateSessionRequest, MessageSigner } from './types-auth.js'
 
 /**
@@ -22,22 +23,32 @@ export function generateNonce(): string {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
 }
 
-/** Sign-in failed: bad/expired/reused signature, or the API rejected the request. */
-export class AuthError extends Error {
-  constructor(
-    message: string,
-    public readonly status?: number,
-  ) {
-    super(message)
-    this.name = 'AuthError'
+/**
+ * Sign-in failed: bad, expired or reused signature, or no signer. Extends
+ * `OwApiError`; `status` is 0 when no request was made.
+ */
+export class AuthError extends OwApiError {
+  constructor(message: string, status = 0, from?: OwApiError) {
+    super({
+      status,
+      message,
+      code: from?.code,
+      body: from?.body,
+      method: from?.method,
+      url: from?.url,
+      retries: from?.retries,
+      response: from?.response,
+      config: from?.config,
+      cause: from,
+    })
+    Object.defineProperty(this, 'name', { value: 'AuthError', configurable: true })
   }
 }
 
 function toAuthError(err: unknown): unknown {
-  const res = (err as { response?: { status: number; data?: unknown } })?.response
-  if (!res) return err
-  const data = res.data as { message?: string } | undefined
-  return new AuthError(data?.message || `Sign-in failed (HTTP ${res.status})`, res.status)
+  const api = toOwApiError(err)
+  if (api.status === 0) return api
+  return new AuthError(api.message || `Sign-in failed (HTTP ${api.status})`, api.status, api)
 }
 
 /** Raw `POST /auth/session`. Prefer `signIn`. */

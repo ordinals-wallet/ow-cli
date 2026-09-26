@@ -7,6 +7,7 @@
  * `verifyAcceptPsbt`, …) before signing.
  */
 import { getClient } from './client.js'
+import { OwApiError, toOwApiError } from './errors.js'
 import type {
   AcceptOfferRequest,
   ActivateOfferRequest,
@@ -33,75 +34,82 @@ import type {
 
 // ─── Errors ─────────────────────────────────────────────────────────
 
-/** An offers route failed. `code` is the API's error code, e.g. `offer_expired`. */
-export class OfferError extends Error {
-  constructor(
-    public readonly code: string,
-    public readonly status?: number,
-    message?: string,
-  ) {
-    super(message ?? `Offer request failed: ${code}`)
-    this.name = 'OfferError'
+/**
+ * An offers route failed with an API error code, e.g. `offer_expired`.
+ * Extends `OwApiError`, so `status`, `body` and `response` are available and
+ * `isOwApiError(err)` is true. Transport failures (no response, no code) are
+ * thrown as plain `OwApiError`.
+ */
+export class OfferError extends OwApiError {
+  declare readonly code: string
+
+  constructor(code: string, status = 0, message?: string, from?: OwApiError) {
+    super({
+      status,
+      code,
+      message: message ?? from?.message ?? `Offer request failed: ${code}`,
+      body: from?.body,
+      method: from?.method,
+      url: from?.url,
+      retries: from?.retries,
+      response: from?.response,
+      config: from?.config,
+      cause: from,
+    })
+    Object.defineProperty(this, 'name', { value: new.target.name, configurable: true })
   }
 }
 
 /** `offer_expired`: past `expires_at`. */
 export class OfferExpiredError extends OfferError {
-  constructor(code: string, status?: number) {
-    super(code, status, 'Offer has expired')
-    this.name = 'OfferExpiredError'
+  constructor(code = 'offer_expired', status?: number, from?: OwApiError) {
+    super(code, status, 'Offer has expired', from)
   }
 }
 
 /** `offer_not_active` (and `offer_not_building` / `offer_not_cancellable`): wrong state. */
 export class OfferNotActiveError extends OfferError {
-  constructor(code: string, status?: number) {
-    super(code, status, 'Offer is not in a state that allows this action')
-    this.name = 'OfferNotActiveError'
+  constructor(code = 'offer_not_active', status?: number, from?: OwApiError) {
+    super(code, status, 'Offer is not in a state that allows this action', from)
   }
 }
 
 /** `item_moved` / `stale` / `item_changed`: the item moved since the offer was made. */
 export class OfferItemMovedError extends OfferError {
-  constructor(code: string, status?: number) {
-    super(code, status, 'The item moved since the offer was made')
-    this.name = 'OfferItemMovedError'
+  constructor(code = 'item_moved', status?: number, from?: OwApiError) {
+    super(code, status, 'The item moved since the offer was made', from)
   }
 }
 
 /** `not_the_owner` / `not_the_buyer`: the address is not a party to this action. */
 export class OfferNotOwnerError extends OfferError {
-  constructor(code: string, status?: number) {
-    super(code, status, code === 'not_the_buyer' ? 'You are not the buyer of this offer' : "You don't own the item")
-    this.name = 'OfferNotOwnerError'
+  constructor(code = 'not_the_owner', status?: number, from?: OwApiError) {
+    super(code, status, code === 'not_the_buyer' ? 'You are not the buyer of this offer' : "You don't own the item", from)
   }
 }
 
 /** `item_not_eligible`: the item doesn't match the collection or trait. */
 export class OfferItemNotEligibleError extends OfferError {
-  constructor(code: string, status?: number) {
-    super(code, status, "The item doesn't match the offer's collection or trait")
-    this.name = 'OfferItemNotEligibleError'
+  constructor(code = 'item_not_eligible', status?: number, from?: OwApiError) {
+    super(code, status, "The item doesn't match the offer's collection or trait", from)
   }
 }
 
 /** `offer_attempt_pending`: a broadcast is in flight; call `reconcile`. */
 export class OfferAttemptPendingError extends OfferError {
-  constructor(code: string, status?: number) {
-    super(code, status, 'A broadcast for this offer is already in flight; call reconcile')
-    this.name = 'OfferAttemptPendingError'
+  constructor(code = 'offer_attempt_pending', status?: number, from?: OwApiError) {
+    super(code, status, 'A broadcast for this offer is already in flight; call reconcile', from)
   }
 }
 
 /** `unauthorized`: missing, expired or wrong-address session token. */
 export class OfferUnauthorizedError extends OfferError {
-  constructor(code: string, status?: number) {
-    super(code, status, 'Session token missing, expired or for a different address; sign in again')
-    this.name = 'OfferUnauthorizedError'
+  constructor(code = 'unauthorized', status?: number, from?: OwApiError) {
+    super(code, status, 'Session token missing, expired or for a different address; sign in again', from)
   }
 }
 
-type OfferErrorCtor = new (code: string, status?: number) => OfferError
+type OfferErrorCtor = new (code: string, status?: number, from?: OwApiError) => OfferError
 
 const ERROR_CLASSES: Record<string, OfferErrorCtor> = {
   offer_expired: OfferExpiredError,
@@ -119,18 +127,18 @@ const ERROR_CLASSES: Record<string, OfferErrorCtor> = {
 }
 
 /** Map an API error code to its typed error. */
-export function offerErrorFromCode(code: string, status?: number): OfferError {
+export function offerErrorFromCode(code: string, status?: number, from?: OwApiError): OfferError {
   const Ctor = ERROR_CLASSES[code]
-  return Ctor ? new Ctor(code, status) : new OfferError(code, status)
+  return Ctor ? new Ctor(code, status, from) : new OfferError(code, status, undefined, from)
 }
 
 function toOfferError(err: unknown): unknown {
-  const res = (err as { response?: { status: number; data?: unknown } })?.response
-  if (!res) return err
-  const data = res.data as { code?: unknown; message?: unknown } | undefined
-  if (data && typeof data.code === 'string') return offerErrorFromCode(data.code, res.status)
-  const msg = data && typeof data.message === 'string' ? data.message : undefined
-  return new OfferError(`http_${res.status}`, res.status, msg)
+  const api = toOwApiError(err)
+  const body = api.body as { code?: unknown } | undefined
+  if (api.status > 0 && body && typeof body.code === 'string') {
+    return offerErrorFromCode(body.code, api.status, api)
+  }
+  return api
 }
 
 async function get<T>(path: string, params?: Record<string, string>): Promise<T> {

@@ -78,9 +78,17 @@ describe('signIn', () => {
       (e) => e,
     )
     expect(err).toBeInstanceOf(AuthError)
+    expect(err.name).toBe('AuthError')
     expect(err.status).toBe(401)
     expect(err.message).toBe('Invalid wallet signature')
   })
+})
+
+it('sign-in POST is never retried (nonces are single use)', async () => {
+  let calls = 0
+  server.use(http.post(`${BASE}/auth/session`, () => (calls++, HttpResponse.json({ error: true, message: 'busy' }, { status: 503 }))))
+  await expect(signIn({ address: ADDR, sign: () => 'x' })).rejects.toBeInstanceOf(AuthError)
+  expect(calls).toBe(1)
 })
 
 describe('SessionManager', () => {

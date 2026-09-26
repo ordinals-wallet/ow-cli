@@ -16,6 +16,7 @@ import {
   offerErrorFromCode,
 } from '../src/offers.js'
 import type { Offer } from '../src/types-offers.js'
+import { OwApiError, isOwApiError } from '../src/errors.js'
 
 setClient({ baseUrl: 'https://turbo.ordinalswallet.com' })
 
@@ -187,10 +188,22 @@ describe('offer error codes', () => {
       const err = await offers.accept(ID, { seller_address: 'x', signed_psbt: 'y' }).catch((e) => e)
       expect(err).toBeInstanceOf(Cls)
       expect(err).toBeInstanceOf(OfferError)
+      expect(err).toBeInstanceOf(OwApiError)
+      expect(isOwApiError(err)).toBe(true)
+      expect(err.name).toBe(Cls.name)
       expect(err.code).toBe(code)
       expect(err.status).toBe(409)
+      expect(err.body).toEqual({ error: true, code })
     })
   }
+
+  it('signing/submit POSTs are never retried', async () => {
+    let calls = 0
+    server.use(http.post(`${B}/:id/accept`, () => (calls++, HttpResponse.json({ error: true, code: 'broadcast_failed' }, { status: 503 }))))
+    const err = await offers.accept(ID, { seller_address: 'x', signed_psbt: 'y' }).catch((e) => e)
+    expect(err.code).toBe('broadcast_failed')
+    expect(calls).toBe(1)
+  })
 
   it('unknown codes become a plain OfferError', () => {
     const e = offerErrorFromCode('broadcast_rejected', 400)
