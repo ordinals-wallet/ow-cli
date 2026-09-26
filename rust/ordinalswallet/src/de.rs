@@ -15,3 +15,13 @@ pub(crate) fn opt_decimal<'de, D: Deserializer<'de>>(d: D) -> Result<Option<Stri
         ))),
     }
 }
+
+/// Accepts a number, null, or a string such as `"5.85%"` (some collections
+/// store trait percentages as text). Text that is not a number becomes `None`.
+pub(crate) fn opt_percent<'de, D: Deserializer<'de>>(d: D) -> Result<Option<f64>, D::Error> {
+    Ok(match Option::<Value>::deserialize(d)? {
+        Some(Value::Number(n)) => n.as_f64(),
+        Some(Value::String(s)) => s.trim().trim_end_matches('%').trim().parse().ok(),
+        _ => None,
+    })
+}
