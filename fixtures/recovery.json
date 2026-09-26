@@ -1,0 +1,327 @@
+{
+  "description": "Seller recovery of a protected escrow through the <144> CSV leaf: assertRecoveryTemplate outcome and signRecovery output (finalized raw transaction and txid). Seller = the \"abandon … about\" key.",
+  "generated_by": "packages/core/__tests__/shared-vectors/generate.ts",
+  "aux_rand": "0000000000000000000000000000000000000000000000000000000000000000",
+  "seller": {
+    "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+    "x_only_public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+    "address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+  },
+  "cases": [
+    {
+      "description": "honest recovery",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001ce02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": true,
+        "escrow_value": 1000,
+        "value_sat": 718,
+        "fee_sat": 282
+      },
+      "sign": {
+        "ok": true,
+        "rawtx": "02000000000101efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001ce02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0340780f44e406aedae16aaee01f0a1be367dc33d21bb4da41c859a616445209730f28f47831dcfa645c518f9bd162cc19bbfa9d17abf459cef2ab224c6961e10bb727029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac41c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80000000000",
+        "txid": "6490a50fad97d6ede2fd48294ca4bf0f295107c7d4d3fc770f54ad8ad97986f8",
+        "value_sat": 718,
+        "fee_sat": 282
+      }
+    },
+    {
+      "description": "SIGHASH_ALL field",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001ce02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304010000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": true,
+        "escrow_value": 1000,
+        "value_sat": 718,
+        "fee_sat": 282
+      },
+      "sign": {
+        "ok": true,
+        "rawtx": "02000000000101efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001ce02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0340780f44e406aedae16aaee01f0a1be367dc33d21bb4da41c859a616445209730f28f47831dcfa645c518f9bd162cc19bbfa9d17abf459cef2ab224c6961e10bb727029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac41c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80000000000",
+        "txid": "6490a50fad97d6ede2fd48294ca4bf0f295107c7d4d3fc770f54ad8ad97986f8",
+        "value_sat": 718,
+        "fee_sat": 282
+      }
+    },
+    {
+      "description": "fee at the cap",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001cd02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": true,
+        "escrow_value": 1000,
+        "value_sat": 717,
+        "fee_sat": 283
+      },
+      "sign": {
+        "ok": true,
+        "rawtx": "02000000000101efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001cd02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0340103be25ae8f02e728409b3ea1bdd1bccf8a609520139d44cbb3245c2df170a2fe5b17fb37be512a31bff3d76713ad7ee87a0fe1b17ff81572b5e22e7e7388c1727029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac41c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80000000000",
+        "txid": "37355b7762b135988066175010764862ed959b93d942745a70a4252c9ebb4ed3",
+        "value_sat": 717,
+        "fee_sat": 283
+      }
+    },
+    {
+      "description": "fee one above the cap",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001cc02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "recovery_fee"
+      },
+      "sign": {
+        "ok": false,
+        "code": "recovery_fee"
+      }
+    },
+    {
+      "description": "zero fee",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001e803000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "recovery_fee"
+      },
+      "sign": {
+        "ok": false,
+        "code": "recovery_fee"
+      }
+    },
+    {
+      "description": "no timelock wait",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000000100000001ce02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "recovery_sequence"
+      },
+      "sign": {
+        "ok": false,
+        "code": "recovery_sequence"
+      }
+    },
+    {
+      "description": "pays someone else",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001ce02000000000000225120752325a3227b93a2cdfa4e2e17e176a9f4a789b0c4c723df373e9c4b04bb629e000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "recovery_destination"
+      },
+      "sign": {
+        "ok": false,
+        "code": "recovery_destination"
+      }
+    },
+    {
+      "description": "fee above the rate",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef000000000090000000015802000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "recovery_fee"
+      },
+      "sign": {
+        "ok": false,
+        "code": "recovery_fee"
+      }
+    },
+    {
+      "description": "fee far above the rate",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef000000000090000000013e01000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "recovery_fee"
+      },
+      "sign": {
+        "ok": false,
+        "code": "recovery_fee"
+      }
+    },
+    {
+      "description": "escrow with another co-signer",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001ce02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be8030000000000002251201bb367b4c52da4b82ce17fa1c139bd7b4ed300d3def92debd292c80503936845010304000000004215c150929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac01d4d6fe8b7cb74884908ea411fb165c5fd6f746f8944e05aacb7bd2a0031d3c528029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "recovery_prevout"
+      },
+      "sign": {
+        "ok": false,
+        "code": "recovery_prevout"
+      }
+    },
+    {
+      "description": "spends another output",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef01000000009000000001ce02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "recovery_input"
+      },
+      "sign": {
+        "ok": false,
+        "code": "recovery_input"
+      }
+    },
+    {
+      "description": "version 1",
+      "psbt": "70736274ff01005e0100000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001ce02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "recovery_version"
+      },
+      "sign": {
+        "ok": false,
+        "code": "recovery_version"
+      }
+    },
+    {
+      "description": "two outputs",
+      "psbt": "70736274ff0100890200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000002ce02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0100000000000000225120752325a3227b93a2cdfa4e2e17e176a9f4a789b0c4c723df373e9c4b04bb629e000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0000000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "recovery_shape"
+      },
+      "sign": {
+        "ok": false,
+        "code": "recovery_shape"
+      }
+    },
+    {
+      "description": "SINGLE|ANYONECANPAY field",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001ce02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "recovery_sighash"
+      },
+      "sign": {
+        "ok": false,
+        "code": "recovery_sighash"
+      }
+    },
+    {
+      "description": "dust output",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef000000000090000000013e01000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b5802000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "recovery_below_dust"
+      },
+      "sign": {
+        "ok": false,
+        "code": "recovery_below_dust"
+      }
+    },
+    {
+      "description": "garbage",
+      "psbt": "beef",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": false,
+        "code": "invalid_psbt"
+      },
+      "sign": {
+        "ok": false,
+        "code": "invalid_psbt"
+      }
+    },
+    {
+      "description": "passthrough txid in upper case",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001ce02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "EFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEF",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 2,
+      "expect": {
+        "ok": true,
+        "escrow_value": 1000,
+        "value_sat": 718,
+        "fee_sat": 282
+      },
+      "sign": {
+        "ok": true,
+        "rawtx": "02000000000101efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef00000000009000000001ce02000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0340780f44e406aedae16aaee01f0a1be367dc33d21bb4da41c859a616445209730f28f47831dcfa645c518f9bd162cc19bbfa9d17abf459cef2ab224c6961e10bb727029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac41c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80000000000",
+        "txid": "6490a50fad97d6ede2fd48294ca4bf0f295107c7d4d3fc770f54ad8ad97986f8",
+        "value_sat": 718,
+        "fee_sat": 282
+      }
+    },
+    {
+      "description": "fractional fee rate",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef000000000090000000011403000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 1.5,
+      "expect": {
+        "ok": true,
+        "escrow_value": 1000,
+        "value_sat": 788,
+        "fee_sat": 212
+      },
+      "sign": {
+        "ok": true,
+        "rawtx": "02000000000101efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef000000000090000000011403000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0340ddc31c2572a6480b8235cd59e922fbb4563a0233d636527453dd4411c4bdbac85dcfd0354c3782f0807efd003c9505db084482731787816e4a8a52d0bb6143bb27029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac41c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80000000000",
+        "txid": "f0cccf79e5e34035e78346840c4e1b93a24e78194ef3f4fa0c8bc5f43cc43511",
+        "value_sat": 788,
+        "fee_sat": 212
+      }
+    },
+    {
+      "description": "fee rate below 1 counts as 1",
+      "psbt": "70736274ff01005e0200000001efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef000000000090000000015a03000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012be803000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "passthrough_txid": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+      "destination_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "fee_rate": 0.5,
+      "expect": {
+        "ok": true,
+        "escrow_value": 1000,
+        "value_sat": 858,
+        "fee_sat": 142
+      },
+      "sign": {
+        "ok": true,
+        "rawtx": "02000000000101efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef000000000090000000015a03000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0340750e10067f525d249150825e42edcf86a65fa38a19c3f05d25bf1f9235695ee27b7326ef68717eaccc17df8c57da57f80ec6f8c470554386733053222bb0dc4727029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac41c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80000000000",
+        "txid": "b9afab72f552f627e373f032a1d4fa541b3f859a404e4ef8b4ba4b8dc8b354df",
+        "value_sat": 858,
+        "fee_sat": 142
+      }
+    }
+  ]
+}

@@ -77,6 +77,11 @@ pub enum Error {
 
     /// An SSE connection ended, failed mid-stream or went idle. The subscriber reconnects.
     Stream(String),
+
+    /// A PSBT, key or message was refused before anything was signed or sent
+    /// (feature `signing`). Branch on [`crate::signing::SigningError::code`].
+    #[cfg(feature = "signing")]
+    Signing(crate::signing::SigningError),
 }
 
 impl fmt::Display for Error {
@@ -93,6 +98,8 @@ impl fmt::Display for Error {
             Error::InvalidInput(m) => write!(f, "invalid input: {m}"),
             Error::Unavailable(m) | Error::Stream(m) => f.write_str(m),
             Error::SseHttp { status, .. } => write!(f, "SSE request failed with HTTP {status}"),
+            #[cfg(feature = "signing")]
+            Error::Signing(e) => f.write_str(&e.message),
         }
     }
 }
@@ -107,6 +114,8 @@ impl std::error::Error for Error {
             Error::Auth {
                 source: Some(s), ..
             } => Some(s.as_ref()),
+            #[cfg(feature = "signing")]
+            Error::Signing(e) => Some(e),
             _ => None,
         }
     }
@@ -128,6 +137,8 @@ impl Error {
         match self {
             Error::Api { code, .. } => code.as_deref(),
             Error::Network { code, .. } => Some(code),
+            #[cfg(feature = "signing")]
+            Error::Signing(e) => Some(&e.code),
             Error::Auth {
                 source: Some(inner),
                 ..

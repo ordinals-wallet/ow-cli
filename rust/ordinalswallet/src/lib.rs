@@ -50,6 +50,9 @@ pub mod quotes;
 pub mod retry;
 pub mod sales;
 pub mod search;
+#[cfg(feature = "signing")]
+#[cfg_attr(docsrs, doc(cfg(feature = "signing")))]
+pub mod signing;
 pub mod stream;
 pub mod wallet;
 

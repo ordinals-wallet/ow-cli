@@ -36,7 +36,7 @@ pub struct SearchCollection {
     pub extra: Map<String, Value>,
 }
 
-/// `GET /v2/search/:query`. Free text returns `collections`; an inscription
+/// `GET /search/:query`. Free text returns `collections`; an inscription
 /// id/number, txid, address or rune id returns `url` (an ordinalswallet.com path).
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct SearchResult {
@@ -50,7 +50,7 @@ impl Client {
     /// Search collections, or resolve an identifier to a site path. No match
     /// (the API's 404) returns empty `collections`. `limit` defaults to 16.
     pub fn search(&self, input: &str, limit: Option<u32>) -> Result<SearchResult> {
-        let req = Req::get(format!("/v2/search/{}", seg(input)))
+        let req = Req::get(format!("/search/{}", seg(input)))
             .query("limit", limit.unwrap_or(16))
             .accept(&[404]);
         let raw = self.send(req)?;

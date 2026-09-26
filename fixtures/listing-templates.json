@@ -1,0 +1,849 @@
+{
+  "description": "Protected (passthrough v4) listing templates: assertListingTemplates outcome (escrow value, passthrough txid, escrow script, or the refusal code) and signListingTemplates output (passthrough key-path signature, sale script-path 0x83 pre-signature; nothing finalized). `signed_sale` covers assertSignedSaleTemplate. Seller = the \"abandon … about\" key.",
+  "generated_by": "packages/core/__tests__/shared-vectors/generate.ts",
+  "aux_rand": "0000000000000000000000000000000000000000000000000000000000000000",
+  "seller": {
+    "mnemonic": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+    "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+    "x_only_public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+    "address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+  },
+  "item": "abababababababababababababababababababababababababababababababab:1",
+  "price": 50000,
+  "templates": [
+    {
+      "description": "honest templates",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": true,
+        "escrow_value": 546,
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_script": "5120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7"
+      },
+      "sign": {
+        "ok": true,
+        "psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011340b0e665bf58bba8c92112917c5f2575ac0ce000949a72dd06beed417b5c11d1484ae2ec6de9890e16acea645331674ffe27263fddb53c26e4bf857ca144146409011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "passthrough_inputs": [
+          {
+            "tap_key_sig": "b0e665bf58bba8c92112917c5f2575ac0ce000949a72dd06beed417b5c11d1484ae2ec6de9890e16acea645331674ffe27263fddb53c26e4bf857ca144146409",
+            "tap_script_sigs": [],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ],
+        "sale_inputs": [
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [
+              {
+                "public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+                "leaf_hash": "196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d800",
+                "signature": "bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d083"
+              }
+            ],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ]
+      }
+    },
+    {
+      "description": "without the asset address check",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000
+      },
+      "expect": {
+        "ok": true,
+        "escrow_value": 546,
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_script": "5120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7"
+      },
+      "sign": {
+        "ok": true,
+        "psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011340b0e665bf58bba8c92112917c5f2575ac0ce000949a72dd06beed417b5c11d1484ae2ec6de9890e16acea645331674ffe27263fddb53c26e4bf857ca144146409011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "passthrough_inputs": [
+          {
+            "tap_key_sig": "b0e665bf58bba8c92112917c5f2575ac0ce000949a72dd06beed417b5c11d1484ae2ec6de9890e16acea645331674ffe27263fddb53c26e4bf857ca144146409",
+            "tap_script_sigs": [],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ],
+        "sale_inputs": [
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [
+              {
+                "public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+                "leaf_hash": "196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d800",
+                "signature": "bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d083"
+              }
+            ],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ]
+      }
+    },
+    {
+      "description": "a passthrough that shaves exactly the 12-sat relay fee",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff01dc03000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012be803000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e0200000001b33f2e68cb5958d5a170fba2b03ef54890e079f8aa9da9c6c2cc63c45254509e0000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012bdc03000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": true,
+        "escrow_value": 988,
+        "passthrough_txid": "9e505452c463ccc2c6a99daaf879e09048f53eb0a2fb70a1d55859cb682e3fb3",
+        "escrow_script": "5120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7"
+      },
+      "sign": {
+        "ok": true,
+        "psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff01dc03000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012be803000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011340993dcd220dcffebe2ecbd1ffee8d378a679a5f40e55522d30adaa6fbd788ee3f022fa2758ca1efb183c16daccd3c9d25730d1999fc7bdb1b18fdceae00a52dc7011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e0200000001b33f2e68cb5958d5a170fba2b03ef54890e079f8aa9da9c6c2cc63c45254509e0000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012bdc03000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041a6920054e1e40a2a0ec5dfd2ecf156a9a1ff8462f4a2c0a975ccfc1ec6e4afe938a04e22eb85087d036fa93b388f7eba63bf8409b9ea0a540dc2194930b78fa6834215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "passthrough_txid": "9e505452c463ccc2c6a99daaf879e09048f53eb0a2fb70a1d55859cb682e3fb3",
+        "escrow_value": 988,
+        "passthrough_inputs": [
+          {
+            "tap_key_sig": "993dcd220dcffebe2ecbd1ffee8d378a679a5f40e55522d30adaa6fbd788ee3f022fa2758ca1efb183c16daccd3c9d25730d1999fc7bdb1b18fdceae00a52dc7",
+            "tap_script_sigs": [],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ],
+        "sale_inputs": [
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [
+              {
+                "public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+                "leaf_hash": "196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d800",
+                "signature": "a6920054e1e40a2a0ec5dfd2ecf156a9a1ff8462f4a2c0a975ccfc1ec6e4afe938a04e22eb85087d036fa93b388f7eba63bf8409b9ea0a540dc2194930b78fa683"
+              }
+            ],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ]
+      }
+    },
+    {
+      "description": "passthrough asks for SIGHASH_ALL",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030401000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": true,
+        "escrow_value": 546,
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_script": "5120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7"
+      },
+      "sign": {
+        "ok": true,
+        "psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030401000000011341f5bc3318ef71903e8b3ae2cae4edc62a9f6a450b60a6f242aa84afca79a5e25835d8a7bdeeb311a3613c7d1de85875736416b3a8d88fab04f6269bbb88961a2b01011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "passthrough_inputs": [
+          {
+            "tap_key_sig": "f5bc3318ef71903e8b3ae2cae4edc62a9f6a450b60a6f242aa84afca79a5e25835d8a7bdeeb311a3613c7d1de85875736416b3a8d88fab04f6269bbb88961a2b01",
+            "tap_script_sigs": [],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ],
+        "sale_inputs": [
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [
+              {
+                "public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+                "leaf_hash": "196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d800",
+                "signature": "bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d083"
+              }
+            ],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ]
+      }
+    },
+    {
+      "description": "an escrow co-signed by a key other than the pinned one",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff0122020000000000002251201bb367b4c52da4b82ce17fa1c139bd7b4ed300d3def92debd292c80503936845000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e0200000001147b02746543ded27d4a97ce6dbd2194b0d5653928fbddcfbdbe565db2ed08f80000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b22020000000000002251201bb367b4c52da4b82ce17fa1c139bd7b4ed300d3def92debd292c80503936845010304830000004215c150929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac20989c0b76cb563971fdc9bef31ec06c3560f3249d6ee9e5d83c57625596e05f6fba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_escrow_mismatch"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_escrow_mismatch"
+      }
+    },
+    {
+      "description": "a passthrough of a different item",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd0000000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e020000000194abe07781edb77fd3a53bf4b915f123b6cbe4a932a927af0bff30246f522f930000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_input_mismatch"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_input_mismatch"
+      }
+    },
+    {
+      "description": "a passthrough with an extra output",
+      "check": {
+        "passthrough_psbt": "70736274ff0100890200000001abababababababababababababababababababababababababababababababab0100000000ffffffff022202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7e803000000000000225120752325a3227b93a2cdfa4e2e17e176a9f4a789b0c4c723df373e9c4b04bb629e000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115000000",
+        "sale_psbt": "70736274ff01005e0200000001f9a5e11c344d8e5318ac695a7d41c512fd8760f9ce7cceb0e5b37621ffd20c8a0000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_output_shape"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_output_shape"
+      }
+    },
+    {
+      "description": "a passthrough that takes more than the 12-sat fee",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff01db03000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012be803000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e0200000001995777c9d454c0dd316e030c62f78e6451a40eae8dfadf535f720f6fb893848f0000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012bdb03000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_postage_mismatch"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_postage_mismatch"
+      }
+    },
+    {
+      "description": "an escrow below the 330-sat dust floor",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff014901000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b4901000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e0200000001d56925e147165d311366388ab9d62ba5c0906ed7f28017af1a5927b709cd166f0000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b4901000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_postage_mismatch"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_postage_mismatch"
+      }
+    },
+    {
+      "description": "a passthrough asking for SIGHASH_SINGLE|ANYONECANPAY",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030483000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_sighash"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_sighash"
+      }
+    },
+    {
+      "description": "a passthrough asking for a script-path signature",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c010304000000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc0011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_script_path"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_script_path"
+      }
+    },
+    {
+      "description": "a passthrough naming another internal key",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720989c0b76cb563971fdc9bef31ec06c3560f3249d6ee9e5d83c57625596e05f6f0000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_internal_key"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_internal_key"
+      }
+    },
+    {
+      "description": "a passthrough that already carries a signature",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0103040000000001134009090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_prefilled"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_prefilled"
+      }
+    },
+    {
+      "description": "a passthrough with two inputs",
+      "check": {
+        "passthrough_psbt": "70736274ff0100870200000002abababababababababababababababababababababababababababababababab0100000000ffffffffeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee0000000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150001012be803000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_input_count"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_input_count"
+      }
+    },
+    {
+      "description": "a sale template paying someone else",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120752325a3227b93a2cdfa4e2e17e176a9f4a789b0c4c723df373e9c4b04bb629e000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_payout_mismatch"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_payout_mismatch"
+      }
+    },
+    {
+      "description": "a sale template paying less than the price",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff014fc3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_price_mismatch"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_price_mismatch"
+      }
+    },
+    {
+      "description": "a sale template with an extra output",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01008902000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0250c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684ce803000000000000225120752325a3227b93a2cdfa4e2e17e176a9f4a789b0c4c723df373e9c4b04bb629e000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0000000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "sale_template_shape"
+      },
+      "sign": {
+        "ok": false,
+        "code": "sale_template_shape"
+      }
+    },
+    {
+      "description": "a sale template asking for SIGHASH_ALL",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304010000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "sale_template_sighash"
+      },
+      "sign": {
+        "ok": false,
+        "code": "sale_template_sighash"
+      }
+    },
+    {
+      "description": "a sale template with a spendable internal key",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc0011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "sale_template_internal_key"
+      },
+      "sign": {
+        "ok": false,
+        "code": "sale_template_internal_key"
+      }
+    },
+    {
+      "description": "a sale template that also carries the recovery leaf",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80028029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115acc04215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "sale_template_leaf"
+      },
+      "sign": {
+        "ok": false,
+        "code": "sale_template_leaf"
+      }
+    },
+    {
+      "description": "a sale template spending another output",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520100000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "sale_template_input"
+      },
+      "sign": {
+        "ok": false,
+        "code": "sale_template_input"
+      }
+    },
+    {
+      "description": "a sale template that already carries a signature",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a701030483000000011340090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909094215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "sale_template_prefilled"
+      },
+      "sign": {
+        "ok": false,
+        "code": "sale_template_prefilled"
+      }
+    },
+    {
+      "description": "an item that is not at our address",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1pw53jtgez0wf69n06fchp0ctk48620zdscnrj8heh86wykp9mv20qya3c8w"
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_input_not_yours"
+      },
+      "sign": {
+        "ok": false,
+        "code": "listing_input_not_yours"
+      }
+    },
+    {
+      "description": "a price below dust",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff014901000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 329,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "price_below_dust"
+      },
+      "sign": {
+        "ok": false,
+        "code": "price_below_dust"
+      }
+    },
+    {
+      "description": "expected outpoint in upper case",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "ABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAB:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": true,
+        "escrow_value": 546,
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_script": "5120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7"
+      },
+      "sign": {
+        "ok": true,
+        "psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011340b0e665bf58bba8c92112917c5f2575ac0ce000949a72dd06beed417b5c11d1484ae2ec6de9890e16acea645331674ffe27263fddb53c26e4bf857ca144146409011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "passthrough_inputs": [
+          {
+            "tap_key_sig": "b0e665bf58bba8c92112917c5f2575ac0ce000949a72dd06beed417b5c11d1484ae2ec6de9890e16acea645331674ffe27263fddb53c26e4bf857ca144146409",
+            "tap_script_sigs": [],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ],
+        "sale_inputs": [
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [
+              {
+                "public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+                "leaf_hash": "196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d800",
+                "signature": "bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d083"
+              }
+            ],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ]
+      }
+    },
+    {
+      "description": "garbage instead of the passthrough",
+      "check": {
+        "passthrough_psbt": "nope",
+        "sale_psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "invalid_psbt"
+      },
+      "sign": {
+        "ok": false,
+        "code": "invalid_psbt"
+      }
+    },
+    {
+      "description": "garbage instead of the sale template",
+      "check": {
+        "passthrough_psbt": "70736274ff01005e0200000001abababababababababababababababababababababababababababababababab0100000000ffffffff012202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c01030400000000011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "sale_psbt": "nope",
+        "expected_outpoint": "abababababababababababababababababababababababababababababababab:1",
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "expected_seller_sats": 50000,
+        "asset_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+      },
+      "expect": {
+        "ok": false,
+        "code": "invalid_psbt"
+      },
+      "sign": {
+        "ok": false,
+        "code": "invalid_psbt"
+      }
+    }
+  ],
+  "signed_sale": [
+    {
+      "description": "honest signed template",
+      "psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "expectation": {
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "price_sats": 50000
+      },
+      "expect": {
+        "ok": true,
+        "unchanged": true,
+        "has_key_sig": false,
+        "inputs": [
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [
+              {
+                "public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+                "leaf_hash": "196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d800",
+                "signature": "bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d083"
+              }
+            ],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ]
+      }
+    },
+    {
+      "description": "a stray key-path signature is stripped",
+      "psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a701030483000000011340090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909094114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "expectation": {
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "price_sats": 50000
+      },
+      "expect": {
+        "ok": true,
+        "unchanged": false,
+        "has_key_sig": false,
+        "inputs": [
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [
+              {
+                "public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+                "leaf_hash": "196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d800",
+                "signature": "bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d083"
+              }
+            ],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ]
+      }
+    },
+    {
+      "description": "unsigned template",
+      "psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "expectation": {
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "price_sats": 50000
+      },
+      "expect": {
+        "ok": false,
+        "code": "sale_unsigned"
+      }
+    },
+    {
+      "description": "only a key-path signature",
+      "psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a701030483000000011340090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909090909094215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "expectation": {
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "price_sats": 50000
+      },
+      "expect": {
+        "ok": false,
+        "code": "sale_signed_on_key_path"
+      }
+    },
+    {
+      "description": "forged signature",
+      "psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e50f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "expectation": {
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "price_sats": 50000
+      },
+      "expect": {
+        "ok": false,
+        "code": "sale_presignature_invalid"
+      }
+    },
+    {
+      "description": "wrong sighash byte",
+      "psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0014215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "expectation": {
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "price_sats": 50000
+      },
+      "expect": {
+        "ok": false,
+        "code": "sale_template_sighash"
+      }
+    },
+    {
+      "description": "a second signature from another key",
+      "psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004114989c0b76cb563971fdc9bef31ec06c3560f3249d6ee9e5d83c57625596e05f6f196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "expectation": {
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "price_sats": 50000
+      },
+      "expect": {
+        "ok": false,
+        "code": "sale_template_mutated"
+      }
+    },
+    {
+      "description": "finalized template",
+      "psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000000108430141bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "expectation": {
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "price_sats": 50000
+      },
+      "expect": {
+        "ok": false,
+        "code": "sale_template_mutated"
+      }
+    },
+    {
+      "description": "price changed",
+      "psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "expectation": {
+        "passthrough_txid": "5291533c134b16422e18f9b89b73e29d0df8e70a7f1a5b8c35f977717b89139e",
+        "escrow_value": 546,
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "price_sats": 50001
+      },
+      "expect": {
+        "ok": false,
+        "code": "listing_price_mismatch"
+      }
+    },
+    {
+      "description": "passthrough txid in upper case",
+      "psbt": "70736274ff01005e02000000019e13897b7177f9358c5b1a7f0ae7f80d9de2739bb8f9182e42164b133c5391520000000000ffffffff0150c3000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7010304830000004114cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d80041bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d0834215c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b94720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529cc001172050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00000",
+      "expectation": {
+        "passthrough_txid": "5291533C134B16422E18F9B89B73E29D0DF8E70A7F1A5B8C35F977717B89139E",
+        "escrow_value": 546,
+        "seller_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+        "price_sats": 50000
+      },
+      "expect": {
+        "ok": true,
+        "unchanged": true,
+        "has_key_sig": false,
+        "inputs": [
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [
+              {
+                "public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+                "leaf_hash": "196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d800",
+                "signature": "bd103e51f4f605a61c55e930536b5ef0875312a33c1950b5e52bdf9541be785f0385e5d01bcb8c62b3484566d215e995b281ba0ae02e32b9753719ac1861c1d083"
+              }
+            ],
+            "partial_sigs": [],
+            "final_script_witness": null
+          }
+        ]
+      }
+    }
+  ]
+}
