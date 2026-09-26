@@ -12,7 +12,7 @@ description: Build, debug, and extend the Ordinals Wallet CLI (ow-cli) — a Bit
 | Package | Path | Purpose |
 |---------|------|---------|
 | `@ow-cli/core` | `packages/core` | BIP39/BIP32 key derivation, WIF decode, P2TR address, PSBT signing |
-| `@ow-cli/api` | `packages/api` | Typed HTTP client for all OW API endpoints (axios) + TAP socket |
+| `@ow-cli/api` | `packages/api` | Typed HTTP client for all OW API endpoints (native fetch, zero runtime deps) |
 | `@ow-cli/cli` | `packages/cli` | Commander.js CLI commands wiring core + api |
 
 ## Key commands
@@ -107,7 +107,7 @@ All API types live in `packages/api/src/types.ts`. No `any` types — everything
 - `RuneEdict`, `RuneOutpoint`, `BuildRuneEdictTransferRequest`, `BuildAlkaneTransferRequest`
 - `BuildConsolidateRequest/Response`, `BuildPurchaseAlkanesRequest`, `BroadcastBulkResult`
 
-TAP protocol types are in `packages/api/src/tap.ts` (`TapToken`).
+TAP balances come from `packages/cli/src/utils/tap.ts` (`TapToken`, Socket.IO over native WebSocket).
 
 ## Testing
 

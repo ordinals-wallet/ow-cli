@@ -9,16 +9,14 @@ export const VALUATION_BATCH_LIMIT = 200
  * `GET /collection/:slug/ohlcv` (cached 60s, up to 5,000 buckets).
  */
 export async function getOhlcv(slug: string, params: OhlcvParams = {}): Promise<Ohlcv> {
-  const { data } = await getClient().get(`/collection/${encodeURIComponent(slug)}/ohlcv`, {
+  return getClient().get<Ohlcv>(`/collection/${encodeURIComponent(slug)}/ohlcv`, {
     params: compact({ ...params }),
   })
-  return data
 }
 
 /** Fair value, range, confidence and inputs. `GET /collection/:slug/valuation`. */
 export async function getValuation(slug: string): Promise<Valuation> {
-  const { data } = await getClient().get(`/collection/${encodeURIComponent(slug)}/valuation`)
-  return data
+  return getClient().get<Valuation>(`/collection/${encodeURIComponent(slug)}/valuation`)
 }
 
 /**
@@ -30,7 +28,7 @@ export async function getValuations(slugs: string[]): Promise<Valuation[]> {
   const out: Valuation[] = []
   for (let i = 0; i < unique.length; i += VALUATION_BATCH_LIMIT) {
     const chunk = unique.slice(i, i + VALUATION_BATCH_LIMIT)
-    const { data } = await getClient().post('/collections/valuation', { slugs: chunk })
+    const data = await getClient().post<{ valuations?: Valuation[] }>('/collections/valuation', { slugs: chunk })
     out.push(...((data?.valuations ?? []) as Valuation[]))
   }
   return out

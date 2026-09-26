@@ -52,8 +52,8 @@ export class OfferError extends OwApiError {
       method: from?.method,
       url: from?.url,
       retries: from?.retries,
-      response: from?.response,
-      config: from?.config,
+      statusText: from?.statusText,
+      headers: from?.headers,
       cause: from,
     })
     Object.defineProperty(this, 'name', { value: new.target.name, configurable: true })
@@ -143,8 +143,7 @@ function toOfferError(err: unknown): unknown {
 
 async function get<T>(path: string, params?: Record<string, string>): Promise<T> {
   try {
-    const { data } = await getClient().get(path, { params })
-    return data
+    return await getClient().get<T>(path, { params })
   } catch (err) {
     throw toOfferError(err)
   }
@@ -152,8 +151,7 @@ async function get<T>(path: string, params?: Record<string, string>): Promise<T>
 
 async function post<T>(path: string, body: unknown): Promise<T> {
   try {
-    const { data } = await getClient().post(path, body)
-    return data
+    return await getClient().post<T>(path, body)
   } catch (err) {
     throw toOfferError(err)
   }

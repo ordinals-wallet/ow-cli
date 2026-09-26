@@ -1,4 +1,5 @@
 import { PassthroughError, MAX_PROTECTED_ITEMS_PER_PURCHASE } from '@ow-cli/core'
+import { isOwApiError } from '@ow-cli/api'
 
 /**
  * Typed errors for snipe-protected (passthrough v4) trading. Every failure
@@ -152,10 +153,6 @@ export function protectedErrorMessage(code: string, stage?: ProtectedTradeStage)
   return first[code] ?? second[code] ?? ''
 }
 
-interface ApiErrorLike {
-  response?: { status?: number; data?: { code?: string; message?: string } | string }
-}
-
 /**
  * Turn anything a protected-trading call threw into a `ProtectedTradeError`.
  * HTTP failures keep the server's code (or `http_<status>` when it sent none);
@@ -167,10 +164,14 @@ export function toProtectedError(err: unknown, stage: ProtectedTradeStage): Erro
     const copy = protectedErrorMessage(err.code, stage)
     return new ProtectedTradeError(err.code, copy ? `${err.message}. ${copy}` : err.message, stage)
   }
-  const response = (err as ApiErrorLike)?.response
-  if (!response) return err as Error
-  const data = typeof response.data === 'object' && response.data ? response.data : {}
-  const code = String(data.code || `http_${response.status}`)
-  const text = protectedErrorMessage(code, stage) || data.message || `request failed with status ${response.status}`
-  return new ProtectedTradeError(code, `Protected ${stage} failed (${code}): ${text}`, stage, response.status)
+  // Only HTTP responses carry a server code; network failures (status 0) pass through.
+  if (!isOwApiError(err) || err.status === 0) return err as Error
+  const body = err.body
+  const data = (typeof body === 'object' && body ? body : {}) as { code?: unknown; message?: unknown }
+  const code = String((typeof data.code === 'string' && data.code) || `http_${err.status}`)
+  const text =
+    protectedErrorMessage(code, stage) ||
+    (typeof data.message === 'string' && data.message) ||
+    `request failed with status ${err.status}`
+  return new ProtectedTradeError(code, `Protected ${stage} failed (${code}): ${text}`, stage, err.status)
 }

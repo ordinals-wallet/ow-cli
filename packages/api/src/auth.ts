@@ -37,8 +37,8 @@ export class AuthError extends OwApiError {
       method: from?.method,
       url: from?.url,
       retries: from?.retries,
-      response: from?.response,
-      config: from?.config,
+      statusText: from?.statusText,
+      headers: from?.headers,
       cause: from,
     })
     Object.defineProperty(this, 'name', { value: 'AuthError', configurable: true })
@@ -54,8 +54,7 @@ function toAuthError(err: unknown): unknown {
 /** Raw `POST /auth/session`. Prefer `signIn`. */
 export async function createSession(params: CreateSessionRequest): Promise<AuthSession> {
   try {
-    const { data } = await getClient().post('/auth/session', params)
-    return data
+    return await getClient().post<AuthSession>('/auth/session', params)
   } catch (err) {
     throw toAuthError(err)
   }

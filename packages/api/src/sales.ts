@@ -40,10 +40,9 @@ function pageParams(p: SalesParams): Record<string, number> {
 
 /** Every on-chain sale of a collection, newest first. `GET /collection/:slug/sales`. */
 export async function getSales(slug: string, params: SalesParams = {}): Promise<SalesPage> {
-  const { data } = await getClient().get(`/collection/${encodeURIComponent(slug)}/sales`, {
+  return getClient().get<SalesPage>(`/collection/${encodeURIComponent(slug)}/sales`, {
     params: pageParams(params),
   })
-  return data
 }
 
 /** Daily volume by marketplace. `GET /collection/:slug/sales-volume`. */
@@ -51,16 +50,14 @@ export async function getSalesVolume(slug: string, params: SalesVolumeParams = {
   const q: Record<string, number> = {}
   if (params.fromHeight != null) q.from_height = params.fromHeight
   if (params.toHeight != null) q.to_height = params.toHeight
-  const { data } = await getClient().get(`/collection/${encodeURIComponent(slug)}/sales-volume`, { params: q })
-  return data
+  return getClient().get<SalesVolume>(`/collection/${encodeURIComponent(slug)}/sales-volume`, { params: q })
 }
 
 /** Sales a wallet bought or sold, across marketplaces. `GET /wallet/:address/global-sales`. */
 export async function getWalletSales(address: string, params: SalesParams = {}): Promise<WalletSalesPage> {
-  const { data } = await getClient().get(`/wallet/${encodeURIComponent(address)}/global-sales`, {
+  return getClient().get<WalletSalesPage>(`/wallet/${encodeURIComponent(address)}/global-sales`, {
     params: pageParams(params),
   })
-  return data
 }
 
 async function* paginate<T extends { block_height: number }>(

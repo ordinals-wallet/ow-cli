@@ -23,8 +23,7 @@ const NO_STORE = { 'Cache-Control': 'no-store' }
 
 /** Build both templates for up to 100 items. Per-item refusals come back as rows with `error: true`. */
 export async function buildBulk(params: SecureListingBuildBulkRequest): Promise<SecureListingBuildBulkResponse> {
-  const { data } = await getClient().post('/market/secure-listing/build-bulk', params, { headers: NO_STORE })
-  return data
+  return getClient().post<SecureListingBuildBulkResponse>('/market/secure-listing/build-bulk', params, { headers: NO_STORE })
 }
 
 /**
@@ -33,9 +32,11 @@ export async function buildBulk(params: SecureListingBuildBulkRequest): Promise<
  * item, HTTP 400 on refusal) is normalized to the same shape.
  */
 export async function authorizeBulk(items: SecureListingAuthorizeItem[]): Promise<SecureListingAuthorizeBulkResponse> {
-  const res = await getClient().post('/market/secure-listing/authorize-bulk', { items }, {
+  const res = await getClient().request<any>('/market/secure-listing/authorize-bulk', {
+    method: 'POST',
+    body: { items },
     headers: NO_STORE,
-    validateStatus: (status) => (status >= 200 && status < 300) || (status === 400 && items.length === 1),
+    acceptStatus: (status) => status === 400 && items.length === 1,
   })
   const data = res.data
   if (items.length === 1 && data && !Array.isArray(data.items) && typeof data.outpoint === 'string') {
@@ -47,10 +48,11 @@ export async function authorizeBulk(items: SecureListingAuthorizeItem[]): Promis
       status: res.status,
       code: typeof data?.code === 'string' ? data.code : undefined,
       message: extractErrorMessage(data) ?? 'secure listing rejected',
+      statusText: res.statusText,
       body: data,
+      headers: res.headers,
       method: 'POST',
       url: '/market/secure-listing/authorize-bulk',
-      response: { status: res.status, statusText: res.statusText, data, headers: {} },
     })
   }
   return data
@@ -58,16 +60,15 @@ export async function authorizeBulk(items: SecureListingAuthorizeItem[]): Promis
 
 /** The protected listing at this outpoint, or null when there is none. */
 export async function status(outpoint: string): Promise<SecureListingStatus | null> {
-  const res = await getClient().get(`/market/secure-listing/${encodeURIComponent(outpoint)}`, {
-    headers: NO_STORE,
-    validateStatus: (s) => (s >= 200 && s < 300) || s === 404,
-  })
+  const res = await getClient().request<{ error?: unknown; secure_listing?: SecureListingStatus } | undefined>(
+    `/market/secure-listing/${encodeURIComponent(outpoint)}`,
+    { headers: NO_STORE, acceptStatus: (s) => s === 404 },
+  )
   if (res.status === 404 || !res.data || res.data.error) return null
   return res.data.secure_listing ?? null
 }
 
 /** Build (never sign) the seller's recovery of an escrow that confirmed without its sale. */
 export async function recover(params: SecureListingRecoverRequest): Promise<SecureListingRecoverResponse> {
-  const { data } = await getClient().post('/market/secure-listing/recover', params, { headers: NO_STORE })
-  return data
+  return getClient().post<SecureListingRecoverResponse>('/market/secure-listing/recover', params, { headers: NO_STORE })
 }

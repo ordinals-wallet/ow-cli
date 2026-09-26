@@ -233,10 +233,6 @@ function quoteFromBuild(
   return { items, feeRate, buyerAddress, links, setup, verified, expiresAt, quotedTotalSat, maxTotalSat }
 }
 
-interface ApiErrorLike {
-  response?: { status?: number; data?: { code?: string; message?: string } | string }
-}
-
 function verifyChecked<T>(run: () => T, stage: ProtectedTradeStage): T {
   try {
     return run()
@@ -418,8 +414,7 @@ export async function executePurchase(params: PurchaseParams): Promise<{ result:
       }
     } catch (err) {
       if (!outcome.protected) throw err
-      const data = (err as ApiErrorLike)?.response?.data
-      const detail = typeof data === 'string' ? data : data?.message || (err as Error).message
+      const detail = (err as Error).message
       throw new ProtectedTradeError(
         'partial_purchase',
         `The protected purchase went through (txid ${outcome.protected.txid}), but the ${plan.legacy.length} standard listing(s) failed: ${detail}. ` +

@@ -1,64 +1,56 @@
-import axios, { type AxiosError } from 'axios'
-
 /**
  * Error thrown by every @ow-cli/api request that fails.
  *
  * - `status` is the HTTP status, or `0` when no response arrived (network
- *   error, timeout, DNS failure).
+ *   error, timeout, DNS failure, abort).
  * - `code` is the transport error code for network failures (`ECONNRESET`,
- *   `ECONNABORTED`, `ETIMEDOUT`, ...) or a string `error` field from the body.
+ *   `ETIMEDOUT`, `ERR_CANCELED`, `ERR_NETWORK`, ...) or a string code from
+ *   the body (`{ code }`, or `{ error: "<code>", message }`).
  * - `message` is the best human-readable message found in the body. The API
  *   returns `{ error: true, message }`, plain text, `{ error: "..." }`, or an
  *   empty body depending on the endpoint, so branch on `status`, not on
  *   `message`.
  * - `body` is the raw response body (parsed JSON, text, or `undefined`).
- *
- * `response` and `config` mirror the axios shape so code written against
- * `AxiosError` (`err.response.status`, `err.response.data`) keeps working.
+ * - `headers` are the response headers, when a response arrived.
  */
 export class OwApiError extends Error {
   override readonly name = 'OwApiError'
   readonly status: number
+  readonly statusText?: string
   readonly code?: string
   readonly body: unknown
+  readonly headers?: Headers
   readonly method?: string
   readonly url?: string
   /** Number of retries performed before giving up. */
   readonly retries: number
-  readonly response?: {
-    status: number
-    statusText: string
-    data: unknown
-    headers: Record<string, unknown>
-  }
-  readonly config?: { url?: string; method?: string; baseURL?: string; data?: unknown }
 
   constructor(init: {
     status: number
     message: string
+    statusText?: string
     code?: string
     body?: unknown
+    headers?: Headers
     method?: string
     url?: string
     retries?: number
-    response?: OwApiError['response']
-    config?: OwApiError['config']
     cause?: unknown
   }) {
     super(init.message, init.cause === undefined ? undefined : { cause: init.cause })
     this.status = init.status
+    this.statusText = init.statusText
     this.code = init.code
     this.body = init.body
+    this.headers = init.headers
     this.method = init.method
     this.url = init.url
     this.retries = init.retries ?? 0
-    this.response = init.response
-    this.config = init.config
   }
 
   /** True for 5xx, 429 and network failures: worth retrying later. */
   get isTransient(): boolean {
-    return this.status === 0 || this.status === 429 || this.status >= 500
+    return (this.status === 0 && this.code !== 'ERR_CANCELED') || this.status === 429 || this.status >= 500
   }
 }
 
@@ -80,7 +72,8 @@ export function extractErrorMessage(body: unknown): string | undefined {
   return undefined
 }
 
-function extractErrorCode(body: unknown): string | undefined {
+/** A string code from an error body: `{ code }`, or `{ error: "<code>", message }`. */
+export function extractErrorCode(body: unknown): string | undefined {
   if (typeof body === 'object' && body !== null) {
     const rec = body as Record<string, unknown>
     if (typeof rec.code === 'string') return rec.code
@@ -90,46 +83,61 @@ function extractErrorCode(body: unknown): string | undefined {
   return undefined
 }
 
-/** Converts an axios failure (or anything else) into an OwApiError. */
-export function toOwApiError(err: unknown, retries = 0): OwApiError {
-  if (isOwApiError(err)) return err
-  if (!axios.isAxiosError(err)) {
-    const message = err instanceof Error ? err.message : String(err)
-    return new OwApiError({ status: 0, message, retries, cause: err })
-  }
-  const ax = err as AxiosError
-  const cfg = ax.config
-  const method = cfg?.method?.toUpperCase()
-  const url = cfg?.url
+/** Builds the error for a response whose status was not accepted. */
+export function httpError(init: {
+  status: number
+  statusText?: string
+  body: unknown
+  headers?: Headers
+  method?: string
+  url?: string
+  retries?: number
+}): OwApiError {
+  const { status, statusText, body, method, url } = init
   const where = [method, url].filter(Boolean).join(' ')
-
-  if (!ax.response) {
-    const code = ax.code ?? 'ERR_NETWORK'
-    return new OwApiError({
-      status: 0,
-      code,
-      message: `${ax.message || 'Network error'}${where ? ` (${where})` : ''}`,
-      method,
-      url,
-      retries,
-      config: cfg ? { url: cfg.url, method: cfg.method, baseURL: cfg.baseURL, data: cfg.data } : undefined,
-      cause: err,
-    })
-  }
-
-  const { status, statusText, data, headers } = ax.response
-  const detail = extractErrorMessage(data)
-  const message = detail ?? `HTTP ${status}${statusText ? ` ${statusText}` : ''}${where ? ` (${where})` : ''}`
+  const message =
+    extractErrorMessage(body) ?? `HTTP ${status}${statusText ? ` ${statusText}` : ''}${where ? ` (${where})` : ''}`
   return new OwApiError({
     status,
-    code: extractErrorCode(data),
+    statusText,
+    code: extractErrorCode(body),
     message,
-    body: data === '' ? undefined : data,
+    body: body === '' ? undefined : body,
+    headers: init.headers,
+    method,
+    url,
+    retries: init.retries,
+  })
+}
+
+/** Converts anything thrown during a request into an OwApiError (status 0 unless it already is one). */
+export function toOwApiError(err: unknown, retries = 0, where?: { method?: string; url?: string }): OwApiError {
+  if (isOwApiError(err)) return err
+  const e = err as { name?: string; message?: string; code?: string; cause?: { code?: unknown; message?: string } } | undefined
+  const method = where?.method
+  const url = where?.url
+  const at = [method, url].filter(Boolean).join(' ')
+  let code: string | undefined
+  let message: string
+  if (e?.name === 'TimeoutError' || e?.code === 'ETIMEDOUT') {
+    code = 'ETIMEDOUT'
+    message = e?.message || 'Request timed out'
+  } else if (e?.name === 'AbortError' || e?.code === 'ERR_CANCELED') {
+    code = 'ERR_CANCELED'
+    message = 'Request aborted'
+  } else {
+    // undici puts the socket error (ECONNRESET, ENOTFOUND, ...) on `cause`.
+    code = typeof e?.cause?.code === 'string' ? e.cause.code : typeof e?.code === 'string' ? e.code : 'ERR_NETWORK'
+    const detail = e?.cause?.message && e.cause.message !== e.message ? `: ${e.cause.message}` : ''
+    message = `${e?.message || String(err) || 'Network error'}${detail}`
+  }
+  return new OwApiError({
+    status: 0,
+    code,
+    message: `${message}${at ? ` (${at})` : ''}`,
     method,
     url,
     retries,
-    response: { status, statusText, data, headers: { ...(headers as Record<string, unknown>) } },
-    config: cfg ? { url: cfg.url, method: cfg.method, baseURL: cfg.baseURL, data: cfg.data } : undefined,
     cause: err,
   })
 }

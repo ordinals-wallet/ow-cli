@@ -217,12 +217,18 @@ export interface TokenOutpoint {
   escrow: Partial<Escrow> | null
 }
 
+/**
+ * Fee rates in sat/vB. Rates can be fractional (e.g. `1.222`). The API also
+ * returns rates keyed by target block count (`"1"`, `"2"`, `"3"`, ...).
+ */
 export interface FeeEstimates {
   fastestFee: number
   halfHourFee: number
   hourFee: number
   economyFee: number
   minimumFee: number
+  /** Rate for confirmation within N blocks, keyed by N. */
+  [blocks: string]: number
 }
 
 export interface BroadcastResult {
@@ -370,8 +376,15 @@ export interface SubmitPurchaseRuneRequest {
 /** `GET /market/escrow/:inscription_id`: the live listing, with its protection markers. */
 export interface MarketListing {
   inscription_id: string
-  /** Either `txid:vout` or the 36-byte wire form in hex, depending on the endpoint. */
+  /**
+   * As the API sent it: `GET /market/escrow/:id` returns the serialized
+   * 36-byte wire form in hex (72 chars, txid little-endian). Prefer
+   * `outpoint_txid_vout`.
+   */
   outpoint: string
+  /** `outpoint` normalized to `txid:vout` (added by the SDK). */
+  outpoint_txid_vout?: string
+  private_relay?: boolean
   seller_address: string
   buyer_address?: string | null
   /** What the buyer pays, marketplace fee included. */

@@ -10,7 +10,14 @@ const market = vi.hoisted(() => ({
   buildPurchaseBulk: vi.fn(),
   submitPurchase: vi.fn(),
 }))
-vi.mock('@ow-cli/api', () => ({ market }))
+vi.mock('@ow-cli/api', async (importOriginal) => {
+  const real = await importOriginal<typeof import('@ow-cli/api')>()
+  return { ...{ market }, OwApiError: real.OwApiError, isOwApiError: real.isOwApiError }
+})
+
+import { OwApiError } from '@ow-cli/api'
+const apiError = (status: number, body: Record<string, unknown>) =>
+  new OwApiError({ status, message: typeof body.message === 'string' ? body.message : `HTTP ${status}`, body })
 
 import {
   canonicalOutpoint,
@@ -199,7 +206,7 @@ describe('protected purchase', () => {
 
   it('surfaces API failures as typed errors', async () => {
     serve()
-    market.buildSecurePurchase.mockRejectedValue({ response: { status: 409, data: { code: 'too_many_pending_purchases' } } })
+    market.buildSecurePurchase.mockRejectedValue(apiError(409, { code: 'too_many_pending_purchases' }))
     const err = await executePurchase({ ids: [PROTECTED_ID], ...wallet }).catch((e) => e)
     expect(err).toBeInstanceOf(ProtectedTradeError)
     expect(err).toMatchObject({ code: 'too_many_pending_purchases', stage: 'purchase build', status: 409, retryable: true })
@@ -234,7 +241,7 @@ describe('protected purchase', () => {
 
   it('explains build failures in plain words', async () => {
     serve()
-    market.buildSecurePurchase.mockRejectedValue({ response: { status: 400, data: { code: 'two_funding_utxos_required' } } })
+    market.buildSecurePurchase.mockRejectedValue(apiError(400, { code: 'two_funding_utxos_required' }))
     await expect(executePurchase({ ids: [PROTECTED_ID], ...wallet })).rejects.toThrow(/at least two spendable UTXOs/)
   })
 })
@@ -242,7 +249,7 @@ describe('protected purchase', () => {
 describe('mixed purchase', () => {
   it('runs the protected purchase first and reports a legacy failure as partial', async () => {
     const f = serve()
-    market.buildPurchaseBulk.mockRejectedValue({ response: { status: 400, data: { message: 'no longer listed' } }, message: 'x' })
+    market.buildPurchaseBulk.mockRejectedValue(apiError(400, { message: 'no longer listed' }))
     const err = await executePurchase({ ids: [LEGACY_ID, PROTECTED_ID], ...wallet }).catch((e) => e)
     expect(err.code).toBe('partial_purchase')
     expect(err.message).toContain(f.saleTxid)

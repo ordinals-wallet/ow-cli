@@ -4,8 +4,10 @@ Command-line interface for [Ordinals Wallet](https://ordinalswallet.com). Buy, s
 
 ## Install
 
+Requires Node 22+ (the SDK package alone runs on Node 18+ and browsers).
+
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 pnpm build
 ```
 
@@ -248,7 +250,8 @@ Turborepo monorepo with three packages:
 | Package | Description |
 |---------|-------------|
 | `@ow-cli/core` | Key management (BIP39/BIP32/WIF), P2TR address derivation, PSBT signing, passthrough v4 purchase verification |
-| `@ow-cli/api` | Typed HTTP client for all Ordinals Wallet API endpoints |
+| `@ow-cli/api` | Typed client for all Ordinals Wallet API endpoints. Zero runtime dependencies (native `fetch`) |
+| `@ow-cli/shared` | Flows shared by CLI and SDK users: protected listing/purchase/delist, sign-in helpers |
 | `@ow-cli/cli` | Commander.js CLI wiring commands to core + api |
 
 ### Client identification
@@ -266,21 +269,34 @@ Node the SDK also sets `User-Agent: ow-cli/<version>` (browsers do not allow it)
 Identify your own integration with `appName`:
 
 ```ts
-import { setClient, createClient } from '@ow-cli/api'
+import { setClient, createClient, type FeeEstimates } from '@ow-cli/api'
 
 setClient({ appName: 'my-bot/1.2' })          // default client used by the api helpers
-const client = createClient({ appName: 'my-bot/1.2' }) // standalone axios instance
+const client = createClient({ appName: 'my-bot/1.2' }) // standalone client
+
+await client.get<FeeEstimates>('/wallet/fee-estimates')           // parsed JSON body
+await client.post('/collections/valuation', { slugs: ['nodemonkes'] })
+const res = await client.request('/market/escrow/<id>', { acceptStatus: (s) => s === 404 })
+res.status; res.headers; res.data
 ```
+
+`getClient()` / `createClient()` return the SDK's own small `fetch` client
+(`get`, `post`, `request`, `url`, plus read-only `baseUrl`, `headers`,
+`timeout`). Pass `fetch` in the config to use a custom implementation.
 
 ### Errors and retries
 
 Every failed request throws an `OwApiError` with `status` (HTTP status, or `0`
 for network errors), `code?`, `message` (read from the API's `{error, message}`,
-`{error: "..."}` or plain-text bodies) and the raw `body`. Branch on `status`.
+`{error: "..."}` or plain-text bodies), the raw `body`, `statusText` and the
+response `headers`. Branch on `status`. Network failures carry a `code`
+(`ETIMEDOUT` for the per-attempt `timeout`, `ERR_CANCELED` when your `signal`
+aborts, otherwise the socket error such as `ECONNRESET`).
 
 Idempotent requests (GET/HEAD/OPTIONS) are retried on network errors, `429`
 and `5xx` with exponential backoff and jitter, honouring `Retry-After`. POSTs
-are never retried unless a request passes `{ owRetry: true }`.
+are never retried unless a request passes `{ retry: true }` (or a count);
+`{ retry: false }` turns retries off for one request.
 
 ```ts
 import { setClient, isOwApiError, wallet } from '@ow-cli/api'
@@ -395,6 +411,55 @@ Error codes map to typed errors, all `OfferError` (an `OwApiError`):
 `reconcile`), `OfferUnauthorizedError` (`unauthorized`). Offer POSTs are never
 retried.
 
+### Breaking changes (unreleased SDK)
+
+`@ow-cli/api` no longer depends on axios or socket.io-client:
+
+- `getClient()` / `createClient()` return an `OwClient` (`get`/`post` resolve
+  to the parsed body, `request` to `{ status, statusText, headers, data }`)
+  instead of an axios instance. Replace `const { data } = await client.get(p)`
+  with `const data = await client.get(p)`, and `validateStatus` with
+  `acceptStatus`.
+- `OwApiError` drops the axios-compatible `response` and `config` fields. Use
+  `err.status`, `err.statusText`, `err.body`, `err.headers`, `err.method`,
+  `err.url`.
+- The per-request retry option is `retry` (was `owRetry`).
+- The TAP socket client (`api.tap`) moved into the CLI
+  (`ow wallet tap balance`); it speaks Socket.IO over the runtime's built-in
+  `WebSocket`, no library.
+- `network.getBlockHeight()` and `network.getExchangeRate()` use the OW API
+  (`/blockheight`, `/quotes`) instead of mempool.space and a Twetch function;
+  `ExchangeRate` is `{ price, ts? }`. The SDK only talks to
+  `turbo.ordinalswallet.com`.
+- `search.search()` calls `/search/:q` (same handler as `/v2/search/:q`).
+
+## Security
+
+The SDK and CLI move bitcoin, so the dependency tree is kept small and fixed:
+
+- **Zero-dependency API package.** `@ow-cli/api` has no runtime dependencies;
+  HTTP is native `fetch`, streams are native `fetch`/`EventSource`.
+- **Few runtime dependencies overall.** `@ow-cli/core` uses the audited
+  `@noble/*` and `@scure/*` libraries; the CLI adds only `commander`. Prompts
+  (including password and seed entry) use `node:readline`, so no third-party
+  code sees them.
+- **Exact versions.** Every dependency and devDependency is pinned to an exact
+  version (no `^`/`~`), and `.npmrc` sets `save-exact=true`.
+- **Lockfile is authoritative.** Install with `pnpm install --frozen-lockfile`;
+  CI and releases must not re-resolve.
+- **No install scripts.** `.npmrc` sets `ignore-scripts=true`, so no package
+  runs code at install time. The build uses esbuild's platform binary package
+  directly and does not need its postinstall.
+
+Verify:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm audit --prod        # must report no high/critical advisories
+pnpm audit               # dev tooling too
+pnpm ls -r --prod --depth Infinity   # the full production tree
+```
+
 ## Rust SDK
 
 [`rust/ordinalswallet`](rust/ordinalswallet/README.md) is a blocking Rust client
@@ -403,10 +468,15 @@ four runtime dependencies and is not on crates.io yet; use it as a git dependenc
 
 ## Testing
 
-There is no CI; run the gates locally.
+There is no CI; run the gates locally. All must pass before merging:
 
 ```bash
-pnpm install --frozen-lockfile && pnpm build && pnpm test
+pnpm install --frozen-lockfile
+pnpm build --force
+pnpm test --force
+for p in packages/*; do (cd $p && npx tsc --noEmit -p .); done
+pnpm audit --prod
+pnpm audit
 cd rust && cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test
 ```
 

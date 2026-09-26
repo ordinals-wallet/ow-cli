@@ -129,7 +129,7 @@ describe('market API', () => {
   it('should surface the build error code', async () => {
     await expect(
       marketApi.buildSecurePurchase({ outpoints: [], protocol: 'ordinal', from: 'bc1ptest', public_key: '02abc', fee_rate: 20 }),
-    ).rejects.toMatchObject({ response: { status: 400, data: { code: 'no_outpoints' } } })
+    ).rejects.toMatchObject({ status: 400, code: 'no_outpoints', body: { code: 'no_outpoints' } })
   })
 
   it('should submit a secure purchase', async () => {

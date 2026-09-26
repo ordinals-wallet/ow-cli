@@ -57,7 +57,6 @@ function apiError(status: number, body: unknown) {
     name: 'OwApiError',
     status,
     body,
-    response: { status, data: body },
   })
 }
 

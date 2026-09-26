@@ -2,7 +2,7 @@ import { Command } from 'commander'
 import * as api from '@ow-cli/api'
 import type { WalletInscription } from '@ow-cli/api'
 import { requirePublicInfo, unlockKeypair } from '../keystore.js'
-import { promptPassword, requireConfirm } from '../utils/prompts.js'
+import { promptPassword, promptInput, requireConfirm } from '../utils/prompts.js'
 import { formatTable, formatJson, formatSats } from '../output.js'
 import { handleError, CliError } from '../utils/errors.js'
 import { validateAmount, validateFeeRate, validateSplits, validateAddress, validateInscriptionId } from '../utils/validate.js'
@@ -124,12 +124,7 @@ export function registerTokenSend(parent: Command, config: TokenConfig): void {
           ])
           console.log(formatTable(['#', 'ID', 'Name'], rows))
 
-          const { default: inquirer } = await import('inquirer')
-          const { choice } = await inquirer.prompt([{
-            type: 'input',
-            name: 'choice',
-            message: `Select inscription (1-${inscriptions.length}):`,
-          }])
+          const choice = await promptInput(`Select inscription (1-${inscriptions.length}):`)
 
           const idx = parseInt(choice, 10) - 1
           if (isNaN(idx) || idx < 0 || idx >= inscriptions.length) {

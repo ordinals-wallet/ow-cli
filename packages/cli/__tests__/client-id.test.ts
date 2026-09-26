@@ -8,6 +8,6 @@ describe('CLI client identification', () => {
   it('tags API traffic as the CLI ahead of the SDK token', () => {
     expect(program.version()).toBe(pkg.version)
     expect(CLI_APP_NAME).toBe(`ow-cli-cli/${pkg.version}`)
-    expect(getClient().defaults.headers['x-ow-client']).toBe(`ow-cli-cli/${pkg.version} ${SDK_CLIENT_TOKEN}`)
+    expect(getClient().headers['x-ow-client']).toBe(`ow-cli-cli/${pkg.version} ${SDK_CLIENT_TOKEN}`)
   })
 })
