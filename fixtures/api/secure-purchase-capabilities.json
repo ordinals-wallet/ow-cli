@@ -1,0 +1,26 @@
+{
+  "secure_purchase": {
+    "version": 2,
+    "mode": "passthrough_v4",
+    "customer_enabled": true,
+    "listing_enabled": true,
+    "build_enabled": true,
+    "submit_enabled": true,
+    "build3_customer_paths": true,
+    "escrow_policy": "passthrough_v4",
+    "cosigner_public_key": "1d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7dee",
+    "min_postage_sats": 330,
+    "settlement": "zero_fee_parent_package",
+    "max_items_per_purchase": 12,
+    "protocols": [
+      "ordinal"
+    ],
+    "protocol_status": {
+      "alkane": "disabled_by_rollout",
+      "brc20": "protocol_extraction_unverified",
+      "ordinal": "enabled",
+      "rune": "disabled_by_rollout",
+      "tap": "protocol_extraction_unverified"
+    }
+  }
+}

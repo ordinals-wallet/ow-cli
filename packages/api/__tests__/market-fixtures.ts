@@ -2,11 +2,11 @@ import { readFileSync } from 'node:fs'
 
 // Real responses captured from https://turbo.ordinalswallet.com (trimmed).
 export function fixture<T = any>(name: string): T {
-  return JSON.parse(readFileSync(new URL(`./fixtures/market/${name}`, import.meta.url), 'utf8')) as T
+  return JSON.parse(readFileSync(new URL(`../../../fixtures/api/${name}`, import.meta.url), 'utf8')) as T
 }
 
 export function sseFixture(name: string): string {
-  return readFileSync(new URL(`./fixtures/market/${name}`, import.meta.url), 'utf8')
+  return readFileSync(new URL(`../../../fixtures/sse/${name}`, import.meta.url), 'utf8')
 }
 
 /** A ReadableStream that emits `text` in the given chunk sizes (cycled). */

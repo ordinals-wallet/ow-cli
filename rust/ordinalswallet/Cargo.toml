@@ -1,0 +1,31 @@
+[package]
+name = "ordinalswallet"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.76"
+description = "Rust SDK for the Ordinals Wallet API (turbo.ordinalswallet.com)"
+license = "MIT"
+repository = "https://github.com/ordinals-wallet/ow-cli"
+readme = "README.md"
+keywords = ["bitcoin", "ordinals", "runes", "api", "sdk"]
+categories = ["api-bindings", "cryptography::cryptocurrencies"]
+publish = false
+
+[lib]
+name = "ordinalswallet"
+
+[features]
+default = []
+# Reserved for stage 2 (PSBT/BIP-322 signing with rust-bitcoin 0.32 + secp256k1).
+signing = []
+
+[dependencies]
+# Blocking HTTP/1.1 client with rustls + webpki roots. No async runtime.
+ureq = { version = "=2.12.1", default-features = false, features = ["tls"] }
+serde = { version = "=1.0.229", default-features = false, features = ["std", "derive"] }
+serde_json = { version = "=1.0.151", default-features = false, features = ["std"] }
+# Pins `url`'s IDNA back end to the ASCII-only adapter (the documented opt-out
+# from ICU4X), removing ~25 transitive crates. Hostnames must be ASCII.
+# CSPRNG for sign-in nonces; already in the tree via ring.
+getrandom = { version = "=0.2.17", default-features = false }
+idna_adapter = { version = "=1.0.0", default-features = false }

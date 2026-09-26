@@ -22,8 +22,8 @@ function parseAll(text: string, sizes?: number[]): { events: SseEvent[]; comment
 }
 
 describe('SSE parser (live captures)', () => {
-  const quotes = sseFixture('quotes_stream.sse')
-  const activity = sseFixture('activity_stream.sse')
+  const quotes = sseFixture('quotes_stream.txt')
+  const activity = sseFixture('activity_stream.txt')
 
   it('parses the /quotes/stream capture: snapshot, btc, mark, keep-alives', () => {
     const { events, comments } = parseAll(quotes)
@@ -89,7 +89,7 @@ function sseResponse(text: string, sizes?: number[]): Response {
 
 describe('subscribe (fetch transport)', () => {
   it('delivers named events and closes cleanly', async () => {
-    const fetchMock = vi.fn(async () => sseResponse(sseFixture('quotes_stream.sse'), [17]))
+    const fetchMock = vi.fn(async () => sseResponse(sseFixture('quotes_stream.txt'), [17]))
     const names: string[] = []
     await new Promise<void>((resolve) => {
       const close = subscribe(

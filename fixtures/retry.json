@@ -1,0 +1,243 @@
+{
+  "description": "HTTP retry maths. parse_retry_after: delta-seconds or IMF-fixdate relative to now_ms. compute_delay: Retry-After wins when present (null = longer than max_delay, do not retry); otherwise equal-jitter exponential backoff: exp = min(max_delay, retry_delay * 2^(attempt-1)); delay = round(exp/2 + random*exp/2).",
+  "defaults": {
+    "retries": 2,
+    "retry_delay_ms": 300,
+    "max_delay_ms": 10000
+  },
+  "retryable_status": {
+    "retry": [
+      429,
+      500,
+      502,
+      503,
+      504,
+      599
+    ],
+    "no_retry": [
+      400,
+      401,
+      403,
+      404,
+      408,
+      409,
+      422
+    ]
+  },
+  "idempotent_methods": [
+    "GET",
+    "HEAD",
+    "OPTIONS"
+  ],
+  "now_ms": 1790380800000,
+  "parse_retry_after": [
+    {
+      "value": "2",
+      "expected_ms": 2000
+    },
+    {
+      "value": "0",
+      "expected_ms": 0
+    },
+    {
+      "value": "0.5",
+      "expected_ms": 500
+    },
+    {
+      "value": "1.25",
+      "expected_ms": 1250
+    },
+    {
+      "value": " 3 ",
+      "expected_ms": 3000
+    },
+    {
+      "value": "",
+      "expected_ms": null
+    },
+    {
+      "value": null,
+      "expected_ms": null
+    },
+    {
+      "value": "garbage",
+      "expected_ms": null
+    },
+    {
+      "value": "1e3",
+      "expected_ms": null
+    },
+    {
+      "value": "Sat, 26 Sep 2026 00:00:03 GMT",
+      "expected_ms": 3000
+    },
+    {
+      "value": "Fri, 25 Sep 2026 23:59:00 GMT",
+      "expected_ms": 0
+    }
+  ],
+  "compute_delay": [
+    {
+      "attempt": 1,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": null,
+      "random": 0,
+      "expected_ms": 50
+    },
+    {
+      "attempt": 1,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": null,
+      "random": 1,
+      "expected_ms": 100
+    },
+    {
+      "attempt": 1,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": null,
+      "random": 0.5,
+      "expected_ms": 75
+    },
+    {
+      "attempt": 2,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": null,
+      "random": 0,
+      "expected_ms": 100
+    },
+    {
+      "attempt": 2,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": null,
+      "random": 1,
+      "expected_ms": 200
+    },
+    {
+      "attempt": 3,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": null,
+      "random": 1,
+      "expected_ms": 400
+    },
+    {
+      "attempt": 4,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": null,
+      "random": 1,
+      "expected_ms": 800
+    },
+    {
+      "attempt": 5,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": null,
+      "random": 1,
+      "expected_ms": 1000
+    },
+    {
+      "attempt": 10,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": null,
+      "random": 0,
+      "expected_ms": 500
+    },
+    {
+      "attempt": 10,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": null,
+      "random": 1,
+      "expected_ms": 1000
+    },
+    {
+      "attempt": 1,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": "0.5",
+      "random": 0.5,
+      "expected_ms": 500
+    },
+    {
+      "attempt": 1,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": "1",
+      "random": 0.5,
+      "expected_ms": 1000
+    },
+    {
+      "attempt": 1,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": "0",
+      "random": 0.5,
+      "expected_ms": 0
+    },
+    {
+      "attempt": 1,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": "5",
+      "random": 0.5,
+      "expected_ms": null
+    },
+    {
+      "attempt": 1,
+      "retry_delay_ms": 100,
+      "max_delay_ms": 1000,
+      "retry_after": "120",
+      "random": 0.5,
+      "expected_ms": null
+    }
+  ],
+  "default_backoff_bounds": [
+    {
+      "attempt": 1,
+      "min_ms": 150,
+      "max_ms": 300
+    },
+    {
+      "attempt": 2,
+      "min_ms": 300,
+      "max_ms": 600
+    },
+    {
+      "attempt": 3,
+      "min_ms": 600,
+      "max_ms": 1200
+    },
+    {
+      "attempt": 4,
+      "min_ms": 1200,
+      "max_ms": 2400
+    },
+    {
+      "attempt": 5,
+      "min_ms": 2400,
+      "max_ms": 4800
+    },
+    {
+      "attempt": 6,
+      "min_ms": 4800,
+      "max_ms": 9600
+    },
+    {
+      "attempt": 7,
+      "min_ms": 5000,
+      "max_ms": 10000
+    },
+    {
+      "attempt": 8,
+      "min_ms": 5000,
+      "max_ms": 10000
+    }
+  ]
+}

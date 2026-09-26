@@ -1,0 +1,37 @@
+# cargo-deny policy for the Rust SDK. Run from rust/: `cargo deny check`
+# (install: `cargo install --locked cargo-deny`).
+
+[graph]
+all-features = true
+
+[advisories]
+# RustSec advisories (vulnerabilities, unmaintained, yanked) fail the check.
+yanked = "deny"
+
+[licenses]
+confidence-threshold = 0.93
+# Exactly the licenses present in today's dependency tree.
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "ISC",              # ring, rustls-webpki, untrusted
+    "BSD-3-Clause",     # subtle
+    "Unicode-3.0",      # unicode-ident (proc-macro, build time only)
+    "Unlicense",        # memchr (dual MIT)
+    "CDLA-Permissive-2.0", # webpki-roots (Mozilla root store data)
+]
+
+[bans]
+multiple-versions = "deny"
+wildcards = "deny"
+skip = [
+    # webpki-roots 0.26 is a semver-trick shim re-exporting 1.x (required by ureq 2).
+    { crate = "webpki-roots@0.26.11", reason = "semver-trick shim over webpki-roots 1.x" },
+]
+
+[sources]
+# Only crates.io; no git dependencies, no other registries.
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []

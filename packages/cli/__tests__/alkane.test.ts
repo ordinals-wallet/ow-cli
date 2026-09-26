@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import type { AlkanesBalance } from '@ow-cli/api'
 import { alkanesBalanceRows, ALKANES_COLUMNS } from '../src/commands/alkane.js'
 // Real, trimmed `/wallet/:address/alkanes-balance` response.
-import alkanesFx from '../../api/__tests__/fixtures/alkanes-balance.json' with { type: 'json' }
+import alkanesFx from '../../../fixtures/api/alkanes-balance.json' with { type: 'json' }
 
 describe('alkanes balance rows', () => {
   it('prints ticker, id and whole-unit balances from the live shape', () => {

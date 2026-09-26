@@ -21,7 +21,7 @@ import { OwApiError, isOwApiError } from '../src/errors.js'
 setClient({ baseUrl: 'https://turbo.ordinalswallet.com' })
 
 const B = 'https://turbo.ordinalswallet.com/market/offers'
-const live = JSON.parse(readFileSync(new URL('./fixtures/offers-live.json', import.meta.url), 'utf8'))
+const live = JSON.parse(readFileSync(new URL('../../../fixtures/api/offers-live.json', import.meta.url), 'utf8'))
 const ID = '6f1c1a3e-7c4b-4f7a-9d55-2f5a0b1c9e11'
 const INSC = '6fb976ab49dcec017f1e201e84395983204ae1a7c2abf7ced0a85d692e442799i0'
 

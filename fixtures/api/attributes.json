@@ -1,0 +1,62 @@
+[
+  {
+    "trait_type": "Attributes",
+    "values": [
+      {
+        "trait_type": "Attributes",
+        "value": "None",
+        "count": 5159
+      },
+      {
+        "trait_type": "Attributes",
+        "value": "Cigarette",
+        "count": 1947
+      },
+      {
+        "trait_type": "Attributes",
+        "value": "Vanilla",
+        "count": 420
+      }
+    ]
+  },
+  {
+    "trait_type": "Background",
+    "values": [
+      {
+        "trait_type": "Background",
+        "value": "Red",
+        "count": 790
+      },
+      {
+        "trait_type": "Background",
+        "value": "Bitcoin Orange",
+        "count": 374
+      },
+      {
+        "trait_type": "Background",
+        "value": "Blue",
+        "count": 856
+      }
+    ]
+  },
+  {
+    "trait_type": "Face",
+    "values": [
+      {
+        "trait_type": "Face",
+        "value": "Bitty",
+        "count": 236
+      },
+      {
+        "trait_type": "Face",
+        "value": "Coder",
+        "count": 475
+      },
+      {
+        "trait_type": "Face",
+        "value": "Dark Mask",
+        "count": 508
+      }
+    ]
+  }
+]

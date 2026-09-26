@@ -1,0 +1,3 @@
+# Keep Cargo.lock resolvable by the MSRV declared in ordinalswallet/Cargo.toml.
+[resolver]
+incompatible-rust-versions = "fallback"

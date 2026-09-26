@@ -1,0 +1,80 @@
+{
+  "description": "Serialized outpoints (72 hex: txid little-endian + vout u32 little-endian) to txid:vout.",
+  "valid": [
+    {
+      "name": "mainnet inscription (fixtures/api/inscription-outpoint.json vs inscription.json satpoint)",
+      "serialized": "73285fb379038569e574137912e14d312bfc9487fe96f9347683aa64b405c6f500000000",
+      "txid_vout": "f5c605b464aa837634f996fe8794fc2b314de112791374e569850379b35f2873:0",
+      "vout": 0
+    },
+    {
+      "name": "vout 1",
+      "serialized": "abababababababababababababababababababababababababababababababab01000000",
+      "txid_vout": "abababababababababababababababababababababababababababababababab:1",
+      "vout": 1
+    },
+    {
+      "name": "vout 256 (little-endian)",
+      "serialized": "abababababababababababababababababababababababababababababababab00010000",
+      "txid_vout": "abababababababababababababababababababababababababababababababab:256",
+      "vout": 256
+    },
+    {
+      "name": "vout u32 max",
+      "serialized": "ababababababababababababababababababababababababababababababababffffffff",
+      "txid_vout": "abababababababababababababababababababababababababababababababab:4294967295",
+      "vout": 4294967295
+    },
+    {
+      "name": "uppercase input normalises to lowercase",
+      "serialized": "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF2A000000",
+      "txid_vout": "efcdab8967452301efcdab8967452301efcdab8967452301efcdab8967452301:42",
+      "vout": 42
+    },
+    {
+      "name": "wallet inscription",
+      "serialized": "70149b8954783f0996e4bf01582bc74bdb78c93aa3b2d4ae70fb2965170b9ea200000000",
+      "txid_vout": "a29e0b176529fb70aed4b2a33ac978db4bc72b5801bfe496093f7854899b1470:0",
+      "vout": 0
+    }
+  ],
+  "passthrough": [
+    {
+      "input": "33d3057475e332a278ae0376408490c52a6cab506588b88d3690fabc974e11e9:0",
+      "expected": "33d3057475e332a278ae0376408490c52a6cab506588b88d3690fabc974e11e9:0"
+    },
+    {
+      "input": "33D3057475E332A278AE0376408490C52A6CAB506588B88D3690FABC974E11E9:12",
+      "expected": "33d3057475e332a278ae0376408490c52a6cab506588b88d3690fabc974e11e9:12"
+    }
+  ],
+  "roundtrip": [
+    {
+      "txid_vout": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef:4294967295",
+      "serialized": "efcdab8967452301efcdab8967452301efcdab8967452301efcdab8967452301ffffffff"
+    },
+    {
+      "txid_vout": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef:0",
+      "serialized": "efcdab8967452301efcdab8967452301efcdab8967452301efcdab896745230100000000"
+    },
+    {
+      "txid_vout": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210:7",
+      "serialized": "1032547698badcfe1032547698badcfe1032547698badcfe1032547698badcfe07000000"
+    }
+  ],
+  "invalid_serialized": [
+    "abc",
+    "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+    "",
+    "abababababababababababababababababababababababababababababababab0100000",
+    "abababababababababababababababababababababababababababababababab010000000",
+    "nope",
+    "abababababababababababababababababababababababababababababababab:",
+    "abababababababababababababababababababababababababababababababab:x"
+  ],
+  "invalid_txid_vout": [
+    "nope",
+    "abababababababababababababababababababababababababababababababab:4294967296",
+    "ababababababababababababababababababababababababababababababab:0"
+  ]
+}

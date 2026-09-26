@@ -1,0 +1,50 @@
+{
+  "description": "x-ow-client header value for an appName. {sdk} is the implementation token: ow-cli/<version> (TypeScript) or ordinalswallet-rs/<version> (Rust). User-Agent is always just {sdk}.",
+  "header": "x-ow-client",
+  "sdk_tokens": {
+    "typescript": "ow-cli/<package version>",
+    "rust": "ordinalswallet-rs/<crate version>"
+  },
+  "cases": [
+    {
+      "name": "no appName",
+      "app_name": null,
+      "expected": "{sdk}"
+    },
+    {
+      "name": "empty",
+      "app_name": "",
+      "expected": "{sdk}"
+    },
+    {
+      "name": "blank",
+      "app_name": "   ",
+      "expected": "{sdk}"
+    },
+    {
+      "name": "tabs and newlines only",
+      "app_name": "\t\n ",
+      "expected": "{sdk}"
+    },
+    {
+      "name": "single token",
+      "app_name": "my-bot/1.2",
+      "expected": "my-bot/1.2 {sdk}"
+    },
+    {
+      "name": "multiple tokens",
+      "app_name": "svc/2.0 worker/3",
+      "expected": "svc/2.0 worker/3 {sdk}"
+    },
+    {
+      "name": "collapses and trims whitespace",
+      "app_name": "  a/1   b/2 ",
+      "expected": "a/1 b/2 {sdk}"
+    },
+    {
+      "name": "tabs become single spaces",
+      "app_name": "a/1\t\tb/2\n",
+      "expected": "a/1 b/2 {sdk}"
+    }
+  ]
+}

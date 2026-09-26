@@ -1,20 +1,20 @@
 import { http, HttpResponse } from 'msw'
 // Fixtures are real, trimmed responses from turbo.ordinalswallet.com (GET only).
-import walletFx from './fixtures/wallet.json' with { type: 'json' }
-import walletInscriptionsFx from './fixtures/wallet-inscriptions.json' with { type: 'json' }
-import walletBalanceFx from './fixtures/wallet-balance.json' with { type: 'json' }
-import alkanesBalanceFx from './fixtures/alkanes-balance.json' with { type: 'json' }
-import alkanesOutpointsFx from './fixtures/alkanes-outpoints.json' with { type: 'json' }
-import runeBalanceFx from './fixtures/rune-balance.json' with { type: 'json' }
-import brc20BalanceFx from './fixtures/brc20-balance.json' with { type: 'json' }
-import inscriptionFx from './fixtures/inscription.json' with { type: 'json' }
-import inscriptionOutpointFx from './fixtures/inscription-outpoint.json' with { type: 'json' }
-import collectionFx from './fixtures/collection.json' with { type: 'json' }
-import collectionStatsFx from './fixtures/collection-stats.json' with { type: 'json' }
-import escrowsFx from './fixtures/escrows.json' with { type: 'json' }
-import soldEscrowsFx from './fixtures/sold-escrows.json' with { type: 'json' }
-import searchCollectionsFx from './fixtures/search-collections.json' with { type: 'json' }
-import searchUrlFx from './fixtures/search-url.json' with { type: 'json' }
+import walletFx from '../../../fixtures/api/wallet.json' with { type: 'json' }
+import walletInscriptionsFx from '../../../fixtures/api/wallet-inscriptions.json' with { type: 'json' }
+import walletBalanceFx from '../../../fixtures/api/wallet-balance.json' with { type: 'json' }
+import alkanesBalanceFx from '../../../fixtures/api/alkanes-balance.json' with { type: 'json' }
+import alkanesOutpointsFx from '../../../fixtures/api/alkanes-outpoints.json' with { type: 'json' }
+import runeBalanceFx from '../../../fixtures/api/rune-balance.json' with { type: 'json' }
+import brc20BalanceFx from '../../../fixtures/api/brc20-balance.json' with { type: 'json' }
+import inscriptionFx from '../../../fixtures/api/inscription.json' with { type: 'json' }
+import inscriptionOutpointFx from '../../../fixtures/api/inscription-outpoint.json' with { type: 'json' }
+import collectionFx from '../../../fixtures/api/collection.json' with { type: 'json' }
+import collectionStatsFx from '../../../fixtures/api/collection-stats.json' with { type: 'json' }
+import escrowsFx from '../../../fixtures/api/escrows.json' with { type: 'json' }
+import soldEscrowsFx from '../../../fixtures/api/sold-escrows.json' with { type: 'json' }
+import searchCollectionsFx from '../../../fixtures/api/search-collections.json' with { type: 'json' }
+import searchUrlFx from '../../../fixtures/api/search-url.json' with { type: 'json' }
 
 const BASE = 'https://turbo.ordinalswallet.com'
 
