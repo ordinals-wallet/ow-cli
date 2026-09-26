@@ -1,0 +1,58 @@
+{
+ "valuations": [
+  {
+   "slug": "bitcoin-puppets",
+   "fair_sats": 1601329.7006435844,
+   "fair_usd": 1347.3376725694634,
+   "low_sats": 1300940.7723297682,
+   "low_usd": 1094.594393420072,
+   "high_sats": 2045220.0,
+   "high_usd": 1720.8211110959999,
+   "confidence": 0.5381973803836284,
+   "method": "discounted-floor",
+   "tape_source": "global",
+   "inputs": {
+    "best_bid_sats": null,
+    "floor_sats": 2045220.0,
+    "tape_sats": 1600500.0,
+    "bid_depth": 0,
+    "trades_7d": 136,
+    "trades_30d": 268,
+    "median_7d_sats": 1600500.0,
+    "median_30d_sats": 1229850.0,
+    "last_sale_sats": 1745546.0,
+    "last_sale_ts": 1790420677.0
+   },
+   "supply": 10001.0,
+   "marketcap_sats": 16014898336.136488,
+   "marketcap_usd": 13474724.063367203
+  },
+  {
+   "slug": "nodemonkes",
+   "fair_sats": 2910952.0034407205,
+   "fair_usd": 2449.2365911285765,
+   "low_sats": 2357252.7383371266,
+   "low_usd": 1983.361338300712,
+   "high_sats": 3274431.0,
+   "high_usd": 2755.0630209108,
+   "confidence": 0.5302164624959231,
+   "method": "discounted-floor",
+   "tape_source": "global",
+   "inputs": {
+    "best_bid_sats": null,
+    "floor_sats": 3274431.0,
+    "tape_sats": 2924112.0,
+    "bid_depth": 0,
+    "trades_7d": 30,
+    "trades_30d": 132,
+    "median_7d_sats": 2924112.0,
+    "median_30d_sats": 2895000.0,
+    "last_sale_sats": 2909112.0,
+    "last_sale_ts": 1790402845.0
+   },
+   "supply": 10000.0,
+   "marketcap_sats": 29109520034.407204,
+   "marketcap_usd": 24492365.911285765
+  }
+ ]
+}

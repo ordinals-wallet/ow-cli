@@ -1,0 +1,27 @@
+{
+ "slug": "bitcoin-puppets",
+ "fair_sats": 1601329.6603121958,
+ "fair_usd": 1347.3376386351654,
+ "low_sats": 1300940.978527422,
+ "low_usd": 1094.5945669120563,
+ "high_sats": 2045220.0,
+ "high_usd": 1720.8211110959999,
+ "confidence": 0.5381978325799321,
+ "method": "discounted-floor",
+ "tape_source": "global",
+ "inputs": {
+  "best_bid_sats": null,
+  "floor_sats": 2045220.0,
+  "tape_sats": 1600500.0,
+  "bid_depth": 0,
+  "trades_7d": 136,
+  "trades_30d": 268,
+  "median_7d_sats": 1600500.0,
+  "median_30d_sats": 1229850.0,
+  "last_sale_sats": 1745546.0,
+  "last_sale_ts": 1790420677.0
+ },
+ "supply": 10001.0,
+ "marketcap_sats": 16014897932.78227,
+ "marketcap_usd": 13474723.72399029
+}

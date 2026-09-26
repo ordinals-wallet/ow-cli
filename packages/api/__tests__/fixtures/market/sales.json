@@ -1,0 +1,38 @@
+{
+ "sales": [
+  {
+   "block_height": 968675,
+   "block_timestamp": 1790420677,
+   "inscription_id": "c31afa96aaad21f63385020163d6a41ccd9697dd24a449bd9325d2bad95c6ea6i0",
+   "sequence_number": 53513613,
+   "old_satpoint": "98b8f1848141b8b44e87b18bdba0361edba8f90f4768f9216e38721a108b01ed:9:0",
+   "new_satpoint": "1234376013f085024d47d5a50d1665474978e8f4aef4d0ce4e47f5779a290c4c:0:0",
+   "txid": "1234376013f085024d47d5a50d1665474978e8f4aef4d0ce4e47f5779a290c4c",
+   "inscriptions_in_tx": 1,
+   "sighash": 129,
+   "marketplace": 2,
+   "signals": 9,
+   "seller_address": "bc1qxsxpajwf53ykeva9kyc9a8x3vugvpr2r8gtn7z",
+   "buyer_address": "bc1qxysukuzgp0g8ccexmapnhlhal5pyzffqrx49kjs7zcjgwqxlw8lqw8ey8l",
+   "price_sats": 1745546
+  },
+  {
+   "block_height": 968646,
+   "block_timestamp": 1790400988,
+   "inscription_id": "70c0f490b3ce1418b66364281921d05ed2d736325422e0eabd466bc8c0dfe433i0",
+   "sequence_number": 53562250,
+   "old_satpoint": "795341d26c79d7014b2f690086c0d6ab27e6721989ab9bd00dd76ffb65667773:0:0",
+   "new_satpoint": "b07eec6787ccfc0e56825fc3a031c019d6fa755bf016f246b6d8ac09c5ed4555:0:0",
+   "txid": "b07eec6787ccfc0e56825fc3a031c019d6fa755bf016f246b6d8ac09c5ed4555",
+   "inscriptions_in_tx": 1,
+   "sighash": 1,
+   "marketplace": 2,
+   "signals": 16,
+   "seller_address": "3JW7qpiPwxMHpgRxMPwAgbbmsaJoibhnJn",
+   "buyer_address": "bc1pgcdznqzvxh5xsf8epmwu9ehfx7y2cq2laqua00tzdacjh48sl5ks370mpe",
+   "price_sats": 1503000
+  }
+ ],
+ "has_more": true,
+ "matched_inscriptions": 9059
+}

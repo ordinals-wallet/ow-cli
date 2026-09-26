@@ -1,0 +1,22 @@
+{
+ "address": "bc1qxysukuzgp0g8ccexmapnhlhal5pyzffqrx49kjs7zcjgwqxlw8lqw8ey8l",
+ "sales": [
+  {
+   "block_height": 968675,
+   "block_timestamp": 1790420677,
+   "inscription_id": "c31afa96aaad21f63385020163d6a41ccd9697dd24a449bd9325d2bad95c6ea6i0",
+   "sequence_number": 53513613,
+   "old_satpoint": "98b8f1848141b8b44e87b18bdba0361edba8f90f4768f9216e38721a108b01ed:9:0",
+   "new_satpoint": "1234376013f085024d47d5a50d1665474978e8f4aef4d0ce4e47f5779a290c4c:0:0",
+   "txid": "1234376013f085024d47d5a50d1665474978e8f4aef4d0ce4e47f5779a290c4c",
+   "sighash": 129,
+   "marketplace": 0,
+   "signals": 9,
+   "price_sats": 1745546,
+   "role": "buyer",
+   "seller_address": "bc1qxsxpajwf53ykeva9kyc9a8x3vugvpr2r8gtn7z",
+   "buyer_address": "bc1qxysukuzgp0g8ccexmapnhlhal5pyzffqrx49kjs7zcjgwqxlw8lqw8ey8l"
+  }
+ ],
+ "has_more": false
+}

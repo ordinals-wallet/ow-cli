@@ -1,0 +1,105 @@
+{
+ "scope": "@home",
+ "version": 1790440941785130,
+ "tip": 968710,
+ "built_at": 1790441007366,
+ "rows": [
+  {
+   "alkane_trade": {
+    "side": "sell",
+    "asset_id": "4:8888",
+    "asset_name": "SLICE",
+    "amount": 0.74892458,
+    "txid": "0fbe5d4c96016694c9d856e9859316a4d61b94c0c9f32c6a5d92a18fb1608f10",
+    "swapper": null
+   },
+   "collection": {
+    "slug": "alkane-4:8888",
+    "name": "SLICE",
+    "icon": "https://media.ordinalswallet.com/1daea256173fa955d4d17d508c415b8edac19bba8966521b2710439f2f23c5d3.png"
+   },
+   "escrow": {
+    "satoshi_price": 8305,
+    "bought_at": "2026-09-26T16:42:22+00:00",
+    "purchase_txid": "0fbe5d4c96016694c9d856e9859316a4d61b94c0c9f32c6a5d92a18fb1608f10"
+   },
+   "price_sats": 8305,
+   "marketplace": 100,
+   "source": "mempool",
+   "estimate": "min_out",
+   "key": "alk:0fbe5d4c96016694c9d856e9859316a4d61b94c0c9f32c6a5d92a18fb1608f10:4:8888:sell",
+   "status": "pending",
+   "ts": 1790440942000,
+   "txid": "0fbe5d4c96016694c9d856e9859316a4d61b94c0c9f32c6a5d92a18fb1608f10",
+   "seen": 1790440973347
+  },
+  {
+   "alkane_trade": {
+    "side": "buy",
+    "asset_id": "2:69",
+    "asset_name": "FARTANE",
+    "amount": 1683128190.28205,
+    "txid": "0901ecf7af7432f948d2b608db467f9498d3bfc9463702f00cac86e6bfc7a773",
+    "swapper": null
+   },
+   "collection": {
+    "slug": "alkane-2:69",
+    "name": "FARTANE",
+    "icon": "https://media.ordinalswallet.com/0faaea316582f1a73b136ad67c695acc47118fdefb45472168f58d1ce97b9b71.svg"
+   },
+   "escrow": {
+    "satoshi_price": 47542,
+    "bought_at": "2026-09-26T16:42:22+00:00",
+    "purchase_txid": "0901ecf7af7432f948d2b608db467f9498d3bfc9463702f00cac86e6bfc7a773"
+   },
+   "price_sats": 47542,
+   "marketplace": 100,
+   "source": "mempool",
+   "estimate": null,
+   "key": "alk:0901ecf7af7432f948d2b608db467f9498d3bfc9463702f00cac86e6bfc7a773:2:69:buy",
+   "status": "pending",
+   "ts": 1790440942000,
+   "txid": "0901ecf7af7432f948d2b608db467f9498d3bfc9463702f00cac86e6bfc7a773",
+   "seen": 1790440973347
+  },
+  {
+   "id": null,
+   "num": null,
+   "content_type": null,
+   "meta": null,
+   "collection": {
+    "name": "MAGIC\u2022INTERNET\u2022MONEY",
+    "description": null,
+    "slug": "rune-MAGIC\u2022INTERNET\u2022MONEY",
+    "creator_address": null,
+    "floor_price": null,
+    "icon": "",
+    "icon_inscription": {
+     "id": "b84a1dd3cfb9ebb26f240afe7f17bf73f8a1b6cc9774ea26e360fbe077a26669i0",
+     "content_type": "no_content_type"
+    }
+   },
+   "escrow": {
+    "protected": false,
+    "satoshi_price": 2057025,
+    "seller_address": "bc1pnpevwa943uuam8sh49jsvvs5q8mcmh32sq8uf05tchytqd64ctqs992wey",
+    "buyer_address": "bc1par2vcu6wn8vvtqqlzq3kpg5fwmpkfu5gu04pu5lcrx4mfnnw07msfqwplg",
+    "bought_at": "2026-09-26 16:37:33+00:00",
+    "purchase_txid": "fb2c83f08d6304a551eda559ccf99b83605f22df758ebad4eee1d3d535f4cad2",
+    "private_relay": false
+   },
+   "marketplace": 12,
+   "amount": "2835900",
+   "rune_id": "840000:45",
+   "price_sats": 2057025,
+   "key": "x:a:fb2c83f08d6304a551eda559ccf99b83605f22df758ebad4eee1d3d535f4cad2:840000:45:\"2835900\":2057025",
+   "source": "global",
+   "status": "confirmed",
+   "ts": 1790440653000,
+   "block_height": 968710,
+   "txid": "fb2c83f08d6304a551eda559ccf99b83605f22df758ebad4eee1d3d535f4cad2",
+   "seen": 1790440653000
+  }
+ ],
+ "next": "2~1790427962000000~74783a343034363430396265336663626238653538383835363635633065373464373438383961636233653165316534376235353638616530626334376466663838383a3633336235313238646431663237656261393132306234393562326531636433613337636564646435393837383132623161616130663565666265336534356269323139~6~968682"
+}

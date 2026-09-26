@@ -3,6 +3,7 @@ import { setClient } from '@ow-cli/api'
 import { CLI_APP_NAME, CLI_VERSION } from './version.js'
 import { registerWalletCommands } from './commands/wallet.js'
 import { registerCollectionCommands } from './commands/collection.js'
+import { registerCollectionMarketCommands } from './commands/collection-market.js'
 import { registerInscriptionCommands } from './commands/inscription.js'
 import { registerMarketCommands } from './commands/market.js'
 import { registerSendCommand } from './commands/send.js'
@@ -29,6 +30,7 @@ program
 
 registerWalletCommands(program)
 registerCollectionCommands(program)
+registerCollectionMarketCommands(program)
 registerInscriptionCommands(program)
 registerMarketCommands(program)
 registerSendCommand(program)
