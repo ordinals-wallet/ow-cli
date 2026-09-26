@@ -43,3 +43,20 @@ export type * from './types-sales.js'
 export type * from './types-feeds.js'
 export type * from './types-quotes.js'
 export type { SseEvent, SubscribeHandlers, SubscribeOptions, Unsubscribe } from './stream.js'
+export * as auth from './auth.js'
+export { SessionManager, AuthError, signInMessage } from './auth.js'
+export type { SessionManagerOptions, SignInParams } from './auth.js'
+export type * from './types-auth.js'
+export * as offers from './offers.js'
+export {
+  OfferError,
+  OfferExpiredError,
+  OfferNotActiveError,
+  OfferItemMovedError,
+  OfferNotOwnerError,
+  OfferItemNotEligibleError,
+  OfferAttemptPendingError,
+  OfferUnauthorizedError,
+  offerErrorFromCode,
+} from './offers.js'
+export type * from './types-offers.js'
