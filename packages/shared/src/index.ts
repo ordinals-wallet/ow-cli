@@ -66,3 +66,6 @@ export { buildBrc20Payload, splitAmount } from './brc20.js'
 
 // TAP
 export { buildTapPayload } from './tap.js'
+
+// Wallet sign-in
+export { keypairAddress, keypairMessageSigner, signInWithKey, sessionManagerForKey } from './auth.js'
