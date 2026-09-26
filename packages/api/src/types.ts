@@ -1,13 +1,86 @@
 // Wallet types
 
+/**
+ * Where an inscription sits, as returned by wallet endpoints. `outpoint` is
+ * the 72-hex serialized form; convert it with `outpointToTxidVout()`.
+ */
+export interface SerializedOutpoint {
+  /** 72 hex chars: txid little-endian + vout u32 little-endian. */
+  outpoint: string
+  /** Offset of the inscribed sat inside the output. */
+  sat_offset: number
+  /** Value of the output holding the inscription, in sats. */
+  sats: number
+}
+
+/** Icon inscription reference attached to collections. */
+export interface IconInscription {
+  id: string
+  content_type: string
+}
+
+/** Collection summary embedded in inscription and wallet responses. */
+export interface InscriptionCollectionRef {
+  slug: string
+  name: string
+  description?: string | null
+  creator_address?: string | null
+  floor_price?: number | null
+  icon?: string | null
+  icon_inscription?: IconInscription | null
+}
+
+/** Collection summary embedded in token balance rows (runes, BRC-20, alkanes). */
+export interface TokenCollectionRef {
+  slug: string
+  name?: string
+  icon?: string | null
+  icon_inscription?: IconInscription | null
+  floor_price_per?: number | null
+}
+
+export interface InscriptionAttribute {
+  trait_type: string
+  value: string
+  percent?: number | null
+}
+
+export interface InscriptionMeta {
+  name?: string
+  attributes?: InscriptionAttribute[]
+  rank?: number | null
+  [key: string]: unknown
+}
+
+/** Listing summary embedded in wallet inscriptions. Has no listing id. */
+export interface WalletInscriptionEscrow {
+  satoshi_price: number
+  seller_address?: string
+  buyer_address?: string | null
+  purchase_txid?: string | null
+  /** `null` or `""` when unsold. */
+  bought_at?: string | null
+  protected?: boolean
+  private_relay?: boolean
+  /** @deprecated Not returned by wallet endpoints. */
+  id?: string
+}
+
 export interface WalletInscription {
   id: string
   num: number
   content_type: string
-  meta?: { name?: string; [key: string]: unknown }
-  collection?: { slug: string; name: string }
-  escrow?: { id: string; satoshi_price: number } | null
-  outpoint?: string
+  meta?: InscriptionMeta | null
+  collection?: InscriptionCollectionRef | null
+  collection_slugs?: string[]
+  escrow?: WalletInscriptionEscrow | null
+  /**
+   * Location of the inscription. `outpoint.outpoint` is serialized (72 hex),
+   * not `txid:vout`: use `outpointToTxidVout()`.
+   */
+  outpoint?: SerializedOutpoint | null
+  /** A sale of this item is in the mempool. */
+  pending_sale?: boolean
 }
 
 export interface Brc20Balance {
@@ -15,20 +88,34 @@ export interface Brc20Balance {
   overall_balance: string
   available_balance: string
   transferable_balance: string
-  collection?: { slug: string; name: string } | null
+  collection?: TokenCollectionRef | null
 }
 
-export interface WalletInfo {
-  address: string
+/** Balance fields shared by `/wallet/:address` and `/wallet/:address/balance`. All in sats. */
+export interface WalletBalance {
+  /** Confirmed balance. */
   balance: number
-  unconfirmed_balance: number
   confirmed_balance: number
+  /** Pending in the mempool. */
+  unconfirmed_balance: number
+  /** Sats sitting in outputs that hold inscriptions. */
   inscription_balance: number
+  /** Sats in outputs holding inscriptions or runes. Not safe to spend as plain BTC. */
   frozen_balance: number
-  inscription_count: number
+  /** Spendable outputs. */
   utxo_count: number
+  private_pending_incoming?: number
+  private_pending_outgoing?: number
+  private_pending_net?: number
+}
+
+export interface WalletInfo extends WalletBalance {
   inscriptions: WalletInscription[]
   brc20: Brc20Balance[]
+  /** @deprecated Never returned by the API; use the address you requested. */
+  address?: string
+  /** @deprecated Never returned by the API; use `inscriptions.length`. */
+  inscription_count?: number
 }
 
 export interface Utxo {
@@ -49,32 +136,85 @@ export interface InscriptionDetail {
   num: number
   content_type: string
   content_length: number
+  effective_content_type?: string
+  delegate?: string | null
+  /** Unix seconds. */
+  created?: number
   genesis_height: number
   genesis_fee: number
   sat: { value: number; rarity: string } | null
-  meta?: { name?: string; [key: string]: unknown }
-  collection?: { slug: string; name: string } | null
+  /** Owner at the time of caching. For live ownership use `getInscriptionOutpoint()`. */
+  address?: string
+  /** Value of the output holding the inscription, in sats. */
+  value?: number
+  /** `<txid>:<vout>:<offset>`. */
+  satpoint?: string
+  charms?: string[]
+  parents?: string[]
+  meta?: InscriptionMeta | null
+  collection?: InscriptionCollectionRef | null
+  collections?: InscriptionCollectionRef[]
+  escrow?: WalletInscriptionEscrow | null
+  /** @deprecated Not returned by `/inscription/:id`; use `satpoint` or `getInscriptionOutpoint()`. */
   outpoint?: string
+}
+
+/** `GET /inscription/:id/outpoint`: live location and owner of an inscription. */
+export interface InscriptionOutpoint {
+  inscription: {
+    id: string
+    sat_offset: number
+    /** Serialized (72 hex). Use `outpointToTxidVout()`. */
+    outpoint: string
+    address: string
+    sats: number
+  }
+  owner: string
+  sats: number
+  escrow: Partial<Escrow> | null
 }
 
 export interface RuneBalance {
   name: string
   rune_id: string
+  /** Whole units. */
   amount: string
   symbol: string
   divisibility: number
-  collection?: { slug: string; name: string } | null
+  collection?: TokenCollectionRef | null
 }
 
+/** One row of `GET /wallet/:address/alkanes-balance`. Balances are decimal strings in whole units. */
 export interface AlkanesBalance {
+  ticker: string
+  /** Alkane id, `block:tx`. */
   rune_id: string
-  id: string
+  /** Always `"alkanes"` today. */
+  type: string
+  divisibility: number
+  overall_balance: string
+  available_balance: string
+  transferable_balance: string
+  collection?: TokenCollectionRef | null
+  /** @deprecated Never returned; use `rune_id`. */
+  id?: string
+  /** @deprecated Never returned; use `overall_balance`. */
+  balance?: string
+}
+
+/**
+ * One coin holding an alkane or rune, from
+ * `GET /wallet/:address/alkanes-outpoints/:id` or `/rune-outpoints/:id`.
+ */
+export interface TokenOutpoint {
+  rune_id: string
+  /** `txid:vout`. */
   outpoint: string
+  /** Whole units held in this output. */
   amount: string
-  balance: string
   address: string
   sats: number
-  escrow?: boolean
+  escrow: Partial<Escrow> | null
 }
 
 export interface FeeEstimates {
@@ -93,38 +233,82 @@ export interface BroadcastResult {
 
 // Collection types
 export interface CollectionMetadata {
+  id?: string
   slug: string
   name: string
-  description: string
-  image_url: string
-  banner_url: string
-  supply: number
-  icon?: string
+  description: string | null
+  icon?: string | null
+  icon_inscription?: IconInscription | null
   active?: boolean
-  total_supply?: number
+  verified?: boolean
+  total_supply?: number | null
   socials?: Record<string, string>
-  creator_address?: string
+  creator_address?: string | null
+  gallery_inscription_id?: string | null
+  highest_inscription_num?: number | null
+  lowest_inscription_num?: number | null
+  sponsored_priority?: number
+  featured_priority?: number
+  /** Fair value in sats. See docs: Fair value. */
+  fair_sats?: number | null
+  /** 7-day change of fair value, in percent. */
+  change_week_fair?: number | null
+  /** @deprecated Never returned by the API; use `icon`. */
+  image_url?: string
+  /** @deprecated Never returned by the API. */
+  banner_url?: string
+  /** @deprecated Never returned by the API; use `total_supply`. */
+  supply?: number
 }
 
+/**
+ * A listing ("escrow") or, from `/sold-escrows`, a completed sale on
+ * Ordinals Wallet.
+ */
 export interface Escrow {
   id: string
-  inscription_id: string
-  name?: string
+  /** `null` for fungible (rune) sales. */
+  inscription_id: string | null
+  name?: string | null
+  /** `txid:vout` holding the item. */
   outpoint?: string
-  seller_address?: string
-  buyer_address?: string
+  /** Asking / sale price in sats. */
   satoshi_price: number
-  price: number
-  seller?: string
-  buyer?: string
+  seller_address?: string
+  buyer_address?: string | null
+  purchase_txid?: string | null
+  /** ISO timestamp (UTC). `null` or `""` when unsold. */
+  bought_at?: string | null
+  /** ISO timestamp (UTC). */
   created?: string
-  price_per?: number
-  amount?: number
+  creator_address?: string | null
+  /** Unit price for fungible assets, decimal string. `""` for single inscriptions. */
+  price_per?: string
+  /** Quantity for fungible assets, decimal string. `""` for single inscriptions. */
+  amount?: string
+  /** Listed / settled with snipe protection. */
+  protected?: boolean
+  /** Purchases are relayed privately to miners (BRC-20, TAP). */
+  private_relay?: boolean
+  /** `2` for protected listings, otherwise `null`. */
+  secure_purchase_version?: number | null
+  /** e.g. `"listed"`, `"broadcast"`, `"settled"`. */
+  secure_purchase_state?: string | null
+  /** Venue id for rune sales from other marketplaces. */
+  marketplace?: number
+  /** @deprecated Never returned by the API; use `satoshi_price`. */
+  price?: number
+  /** @deprecated Never returned by the API; use `seller_address`. */
+  seller?: string
+  /** @deprecated Never returned by the API; use `buyer_address`. */
+  buyer?: string
 }
 
 export interface CollectionStats {
+  id?: string
   total_supply?: number | null
   floor_price: number | null
+  floor_price_per?: number | null
   volume_total?: number | null
   volume_day?: number | null
   listed?: number | null
@@ -132,6 +316,12 @@ export interface CollectionStats {
   sales?: number | null
   owners?: number | null
   total_volume?: number | null
+}
+
+export interface SoldEscrowsParams {
+  /** Results per page, max 100. API default 100. */
+  limit?: number
+  offset?: number
 }
 
 // Market types
@@ -334,11 +524,30 @@ export interface BroadcastBulkResult {
 export interface SearchCollection {
   slug: string
   name: string
-  icon?: string
+  icon?: string | null
+  description?: string | null
+  total_supply?: number | null
+  verified?: boolean
+  floor_price?: number | null
+  floor_price_per?: number | null
+  listed?: number | null
+  volume_week?: number | null
+  global_volume_day?: number | null
+  fair_sats?: number | null
+  change_week_fair?: number | null
+  [key: string]: unknown
 }
 
+/**
+ * `GET /v2/search/:query`. Free text returns `collections`; an inscription
+ * id/number, txid, address or rune id returns `url` (an ordinalswallet.com
+ * path). `search()` maps the API's 404 "no match" to `{ collections: [] }`.
+ */
 export interface SearchResult {
-  collections: SearchCollection[]
-  inscriptions: Inscription[]
-  addresses: string[]
+  collections?: SearchCollection[]
+  url?: string
+  /** @deprecated Never returned by the API. */
+  inscriptions?: Inscription[]
+  /** @deprecated Never returned by the API. */
+  addresses?: string[]
 }

@@ -1,0 +1,32 @@
+[
+  {
+    "ticker": "DIESEL",
+    "overall_balance": "125",
+    "transferable_balance": "0",
+    "available_balance": "125",
+    "rune_id": "2:0",
+    "divisibility": 8,
+    "type": "alkanes",
+    "collection": {
+      "name": "DIESEL",
+      "slug": "alkane-2:0",
+      "icon": "https://media.ordinalswallet.com/9fb4d725208bbb6e1c019abb8bfbb83ba8466d0700dcd25125b4fb8a8a43103d.png",
+      "icon_inscription": null
+    }
+  },
+  {
+    "ticker": "METHANE",
+    "overall_balance": "170000",
+    "transferable_balance": "0",
+    "available_balance": "170000",
+    "rune_id": "2:16",
+    "divisibility": 8,
+    "type": "alkanes",
+    "collection": {
+      "name": "METHANE",
+      "slug": "alkane-2:16",
+      "icon": "https://media.ordinalswallet.com/aa7c440030b7020940e12b36c77046508fdca1ba68b14256e960bcf873f700f6.svg",
+      "icon_inscription": null
+    }
+  }
+]

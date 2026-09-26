@@ -1,0 +1,24 @@
+{
+  "id": "7b7af1ca-bdc6-408f-a6db-b6cc20269046",
+  "name": "Bitcoin Puppets",
+  "icon": "https://ord-mirror.magiceden.dev/content/170e13d878efecabbe2f3f31fedf28bc16c31d0ee4292c61829d43a067627ae5i0",
+  "icon_inscription": null,
+  "description": "Not intended for use as anything but art. No roadmap, promises or guarantees or ",
+  "slug": "bitcoin-puppets",
+  "active": true,
+  "sponsored_priority": 0,
+  "featured_priority": 999,
+  "highest_inscription_num": 55543825,
+  "lowest_inscription_num": 53105612,
+  "total_supply": 10001,
+  "socials": {
+    "discord": "",
+    "twitter": "https://x.com/foufoufou67",
+    "website": ""
+  },
+  "creator_address": null,
+  "gallery_inscription_id": null,
+  "verified": false,
+  "change_week_fair": 82.12861635012925,
+  "fair_sats": 1859614.0715047822
+}

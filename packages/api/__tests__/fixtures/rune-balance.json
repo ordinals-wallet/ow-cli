@@ -1,0 +1,32 @@
+[
+  {
+    "rune_id": "840011:56",
+    "name": "AI•ETCHED•THIS•RUNE",
+    "symbol": "🤖",
+    "amount": "10000000000",
+    "divisibility": 0,
+    "collection": {
+      "slug": "rune-AI•ETCHED•THIS•RUNE",
+      "icon": "",
+      "icon_inscription": {
+        "id": "a9bf0ba21e3d6b122edd47e69e3d6a2ee1d226aac2cd4ff52f9f6b67303629a5i0",
+        "content_type": "no_content_type"
+      }
+    }
+  },
+  {
+    "rune_id": "840000:1229",
+    "name": "ANARCHO•CATBUS",
+    "symbol": "🖕",
+    "amount": "2100",
+    "divisibility": 10,
+    "collection": {
+      "slug": "rune-ANARCHO•CATBUS",
+      "icon": "",
+      "icon_inscription": {
+        "id": "380f0cd74137004b4cbfc9748e9f6ef301b64b75fbbcdfd1197fc7697e8ec61di0",
+        "content_type": "text/plain;charset=utf-8"
+      }
+    }
+  }
+]

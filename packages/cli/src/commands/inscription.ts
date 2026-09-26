@@ -1,15 +1,20 @@
 import { Command } from 'commander'
 import { readFileSync } from 'node:fs'
-import * as btc from '@scure/btc-signer'
 import * as api from '@ow-cli/api'
 import type { WalletInscription } from '@ow-cli/api'
-import { hexToBytes, bytesToHex } from '@ow-cli/core'
 import { requirePublicInfo, unlockKeypair } from '../keystore.js'
 import { promptPassword, requireConfirm } from '../utils/prompts.js'
-import { formatJson, formatTable, formatSats } from '../output.js'
+import { formatJson } from '../output.js'
 import { CliError, handleError } from '../utils/errors.js'
 import { validateInscriptionId, validateAddress, validateFeeRate } from '../utils/validate.js'
 import { signBroadcastAndPrint } from '../utils/tx.js'
+import {
+  buildInscriptionMap,
+  decodePsbtPreview,
+  printPsbtPreview,
+  lostToFeeWarning,
+  type PsbtPreview,
+} from '../utils/psbt-preview.js'
 
 export function registerInscriptionCommands(parent: Command): void {
   const inscription = parent.command('inscription').description('Inscription commands')
@@ -169,16 +174,8 @@ export function registerInscriptionCommands(parent: Command): void {
 
         console.log(`\nFound ${inscriptions.length} inscription(s) to strip`)
 
-        // Build inscription outpoint → label map
-        const inscriptionMap = new Map<string, string>()
-        for (const ins of inscriptions) {
-          if (ins.outpoint) {
-            const label = ins.meta?.name || ins.collection?.name
-              ? `${ins.meta?.name ?? ins.collection?.name} (#${ins.num})`
-              : ins.id
-            inscriptionMap.set(ins.outpoint, label)
-          }
-        }
+        // Build inscription outpoint (txid:vout) → label map
+        const inscriptionMap = buildInscriptionMap(inscriptions)
 
         const utxos: [string, number, number][] = cardinalUtxos.map(
           (u) => [u.txid, u.vout, u.value],
@@ -217,6 +214,7 @@ export function registerInscriptionCommands(parent: Command): void {
         } else {
           printPsbtPreview(preview, `Transaction Preview${isSingleBatch ? '' : ' (batch 1)'}`)
         }
+        refuseIfInscriptionsLost(preview)
 
         const confirmMsg = isSingleBatch
           ? 'Broadcast this transaction?'
@@ -312,15 +310,7 @@ export function registerInscriptionCommands(parent: Command): void {
         })
 
         // Build inscription map and preview
-        const inscriptionMap = new Map<string, string>()
-        for (const ins of inscriptions) {
-          if (ins.outpoint) {
-            const label = ins.meta?.name || ins.collection?.name
-              ? `${ins.meta?.name ?? ins.collection?.name} (#${ins.num})`
-              : ins.id
-            inscriptionMap.set(ins.outpoint, label)
-          }
-        }
+        const inscriptionMap = buildInscriptionMap(inscriptions)
 
         const preview = decodePsbtPreview(psbt, inscriptionMap)
 
@@ -329,6 +319,7 @@ export function registerInscriptionCommands(parent: Command): void {
         } else {
           printPsbtPreview(preview)
         }
+        refuseIfInscriptionsLost(preview)
 
         await requireConfirm('Broadcast this transaction?')
         const password = await promptPassword()
@@ -340,92 +331,12 @@ export function registerInscriptionCommands(parent: Command): void {
     })
 }
 
-function printPsbtPreview(
-  preview: ReturnType<typeof decodePsbtPreview>,
-  title = 'Transaction Preview',
-) {
-  console.log(`\n${title}`)
-  console.log('─'.repeat(40))
-
-  console.log(`\nInputs (${preview.inputs.length}):`)
-  const inputRows = preview.inputs.map((inp, i) => {
-    const shortTxid = inp.txid === 'unknown' ? 'unknown' : `${inp.txid.slice(0, 8)}…${inp.txid.slice(-4)}:${inp.vout}`
-    const label = inp.inscriptionId ?? '(fee input)'
-    return [String(i), shortTxid, formatSats(inp.value), label]
-  })
-  console.log(formatTable(['#', 'Outpoint', 'Value', 'Inscription'], inputRows))
-
-  console.log(`\nOutputs (${preview.outputs.length}):`)
-  const outputRows = preview.outputs.map((out, i) => {
-    const shortAddr = out.address === 'unknown' ? 'unknown' : `${out.address.slice(0, 8)}…${out.address.slice(-4)}`
-    let label = ''
-    if (out.inscriptions.length > 0) {
-      label = out.inscriptions.map((id) => `${id} ✓`).join(', ')
-    } else {
-      label = '(change)'
-    }
-    return [String(i), shortAddr, formatSats(out.value), label]
-  })
-  console.log(formatTable(['#', 'Address', 'Value', 'Inscription'], outputRows))
-
-  const changeValue = preview.outputs
-    .filter((o) => o.inscriptions.length === 0)
-    .reduce((s, o) => s + o.value, 0)
-  console.log(`\nFee: ${formatSats(preview.fee)}`)
-  if (changeValue > 0) {
-    console.log(`Change: ${formatSats(changeValue)}`)
+/** Never sign a transaction that would burn an inscription's sat as fee. */
+function refuseIfInscriptionsLost(preview: PsbtPreview): void {
+  const warning = lostToFeeWarning(preview)
+  if (warning) {
+    throw new CliError(`${warning}\nRefusing to sign. Rebuild with a lower fee rate or more funding.`)
   }
-}
-
-function decodePsbtPreview(psbtHex: string, inscriptionMap: Map<string, string>) {
-  const tx = btc.Transaction.fromPSBT(hexToBytes(psbtHex), { allowLegacyWitnessUtxo: true })
-
-  const inputs: { txid: string; vout: number; value: number; outpoint: string; inscriptionId?: string }[] = []
-  for (let i = 0; i < tx.inputsLength; i++) {
-    const inp = tx.getInput(i)
-    const txid = inp.txid ? bytesToHex(new Uint8Array(inp.txid).reverse()) : 'unknown'
-    const vout = inp.index ?? 0
-    const value = Number(inp.witnessUtxo?.amount ?? 0n)
-    const outpoint = `${txid}:${vout}`
-    inputs.push({ txid, vout, value, outpoint, inscriptionId: inscriptionMap.get(outpoint) })
-  }
-
-  const outputs: { address: string; value: number; inscriptions: string[] }[] = []
-  for (let i = 0; i < tx.outputsLength; i++) {
-    const out = tx.getOutput(i)
-    outputs.push({
-      address: tx.getOutputAddress(i) ?? 'unknown',
-      value: Number(out.amount ?? 0n),
-      inscriptions: [],
-    })
-  }
-
-  // Ordinal FIFO: trace inscription sats through inputs → outputs
-  let globalOffset = 0n
-  for (const inp of inputs) {
-    if (inp.inscriptionId) {
-      // Inscription is at sat offset 0 within its UTXO
-      const inscOffset = globalOffset
-      let cumulative = 0n
-      let found = false
-      for (const out of outputs) {
-        if (inscOffset >= cumulative && inscOffset < cumulative + BigInt(out.value)) {
-          out.inscriptions.push(inp.inscriptionId)
-          found = true
-          break
-        }
-        cumulative += BigInt(out.value)
-      }
-      if (!found) {
-        // Inscription sat fell into fee range — warn
-        outputs[outputs.length - 1]?.inscriptions.push(`⚠ ${inp.inscriptionId} (LOST TO FEE!)`)
-      }
-    }
-    globalOffset += BigInt(inp.value)
-  }
-
-  const fee = Number(globalOffset) - outputs.reduce((s, o) => s + o.value, 0)
-  return { inputs, outputs, fee }
 }
 
 export function guessContentType(filename: string): string {

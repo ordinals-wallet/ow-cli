@@ -1,0 +1,21 @@
+[
+  {
+    "id": "08b8f1ee-3f31-42e3-bfdd-14579dad772e",
+    "inscription_id": "836430e4e0ef9809a1c9101e44805967a8ab46223719e709278f075c2c13b0bei0",
+    "name": "Bitcoin Puppet #551",
+    "outpoint": "33d3057475e332a278ae0376408490c52a6cab506588b88d3690fabc974e11e9:0",
+    "purchase_txid": null,
+    "seller_address": "bc1pc5lsnv0aduycfk5pk862axux8u4je3jyh7z93rcaehl7vkg3re6qxma9lt",
+    "buyer_address": null,
+    "satoshi_price": 102774922,
+    "creator_address": null,
+    "bought_at": null,
+    "created": "2026-05-05 18:30:03.972243+00",
+    "price_per": "",
+    "amount": "",
+    "secure_purchase_version": null,
+    "secure_purchase_state": null,
+    "protected": false,
+    "private_relay": false
+  }
+]

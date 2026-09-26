@@ -9,7 +9,8 @@ import {
   bytesToHex,
 } from '@ow-cli/core'
 import * as api from '@ow-cli/api'
-import type { WalletInscription, RuneBalance, Brc20Balance, AlkanesBalance, TapToken } from '@ow-cli/api'
+import type { WalletInscription, RuneBalance, Brc20Balance, TapToken } from '@ow-cli/api'
+import { alkanesBalanceRows, ALKANES_COLUMNS } from './alkane.js'
 import { saveKeystore, requirePublicInfo, unlockKeypair, listWallets, migrateKeystore } from '../keystore.js'
 import { loadConfig, saveConfig } from '../config.js'
 import { promptPassword, promptConfirm, requireConfirm } from '../utils/prompts.js'
@@ -306,8 +307,7 @@ export function registerWalletCommands(parent: Command): void {
 
         if (alkanes.length > 0) {
           console.log('\nAlkanes:')
-          const rows = alkanes.map((t: AlkanesBalance) => [t.id || '', t.balance || ''])
-          console.log(formatTable(['ID', 'Balance'], rows))
+          console.log(formatTable(ALKANES_COLUMNS, alkanesBalanceRows(alkanes)))
         }
 
         const total = runes.length + brc20.length + tapTokens.length + alkanes.length

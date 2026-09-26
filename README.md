@@ -194,6 +194,47 @@ setClient({ appName: 'my-bot/1.2' })          // default client used by the api 
 const client = createClient({ appName: 'my-bot/1.2' }) // standalone axios instance
 ```
 
+### Errors and retries
+
+Every failed request throws an `OwApiError` with `status` (HTTP status, or `0`
+for network errors), `code?`, `message` (read from the API's `{error, message}`,
+`{error: "..."}` or plain-text bodies) and the raw `body`. Branch on `status`.
+
+Idempotent requests (GET/HEAD/OPTIONS) are retried on network errors, `429`
+and `5xx` with exponential backoff and jitter, honouring `Retry-After`. POSTs
+are never retried unless a request passes `{ owRetry: true }`.
+
+```ts
+import { setClient, isOwApiError, wallet } from '@ow-cli/api'
+
+setClient({ retries: 2, retryDelay: 300, maxDelay: 10_000 }) // defaults; retries: 0 disables
+
+try {
+  await wallet.getWallet(address)
+} catch (err) {
+  if (isOwApiError(err) && err.status === 400) console.error(err.message) // "Invalid Address"
+}
+```
+
+### Outpoints
+
+Wallet endpoints and `/inscription/:id/outpoint` return **serialized**
+outpoints (72 hex: txid little-endian + vout u32 LE), not `txid:vout`:
+
+```ts
+import { outpointToTxidVout, wallet } from '@ow-cli/api'
+
+const { inscriptions } = await wallet.getWallet(address)
+outpointToTxidVout(inscriptions[0].outpoint!.outpoint) // 'a29e0b…1470:0'
+
+const loc = await wallet.getInscriptionOutpoint(id) // live owner + location
+outpointToTxidVout(loc.inscription.outpoint)
+```
+
+Other read helpers: `wallet.getBalance`, `wallet.getWalletInscriptions`,
+`wallet.getAlkanesOutpoints`, `wallet.getRuneOutpoints`, and
+`collection.getSoldEscrows(slug, { limit, offset })`.
+
 ## Testing
 
 ```bash

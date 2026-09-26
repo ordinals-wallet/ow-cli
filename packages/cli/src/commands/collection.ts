@@ -56,7 +56,7 @@ export function registerCollectionCommands(parent: Command): void {
         }
 
         const rows = escrows.map((e: Escrow) => [
-          e.inscription_id,
+          e.inscription_id ?? '',
           e.name || '',
           formatSats(e.satoshi_price ?? e.price),
           e.seller_address || e.seller || '',
@@ -74,7 +74,7 @@ export function registerCollectionCommands(parent: Command): void {
     .option('--json', 'Output as JSON')
     .action(async (slug: string, opts) => {
       try {
-        const sold = await api.collection.getSoldEscrows(slug, parseInt(opts.limit))
+        const sold = await api.collection.getSoldEscrows(slug, { limit: parseInt(opts.limit, 10) })
 
         if (opts.json) {
           console.log(formatJson(sold))
@@ -108,6 +108,11 @@ export function registerCollectionCommands(parent: Command): void {
 
         if (opts.json) {
           console.log(formatJson(results))
+          return
+        }
+
+        if (results.url) {
+          console.log(`https://ordinalswallet.com${results.url}`)
           return
         }
 

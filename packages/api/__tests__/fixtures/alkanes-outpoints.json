@@ -1,0 +1,18 @@
+[
+  {
+    "rune_id": "2:0",
+    "outpoint": "af45e520cd8efbd7ddbd32e6c18608f5df12cb55a4ddd9ba10e55be7eedd969b:0",
+    "amount": "218.75",
+    "address": "bc1pug3gpt2supdx00yzuh4fkq98hwzxhd5nvzsec0a0adgp07mc025sfn5mhj",
+    "sats": 546,
+    "escrow": null
+  },
+  {
+    "rune_id": "2:0",
+    "outpoint": "d4df68dcc78c89c8e71364de1dd603ca1aa75da9514404a322bd0e68361a499e:0",
+    "amount": "217.53751897",
+    "address": "bc1pug3gpt2supdx00yzuh4fkq98hwzxhd5nvzsec0a0adgp07mc025sfn5mhj",
+    "sats": 546,
+    "escrow": null
+  }
+]

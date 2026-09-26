@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { CliError, handleError } from '../src/utils/errors.js'
+import { OwApiError } from '@ow-cli/api'
 
 describe('CliError', () => {
   it('should create error with message and default exit code', () => {
@@ -68,5 +69,19 @@ describe('handleError', () => {
     handleError({ cancelled: true })
     // First exit call should be 0 (silent cancellation)
     expect(mockExit).toHaveBeenNthCalledWith(1, 0)
+  })
+
+  it('should print OwApiError status and message', () => {
+    handleError(new OwApiError({ status: 400, message: 'Invalid Address', body: { error: true, message: 'Invalid Address' } }))
+    expect(mockError).toHaveBeenCalledWith('\nAPI Error: 400')
+    expect(mockError).toHaveBeenCalledWith('Message: Invalid Address')
+    expect(mockExit).toHaveBeenCalledWith(1)
+  })
+
+  it('should print OwApiError network failures', () => {
+    handleError(new OwApiError({ status: 0, code: 'ECONNRESET', message: 'socket hang up', retries: 2 }))
+    expect(mockError).toHaveBeenCalledWith('\nNetwork Error (ECONNRESET): socket hang up')
+    expect(mockError).toHaveBeenCalledWith('(after 2 retries)')
+    expect(mockExit).toHaveBeenCalledWith(1)
   })
 })

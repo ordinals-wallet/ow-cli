@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance } from 'axios'
 import { VERSION } from './version.js'
+import { DEFAULT_RETRY_OPTIONS, installRetryAndErrors } from './retry.js'
 
 const DEFAULT_BASE_URL = 'https://turbo.ordinalswallet.com'
 
@@ -20,6 +21,19 @@ export interface ClientConfig {
    * Format: one or more space-separated `<name>/<version>` product tokens.
    */
   appName?: string
+  /**
+   * Retries after the first attempt for idempotent requests (GET/HEAD/OPTIONS)
+   * that fail with a network error, 429 or 5xx. Default 2; `0` disables.
+   * POSTs are never retried unless a request opts in with `owRetry: true`.
+   */
+  retries?: number
+  /** Base backoff in ms, doubled per retry with jitter. Default 300. */
+  retryDelay?: number
+  /**
+   * Longest single wait between retries, in ms. Default 10000. `Retry-After`
+   * is honoured up to this bound; a longer one fails fast instead.
+   */
+  maxDelay?: number
 }
 
 /**
@@ -45,11 +59,17 @@ export function createClient(config?: ClientConfig): AxiosInstance {
     headers['User-Agent'] = SDK_CLIENT_TOKEN
   }
 
-  return axios.create({
+  const instance = axios.create({
     baseURL: config?.baseUrl || DEFAULT_BASE_URL,
     timeout: config?.timeout || 30000,
     headers,
   })
+  installRetryAndErrors(instance, {
+    retries: config?.retries ?? DEFAULT_RETRY_OPTIONS.retries,
+    retryDelay: config?.retryDelay ?? DEFAULT_RETRY_OPTIONS.retryDelay,
+    maxDelay: config?.maxDelay ?? DEFAULT_RETRY_OPTIONS.maxDelay,
+  })
+  return instance
 }
 
 let defaultClient: AxiosInstance | null = null
