@@ -13,6 +13,12 @@ import type {
   SubmitEscrowRequest,
   SubmitEscrowResponse,
   CancelEscrowRequest,
+  MarketListing,
+  SecurePurchaseCapabilities,
+  BuildSecurePurchaseRequest,
+  BuildSecurePurchaseResponse,
+  SubmitSecurePurchaseRequest,
+  SubmitSecurePurchaseResponse,
 } from './types.js'
 
 export async function buildPurchaseBulk(params: BuildPurchaseBulkRequest): Promise<BuildPurchaseResponse> {
@@ -59,5 +65,34 @@ export async function submitEscrow(params: SubmitEscrowRequest): Promise<SubmitE
 
 export async function cancelEscrow(params: CancelEscrowRequest): Promise<SubmitEscrowResponse> {
   const { data } = await getClient().post('/market/cancel-escrow', params)
+  return data
+}
+
+/** The live listing for an inscription, or null when it is not for sale. */
+export async function getListing(inscriptionId: string): Promise<MarketListing | null> {
+  const res = await getClient().get(`/market/escrow/${encodeURIComponent(inscriptionId)}`, {
+    validateStatus: (status) => (status >= 200 && status < 300) || status === 404,
+  })
+  if (res.status === 404 || !res.data || res.data.error) return null
+  return res.data
+}
+
+export async function getSecurePurchaseCapabilities(): Promise<SecurePurchaseCapabilities> {
+  const { data } = await getClient().get('/market/secure-purchase/capabilities')
+  if (!data || data.error || !data.secure_purchase) {
+    throw new Error(data?.message || 'Protected purchase capabilities unavailable')
+  }
+  return data.secure_purchase
+}
+
+/** Passthrough v4 build. The legacy `/wallet/purchase-bulk` cannot see protected listings. */
+export async function buildSecurePurchase(params: BuildSecurePurchaseRequest): Promise<BuildSecurePurchaseResponse> {
+  const { data } = await getClient().post('/wallet/secure-purchase/build', params)
+  return data
+}
+
+/** Hands back sale PSBTs with only the buyer's inputs signed; the marketplace co-signs and broadcasts. */
+export async function submitSecurePurchase(params: SubmitSecurePurchaseRequest): Promise<SubmitSecurePurchaseResponse> {
+  const { data } = await getClient().post('/market/secure-purchase/submit', params)
   return data
 }

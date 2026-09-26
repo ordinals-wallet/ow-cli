@@ -1,4 +1,5 @@
 import { isOwApiError } from '@ow-cli/api'
+import { PassthroughError } from '@ow-cli/core'
 
 function isDebug(): boolean {
   return process.argv.includes('--debug')
@@ -36,6 +37,14 @@ export function handleError(err: unknown): never {
   if (err instanceof Error) {
     if (err.message.includes('Unsupported state or unable to authenticate')) {
       console.error('Error: Invalid password')
+      process.exit(1)
+    }
+
+    // Protected-trading refusals (local verification or a mapped API code):
+    // the code is stable and the message is already user-facing.
+    if (err instanceof PassthroughError) {
+      console.error(`Error [${err.code}]: ${err.message}`)
+      if (isDebug()) console.error(err.stack)
       process.exit(1)
     }
 

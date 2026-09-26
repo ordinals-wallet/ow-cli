@@ -8,7 +8,16 @@ import type { WalletInscription } from '@ow-cli/api'
 import { requirePublicInfo, unlockKeypair } from '../keystore.js'
 import { promptPassword, requireConfirm } from '../utils/prompts.js'
 import { formatJson, formatSats } from '../output.js'
-import { handleError } from '../utils/errors.js'
+import { handleError, CliError } from '../utils/errors.js'
+import {
+  planPurchase,
+  buildPassthroughPurchase,
+  executePurchase,
+  planListing,
+  executeProtectedListing,
+  recoverProtectedListing,
+} from '@ow-cli/shared'
+import type { PassthroughQuote, ProtectedListingOutcome } from '@ow-cli/shared'
 import {
   validateInscriptionId,
   validateOutpoint,
@@ -24,47 +33,77 @@ export function registerMarketCommands(parent: Command): void {
     .description('Purchase one or more inscriptions')
     .requiredOption('--ids <ids>', 'Comma-separated inscription IDs')
     .requiredOption('--fee-rate <n>', 'Fee rate in sat/vB')
+    .option('--max-over <sats>', 'Protected purchases: sats the verified total may exceed the quoted total by', '0')
     .option('--json', 'Output as JSON')
     .action(async (opts) => {
       try {
+        const budgetToleranceSat = Number(opts.maxOver)
+        if (!Number.isSafeInteger(budgetToleranceSat) || budgetToleranceSat < 0) {
+          throw new CliError('--max-over must be a whole number of sats, 0 or more')
+        }
         const ids = opts.ids.split(',').map((s: string) => s.trim())
         ids.forEach(validateInscriptionId)
         const feeRate = validateFeeRate(opts.feeRate)
         const pubInfo = requirePublicInfo()
 
+        // Listings come in two kinds with separate endpoints; look them up and route each.
+        const plan = await planPurchase(ids, pubInfo.address)
+
         console.log(`\nBuying ${ids.length} inscription(s)`)
+        for (const item of plan.items) {
+          const kind = item.kind === 'protected' ? 'snipe-protected' : 'standard'
+          console.log(`  ${item.inscriptionId}  ${formatSats(item.priceSat)}  (${kind})`)
+        }
+        console.log(`Listed total: ${formatSats(plan.listedTotalSat)}`)
         console.log(`Fee rate: ${feeRate} sat/vB`)
+
+        // A protected purchase is built and verified before anything is signed,
+        // so the amounts below come from the transactions themselves.
+        let quote: PassthroughQuote | undefined
+        if (plan.protectedItems.length > 0) {
+          quote = await buildPassthroughPurchase({
+            items: plan.protectedItems,
+            feeRate,
+            address: pubInfo.address,
+            publicKey: pubInfo.publicKey,
+            budgetToleranceSat,
+          })
+          const v = quote.verified
+          console.log(`\nProtected purchase, verified (${plan.protectedItems.length} item(s)):`)
+          console.log(`  To seller(s):     ${formatSats(v.sellerProceedsSat)}`)
+          console.log(`  Marketplace fee:  ${formatSats(v.marketFeeSat)}`)
+          if (v.creatorRoyaltySat > 0) console.log(`  Creator royalty:  ${formatSats(v.creatorRoyaltySat)}`)
+          console.log(`  Network fees:     ${formatSats(v.networkFeeSat)}`)
+          console.log(`  Total:            ${formatSats(v.totalSat)}  (quoted ${formatSats(quote.quotedTotalSat)}, cap ${formatSats(quote.maxTotalSat)})`)
+          console.log(`  Quote expires:    ${quote.expiresAt}`)
+        }
 
         await requireConfirm('Proceed with purchase?')
         const password = await promptPassword()
         const kp = unlockKeypair(password)
 
-        const { setup, purchase } = await api.market.buildPurchaseBulk({
-          inscriptions: ids,
-          pay_address: pubInfo.address,
-          receive_address: pubInfo.address,
-          public_key: pubInfo.publicKey,
-          fee_rate: feeRate,
-          wallet_type: 'ow-cli',
-        })
-
-        const { signedSetup, signedPurchase } = signPurchaseFlow(
-          kp.privateKey,
-          kp.publicKey,
-          setup,
-          purchase,
-        )
-
-        const result = await api.market.submitPurchase({
-          setup_rawtx: signedSetup,
-          purchase_rawtx: signedPurchase,
-          wallet_type: 'ow-cli',
+        const { result } = await executePurchase({
+          ids,
+          feeRate,
+          address: pubInfo.address,
+          publicKey: pubInfo.publicKey,
+          privateKey: kp.privateKey,
+          publicKeyBytes: kp.publicKey,
+          plan,
+          quote,
+          budgetToleranceSat,
         })
 
         if (opts.json) {
           console.log(formatJson(result))
         } else {
-          console.log(`\nPurchase submitted!`)
+          if (result.protected) {
+            console.log(`\nProtected purchase submitted: ${result.protected.txid}`)
+            if (result.protected.partial) {
+              console.log('Only part of the chain was broadcast; check your wallet before retrying the rest.')
+            }
+          }
+          if (result.legacy) console.log(`\nPurchase submitted!`)
         }
       } catch (err) {
         handleError(err)
@@ -178,6 +217,7 @@ export function registerMarketCommands(parent: Command): void {
     .option('--ids <ids>', 'Comma-separated inscription IDs to list')
     .option('--price <sats>', 'Price in satoshis (applies to all)')
     .option('--above-floor <percent>', 'Price at X% above collection floor')
+    .option('--unprotected', 'List without snipe protection (standard escrow listing)')
     .option('--json', 'Output as JSON')
     .action(async (opts) => {
       try {
@@ -237,34 +277,112 @@ export function registerMarketCommands(parent: Command): void {
           process.exit(1)
         }
 
-        for (let i = 0; i < inscriptionIds.length; i++) {
-          console.log(`  ${i + 1}. ${inscriptionIds[i]} → ${formatSats(prices[i])}`)
-        }
+        // Snipe protection by default: every item whose postage allows it, when
+        // the marketplace offers it. Repricing a protected listing is the same flow.
+        const plan = await planListing(
+          inscriptionIds.map((inscriptionId, i) => ({ inscriptionId, priceSats: prices[i] })),
+          pubInfo.address,
+          { unprotected: Boolean(opts.unprotected) },
+        )
+        plan.items.forEach((item, i) => {
+          const kind = item.protected ? (item.repricing ? 'protected, reprice' : 'protected') : 'standard'
+          console.log(`  ${i + 1}. ${item.inscriptionId} → ${formatSats(item.priceSats)}  (${kind})`)
+          if (item.standardReason) console.log(`       not protected: ${item.standardReason}`)
+        })
 
         await requireConfirm(`List ${inscriptionIds.length} inscription(s)?`)
         const password = await promptPassword()
         const kp = unlockKeypair(password)
 
-        const { psbt } = await api.market.buildEscrowBulk({
-          inscriptions: inscriptionIds,
-          from: pubInfo.address,
-          prices,
-          public_key: pubInfo.publicKey,
-        })
+        let protectedOutcome: ProtectedListingOutcome | undefined
+        if (plan.protectedItems.length > 0) {
+          protectedOutcome = await executeProtectedListing({
+            items: plan.protectedItems.map((item) => ({
+              inscriptionId: item.inscriptionId,
+              outpoint: item.outpoint,
+              priceSats: item.priceSats,
+            })),
+            address: pubInfo.address,
+            publicKey: pubInfo.publicKey,
+            privateKey: kp.privateKey,
+          })
+        }
 
-        const signedPsbt = signPsbt({
-          psbt,
+        let standardResult: unknown
+        if (plan.standardItems.length > 0) {
+          const { psbt } = await api.market.buildEscrowBulk({
+            inscriptions: plan.standardItems.map((item) => item.inscriptionId),
+            from: pubInfo.address,
+            prices: plan.standardItems.map((item) => item.priceSats),
+            public_key: pubInfo.publicKey,
+          })
+
+          const signedPsbt = signPsbt({
+            psbt,
+            privateKey: kp.privateKey,
+            publicKey: kp.publicKey,
+            disableExtract: true,
+          })
+
+          standardResult = await api.market.submitEscrow({ psbt: signedPsbt })
+        }
+
+        const failures = protectedOutcome?.failures ?? []
+        if (opts.json) {
+          console.log(formatJson({ protected: protectedOutcome, standard: standardResult }))
+        } else {
+          if (protectedOutcome && protectedOutcome.listed.length > 0) {
+            console.log(`
+${protectedOutcome.listed.length} inscription(s) listed with snipe protection.`)
+          }
+          if (plan.standardItems.length > 0) {
+            console.log(`
+${plan.standardItems.length} inscription(s) listed (standard).`)
+          }
+          for (const f of failures) {
+            console.error(`  Not listed: ${f.inscriptionId ?? f.outpoint} [${f.code}] ${f.message}`)
+          }
+        }
+        if (failures.length > 0) process.exitCode = 1
+      } catch (err) {
+        handleError(err)
+      }
+    })
+
+  market
+    .command('recover <passthrough_txid>')
+    .description('Recover a protected listing whose escrow confirmed without a sale (after 144 blocks)')
+    .requiredOption('--fee-rate <n>', 'Fee rate in sat/vB')
+    .option('--to <address>', 'Destination (defaults to this wallet)')
+    .option('--no-broadcast', 'Sign and print the transaction without broadcasting it')
+    .option('--json', 'Output as JSON')
+    .action(async (passthroughTxid: string, opts) => {
+      try {
+        if (!/^[0-9a-f]{64}$/i.test(passthroughTxid)) throw new CliError('Invalid passthrough txid')
+        const feeRate = validateFeeRate(opts.feeRate)
+        const pubInfo = requirePublicInfo()
+        console.log(`
+Recovering escrow ${passthroughTxid}:0 to ${opts.to || pubInfo.address} at ${feeRate} sat/vB`)
+        console.log('The network accepts this only once the escrow has 144 confirmations.')
+        await requireConfirm(opts.broadcast === false ? 'Sign recovery?' : 'Sign and broadcast recovery?')
+        const password = await promptPassword()
+        const kp = unlockKeypair(password)
+        const result = await recoverProtectedListing({
+          passthroughTxid,
+          feeRate,
+          destination: opts.to,
+          address: pubInfo.address,
+          publicKey: pubInfo.publicKey,
           privateKey: kp.privateKey,
-          publicKey: kp.publicKey,
-          disableExtract: true,
+          broadcast: opts.broadcast !== false,
         })
-
-        const result = await api.market.submitEscrow({ psbt: signedPsbt })
-
         if (opts.json) {
           console.log(formatJson(result))
         } else {
-          console.log(`\n${inscriptionIds.length} inscription(s) listed!`)
+          console.log(`
+Recovery ${result.broadcast ? 'broadcast' : 'signed'}: ${result.txid}`)
+          console.log(`  To:  ${result.destination}  ${formatSats(result.valueSat)} (fee ${formatSats(result.feeSat)})`)
+          if (!result.broadcast) console.log(`  Raw: ${result.rawtx}`)
         }
       } catch (err) {
         handleError(err)

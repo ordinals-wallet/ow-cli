@@ -44,19 +44,61 @@ export { signAndBroadcast } from './tx.js'
 
 // Market
 export {
-  executePurchase,
   executePurchaseRune,
   executePurchaseAlkane,
   executeListInscriptions,
   executeDelist,
 } from './market.js'
 export type {
-  PurchaseParams,
   PurchaseRuneParams,
   PurchaseAlkaneParams,
   ListInscriptionsParams,
   DelistParams,
 } from './market.js'
+
+// Purchase (legacy escrow + passthrough v4)
+export {
+  executePurchase,
+  planPurchase,
+  buildPassthroughPurchase,
+  signPassthroughPurchase,
+  submitPassthroughPurchase,
+  requirePassthroughSupport,
+  isProtectedListing,
+  canonicalOutpoint,
+  securePurchaseFailureMessage,
+} from './purchase.js'
+export type {
+  ListingKind,
+  PlannedItem,
+  PurchasePlan,
+  PassthroughQuote,
+  SignedPassthroughPurchase,
+  PurchaseParams,
+  PurchaseOutcome,
+} from './purchase.js'
+
+// Protected (passthrough v4) listing and typed errors
+export {
+  protectedListingAvailability,
+  planListing,
+  buildProtectedListings,
+  signProtectedListings,
+  authorizeProtectedListings,
+  executeProtectedListing,
+  recoverProtectedListing,
+} from './protected-listing.js'
+export type {
+  ListingItemInput,
+  PlannedListing,
+  ListingPlan,
+  ProtectedListingFailure,
+  BuiltProtectedListing,
+  ProtectedListingOutcome,
+  RecoveryResult,
+} from './protected-listing.js'
+export { ProtectedTradeError, protectedErrorMessage, toProtectedError } from './protected-errors.js'
+export type { ProtectedTradeStage, ProtectedErrorCode } from './protected-errors.js'
 
 // Rune
 export { buildSplitEdicts } from './rune.js'
