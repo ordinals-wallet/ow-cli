@@ -53,8 +53,11 @@ export type {
   PurchaseRuneParams,
   PurchaseAlkaneParams,
   ListInscriptionsParams,
-  DelistParams,
 } from './market.js'
+
+// Delist (standard + snipe-protected)
+export { delistListing, toDelistError, isProtectedDelist } from './delist.js'
+export type { DelistParams, DelistKind, DelistResult, DelistVerification } from './delist.js'
 
 // Purchase (legacy escrow + passthrough v4)
 export {

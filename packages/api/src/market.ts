@@ -13,6 +13,7 @@ import type {
   SubmitEscrowRequest,
   SubmitEscrowResponse,
   CancelEscrowRequest,
+  CancelEscrowResponse,
   MarketListing,
   SecurePurchaseCapabilities,
   BuildSecurePurchaseRequest,
@@ -63,8 +64,22 @@ export async function submitEscrow(params: SubmitEscrowRequest): Promise<SubmitE
   return data
 }
 
-export async function cancelEscrow(params: CancelEscrowRequest): Promise<SubmitEscrowResponse> {
-  const { data } = await getClient().post('/market/cancel-escrow', params)
+/**
+ * Cancel a listing with an owner proof. Pass `{ outpoint }` for a protected
+ * listing (they are keyed by the outpoint listed from) and `{ inscription_id }`
+ * for a standard inscription listing. Not retried: a POST is never repeated
+ * behind the caller's back. Most callers want `@ow-cli/shared` `delistListing`.
+ */
+export async function cancelEscrow(params: CancelEscrowRequest): Promise<CancelEscrowResponse> {
+  const hasOutpoint = typeof params.outpoint === 'string' && params.outpoint.length > 0
+  const hasInscription = typeof params.inscription_id === 'string' && params.inscription_id.length > 0
+  if (hasOutpoint === hasInscription) {
+    throw new TypeError('cancelEscrow needs exactly one of outpoint or inscription_id')
+  }
+  const body = hasOutpoint
+    ? { outpoint: params.outpoint, signature: params.signature }
+    : { inscription_id: params.inscription_id, signature: params.signature }
+  const { data } = await getClient().post('/market/cancel-escrow', body)
   return data
 }
 

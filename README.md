@@ -91,8 +91,8 @@ ow market list --ids <id> --price 50000 --unprotected   # standard escrow listin
 # (valid once the escrow has 144 confirmations)
 ow market recover <passthrough_txid> --fee-rate 5 [--to <address>] [--no-broadcast]
 
-# Cancel listing
-ow market delist <inscription_id>
+# Cancel a listing, standard or snipe-protected (prints which; --json)
+ow market delist <inscription_id> [--json]
 ```
 
 #### Snipe-protected listings (Passthrough v4)
