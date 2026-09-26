@@ -1,4 +1,4 @@
-import { buildCancelProof, hexToBytes, publicKeyToP2TR } from '@ow-cli/core'
+import { hexToBytes, publicKeyToP2TR, signBip322Simple } from '@ow-cli/core'
 import * as api from '@ow-cli/api'
 import type { CancelEscrowResponse, MarketListing, SecureListingStatus } from '@ow-cli/api'
 import { ProtectedTradeError } from './protected-errors.js'
@@ -7,9 +7,11 @@ import { ProtectedTradeError } from './protected-errors.js'
  * Delist one item, standard or snipe-protected (passthrough v4).
  *
  *   look up     GET /market/escrow/:id (and /market/secure-listing/:outpoint)
- *   prove       a one-input proof PSBT spending the listed outpoint, signed
- *               SIGHASH_DEFAULT on the key path (never ANYONECANPAY), built
- *               locally: no builder round trip, nothing broadcastable
+ *   prove       a `/auth/session` token for the wallet address (BIP-322
+ *               sign-in, or `sessionToken` when the caller already has one).
+ *               The API checks it against the address of the output that
+ *               holds the listed item on chain. Nothing is signed that could
+ *               be replayed as a transaction.
  *   cancel      POST /market/cancel-escrow
  *                 protected -> { outpoint }        (rows are keyed by outpoint)
  *                 standard  -> { inscription_id }
@@ -30,12 +32,18 @@ export interface DelistParams {
   inscriptionId?: string
   /** `txid:vout` (or 72-hex serialized) of an outpoint-keyed listing. */
   outpoint?: string
-  /** Outpoint value in sats; only needed with `outpoint` when the wallet UTXO list does not show it. */
+  /** @deprecated Ignored: the API reads the outpoint value from the chain. */
   valueSats?: number
   address: string
   /** Hex public key (33-byte compressed or 32-byte x-only). */
   publicKey: string
   privateKey: Uint8Array
+  /**
+   * `/auth/session` token for `address`. Pass one (e.g. from a
+   * `SessionManager`) to delist several items with one sign-in; without it
+   * this signs in with `privateKey`.
+   */
+  sessionToken?: string
 }
 
 export interface DelistVerification {
@@ -50,7 +58,7 @@ export interface DelistVerification {
 export interface DelistResult {
   kind: DelistKind
   inscriptionId?: string
-  /** Listing outpoint (`txid:vout`) the proof spent. */
+  /** Listing outpoint (`txid:vout`): the protected listing's key, or the inscription's current location. */
   outpoint: string
   /** How the cancel was routed. */
   routedBy: 'outpoint' | 'inscription_id'
@@ -76,8 +84,8 @@ const DELIST_COPY: Record<string, string> = {
   listing_cancellation_unavailable: 'Listing cancellation is temporarily unavailable.',
   seal_not_a_cancel_proof: 'The marketplace refused the proof: a listing seal cannot cancel a listing.',
   invalid_cancel_proof: 'The wallet signature did not match the listed item. Is this the wallet that listed it?',
+  not_the_owner: 'This wallet does not hold the listed item. Delist it from the wallet that listed it.',
   listing_identifier_required: 'Give an inscription id or an outpoint to delist.',
-  outpoint_value_unknown: 'Could not find the value of this outpoint in the wallet; pass it explicitly.',
 }
 
 function delistError(code: string, detail?: string, status?: number): ProtectedTradeError {
@@ -129,9 +137,8 @@ export function isProtectedDelist(listing: Pick<MarketListing, 'protected' | 'se
 interface Target {
   kind: DelistKind
   inscriptionId?: string
-  /** Outpoint the proof spends. */
+  /** Output that holds the listed item. */
   outpoint: string
-  valueSats: number
   routedBy: 'outpoint' | 'inscription_id'
 }
 
@@ -148,42 +155,26 @@ async function resolveByInscription(inscriptionId: string, address: string): Pro
 
   if (isProtected) {
     // Protected rows are keyed by the outpoint the seller listed from; the API
-    // checks the proof against that output's script, proof input 0.
-    let valueSats = Number(listing.outpoint_sats)
-    if (!Number.isSafeInteger(valueSats) || valueSats <= 0) {
-      const live = await api.wallet.getInscriptionOutpoint(inscriptionId)
-      const liveOutpoint = live?.inscription?.outpoint ? normalizeOutpoint(live.inscription.outpoint) : null
-      valueSats = liveOutpoint === listingOutpoint ? Number(live.inscription.sats ?? live.sats) : NaN
-    }
-    if (!Number.isSafeInteger(valueSats) || valueSats <= 0) throw delistError('outpoint_value_unknown')
-    return { kind: 'protected', inscriptionId, outpoint: listingOutpoint, valueSats, routedBy: 'outpoint' }
+    // checks the session against the address that output pays.
+    return { kind: 'protected', inscriptionId, outpoint: listingOutpoint, routedBy: 'outpoint' }
   }
 
-  // Standard: the API checks the proof (last input) against the inscription's
-  // CURRENT outpoint, so prove from the live location.
+  // Standard: the API checks the session against the inscription's CURRENT
+  // location, so make sure this wallet still holds it.
   const live = await api.wallet.getInscriptionOutpoint(inscriptionId)
   const outpoint = live?.inscription?.outpoint ? normalizeOutpoint(live.inscription.outpoint) : null
-  const valueSats = Number(live?.inscription?.sats ?? live?.sats)
-  if (!outpoint || !Number.isSafeInteger(valueSats) || valueSats <= 0) {
+  if (!outpoint) {
     throw delistError('listing_malformed', `Could not find where ${inscriptionId} sits; try again.`)
   }
   const owner = live.owner || live.inscription.address
   if (owner && owner !== address) throw delistError('not_owner')
-  return { kind: 'standard', inscriptionId, outpoint, valueSats, routedBy: 'inscription_id' }
+  return { kind: 'standard', inscriptionId, outpoint, routedBy: 'inscription_id' }
 }
 
-async function resolveByOutpoint(rawOutpoint: string, address: string, valueSats?: number): Promise<Target> {
+async function resolveByOutpoint(rawOutpoint: string): Promise<Target> {
   const outpoint = normalizeOutpoint(rawOutpoint)
   const status = await api.secureListing.status(outpoint)
-  let value = Number(valueSats)
-  if (!Number.isSafeInteger(value) || value <= 0) {
-    const [txid, vout] = outpoint.split(':')
-    const utxos = await api.wallet.getUtxos(address).catch(() => [])
-    const hit = (Array.isArray(utxos) ? utxos : []).find((u) => u.txid === txid && Number(u.vout) === Number(vout))
-    value = Number(hit?.value)
-  }
-  if (!Number.isSafeInteger(value) || value <= 0) throw delistError('outpoint_value_unknown')
-  return { kind: status ? 'protected' : 'standard', outpoint, valueSats: value, routedBy: 'outpoint' }
+  return { kind: status ? 'protected' : 'standard', outpoint, routedBy: 'outpoint' }
 }
 
 async function verifyCancelled(target: Target): Promise<DelistVerification> {
@@ -207,6 +198,15 @@ async function verifyCancelled(target: Target): Promise<DelistVerification> {
   return verification
 }
 
+async function signInToDelist(address: string, privateKey: Uint8Array): Promise<string> {
+  try {
+    const session = await api.auth.signIn({ address, sign: (message) => signBip322Simple(address, message, privateKey) })
+    return session.token
+  } catch (err) {
+    throw delistError('sign_in_failed', `Sign-in failed: ${(err as Error).message}`)
+  }
+}
+
 /**
  * Cancel a listing, standard or protected, and read back the result. Throws
  * `ProtectedTradeError` (stage `delist`) with user-facing copy on refusal.
@@ -222,14 +222,9 @@ export async function delistListing(params: DelistParams): Promise<DelistResult>
 
   const target = params.inscriptionId
     ? await resolveByInscription(params.inscriptionId, params.address)
-    : await resolveByOutpoint(params.outpoint!, params.address, params.valueSats)
+    : await resolveByOutpoint(params.outpoint!)
 
-  const signature = buildCancelProof({
-    outpoint: target.outpoint,
-    valueSats: target.valueSats,
-    privateKey: params.privateKey,
-    publicKey,
-  })
+  const signature = params.sessionToken ?? (await signInToDelist(params.address, params.privateKey))
 
   let response: CancelEscrowResponse
   try {

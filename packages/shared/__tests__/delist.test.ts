@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { bytesToHex, inspectCancelProof, CANCEL_PROOF_SIGHASH } from '@ow-cli/core'
+import { bytesToHex, verifyBip322Simple } from '@ow-cli/core'
 import { seller, sellerAddress, attacker } from '../../core/__tests__/passthrough-listing-fixtures.js'
 
 const api = vi.hoisted(() => ({
   market: { getListing: vi.fn(), cancelEscrow: vi.fn() },
   secureListing: { status: vi.fn() },
   wallet: { getInscriptionOutpoint: vi.fn(), getUtxos: vi.fn() },
+  auth: { signIn: vi.fn() },
   outpointToTxidVout: (s: string) => {
     if (/^[0-9a-f]{64}:\d+$/i.test(s)) return s.toLowerCase()
     if (!/^[0-9a-f]{72}$/i.test(s)) throw new TypeError('bad outpoint')
@@ -60,8 +61,16 @@ function apiError(status: number, body: unknown) {
   })
 }
 
+const TOKEN = 'ows1.session-for-seller'
+
 beforeEach(() => {
   vi.clearAllMocks()
+  api.auth.signIn.mockImplementation(async ({ address, sign }: { address: string; sign: (m: string) => string }) => {
+    // Like the API: the sign-in must be a valid BIP-322 signature by `address`.
+    const message = `sign in ${address}`
+    if (!(await verifyBip322Simple(address, message, await sign(message)))) throw new Error('bad signature')
+    return { token: TOKEN, address, expires_at: 9e9 }
+  })
   api.wallet.getInscriptionOutpoint.mockResolvedValue({
     inscription: { id: ID, sat_offset: 0, outpoint: serialized(LISTED), address: sellerAddress, sats: 546 },
     owner: sellerAddress,
@@ -88,14 +97,25 @@ describe('delistListing: snipe-protected', () => {
     expect(body.inscription_id).toBeUndefined()
   })
 
-  it('proves ownership of the listing outpoint as input 0 with SIGHASH_DEFAULT', async () => {
+  it('authorizes with a session token for the seller address, not a signed transaction', async () => {
     await delist()
-    const proof = inspectCancelProof(api.market.cancelEscrow.mock.calls[0][0].signature)
-    expect(proof.outpoint).toBe(LISTED)
-    expect(proof.inputs).toBe(1)
-    expect(proof.signatureLength).toBe(64)
-    expect(proof.sighash).toBe(CANCEL_PROOF_SIGHASH)
-    expect(proof.sighash).not.toBe(0x81)
+    expect(api.auth.signIn).toHaveBeenCalledTimes(1)
+    expect(api.auth.signIn.mock.calls[0][0].address).toBe(sellerAddress)
+    expect(api.market.cancelEscrow.mock.calls[0][0].signature).toBe(TOKEN)
+  })
+
+  it('reuses a caller-supplied session token without signing in again', async () => {
+    await delist({ sessionToken: 'ows1.batch' })
+    expect(api.auth.signIn).not.toHaveBeenCalled()
+    expect(api.market.cancelEscrow.mock.calls[0][0].signature).toBe('ows1.batch')
+  })
+
+  it('reports a failed sign-in without calling cancel', async () => {
+    api.auth.signIn.mockRejectedValue(new Error('nonce reused'))
+    const err = await delist().catch((e) => e)
+    expect(err).toBeInstanceOf(ProtectedTradeError)
+    expect(err.code).toBe('sign_in_failed')
+    expect(api.market.cancelEscrow).not.toHaveBeenCalled()
   })
 
   it('reports the kind and confirms by reading both lookups back', async () => {
@@ -107,9 +127,9 @@ describe('delistListing: snipe-protected', () => {
 
   it('uses the listing outpoint even when the lookup lacks its value', async () => {
     api.market.getListing.mockReset().mockResolvedValueOnce({ ...protectedListing, outpoint_sats: undefined }).mockResolvedValue(null)
-    await delist()
-    expect(api.wallet.getInscriptionOutpoint).toHaveBeenCalledWith(ID)
-    expect(inspectCancelProof(api.market.cancelEscrow.mock.calls[0][0].signature).outpoint).toBe(LISTED)
+    const res = await delist()
+    expect(api.market.cancelEscrow.mock.calls[0][0].outpoint).toBe(LISTED)
+    expect(res.outpoint).toBe(LISTED)
   })
 
   it('is protected when only the secure-listing status says so', async () => {
@@ -154,14 +174,13 @@ describe('delistListing: standard', () => {
     })
   })
 
-  it('routes by inscription id and proves the inscription\'s current outpoint', async () => {
+  it('routes by inscription id, checked against the inscription\'s current outpoint', async () => {
     const res = await delist()
     const body = api.market.cancelEscrow.mock.calls[0][0]
     expect(body.inscription_id).toBe(ID)
     expect(body.outpoint).toBeUndefined()
-    const proof = inspectCancelProof(body.signature)
-    expect(proof.outpoint).toBe(LIVE_ELSEWHERE)
-    expect(proof.sighash).toBe(CANCEL_PROOF_SIGHASH)
+    expect(body.signature).toBe(TOKEN)
+    expect(res.outpoint).toBe(LIVE_ELSEWHERE)
     expect(res).toMatchObject({ kind: 'standard', routedBy: 'inscription_id', transition: 'cancelled' })
     expect(res.verification).toEqual({ listingGone: true, protectionRetired: null })
   })
@@ -187,7 +206,6 @@ describe('delistListing: standard', () => {
 describe('delistListing: by outpoint', () => {
   it('uses the protected route when a protected listing is active there', async () => {
     api.secureListing.status.mockResolvedValueOnce(activeStatus).mockResolvedValue(null)
-    api.wallet.getUtxos.mockResolvedValue([{ txid: 'ab'.repeat(32), vout: 1, value: 546, status: { confirmed: true } }])
     api.market.cancelEscrow.mockResolvedValue({ success: true, transition: 'cancelled', listing: { escrow_id: 'e1', secure_v2: true, state: 'cancelled' } })
     const res = await delistListing({ outpoint: LISTED, address: sellerAddress, publicKey: PUBLIC_KEY, privateKey: seller.privateKey })
     expect(api.market.cancelEscrow.mock.calls[0][0]).toMatchObject({ outpoint: LISTED })
@@ -195,11 +213,13 @@ describe('delistListing: by outpoint', () => {
     expect(res.verification).toEqual({ listingGone: null, protectionRetired: true })
   })
 
-  it('needs the outpoint value when the wallet does not list it', async () => {
+  it('does not need the outpoint value: the API reads it from the chain', async () => {
     api.secureListing.status.mockResolvedValue(null)
-    api.wallet.getUtxos.mockResolvedValue([])
-    const err = await delistListing({ outpoint: LISTED, address: sellerAddress, publicKey: PUBLIC_KEY, privateKey: seller.privateKey }).catch((e) => e)
-    expect(err.code).toBe('outpoint_value_unknown')
+    api.market.cancelEscrow.mockResolvedValue({ success: true })
+    const res = await delistListing({ outpoint: LISTED, address: sellerAddress, publicKey: PUBLIC_KEY, privateKey: seller.privateKey })
+    expect(api.wallet.getUtxos).not.toHaveBeenCalled()
+    expect(api.market.cancelEscrow.mock.calls[0][0]).toEqual({ outpoint: LISTED, signature: TOKEN })
+    expect(res.kind).toBe('standard')
   })
 
   it('wants exactly one identifier', async () => {
@@ -241,6 +261,7 @@ describe('server refusals', () => {
       [503, { error: true, code: 'listing_cancellation_unavailable', message: 'x' }, 'listing_cancellation_unavailable', /temporarily unavailable/],
       [400, { error: true, code: 'seal_not_a_cancel_proof', message: 'Invalid Signature' }, 'seal_not_a_cancel_proof', /seal/],
       [400, { error: true, message: 'Invalid Signature' }, 'invalid_cancel_proof', /wallet that listed it/],
+      [401, { error: true, code: 'not_the_owner', message: 'Sign in with the wallet that holds this listing.' }, 'not_the_owner', /wallet that listed it/],
       [404, { error: true, message: 'not found' }, 'listing_not_found', /no longer listed/],
       [400, { error: true, message: 'failed to deserialize tx' }, 'http_400', /failed to deserialize tx/],
     ]

@@ -5,19 +5,17 @@ import { bytesToHex, hexToBytes } from './signer.js'
 import { PassthroughError } from './passthrough.js'
 
 /**
- * Owner proof for `POST /market/cancel-escrow`.
+ * @deprecated Legacy owner proof for `POST /market/cancel-escrow`. Send an
+ * `/auth/session` token as `signature` instead (`delistListing` does). The
+ * API accepts this proof for one release only.
  *
- * The API cancels a listing when `signature` is a PSBT whose proof input is
- * finalized with a signature that verifies against the script that holds the
- * listed item on chain:
- *
- *   `{ outpoint }`        proof input is input 0 (snipe-protected listings are
- *                         keyed by the outpoint the seller listed from)
- *   `{ inscription_id }`  proof input is the LAST input, checked against the
- *                         inscription's current outpoint
- *
- * It refuses a proof signed SIGHASH_ALL|ANYONECANPAY (`seal_not_a_cancel_proof`):
- * that is the shape of the seller seal handed to buyers.
+ * The API accepts it when the input that spends the listed outpoint (the
+ * listing outpoint for `{ outpoint }`, the inscription's current location for
+ * `{ inscription_id }`) verifies against that output's script AND amount as
+ * read from the chain, is signed SIGHASH_DEFAULT/ALL, and commits to an
+ * output of at least 21M BTC. It refuses SIGHASH_ALL|ANYONECANPAY
+ * (`seal_not_a_cancel_proof`), a proof over a different outpoint
+ * (`cancel_proof_wrong_outpoint`) and a mineable one (`cancel_proof_not_bound`).
  *
  * The proof built here has exactly one input and one output, so input 0 is
  * also the last input and the same proof satisfies either route. It is
@@ -42,7 +40,7 @@ const TXID_VOUT_RE = /^[0-9a-fA-F]{64}:\d+$/
 export interface CancelProofInput {
   /** `txid:vout` the listed item sits on (the listing outpoint for protected listings). */
   outpoint: string
-  /** Value of that output in sats. The API does not check it, but the signature commits to it. */
+  /** Value of that output in sats. Must match the chain: the API verifies against the on-chain amount. */
   valueSats: number | bigint
   privateKey: Uint8Array
   /** 33-byte compressed or 32-byte x-only public key of the owner. */
