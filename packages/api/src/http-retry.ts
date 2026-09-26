@@ -21,7 +21,9 @@ export async function getWithRetry<T>(path: string, config: AxiosRequestConfig =
   const maxDelay = opts.maxDelayMs ?? 30000
   for (let attempt = 0; ; attempt++) {
     try {
-      const { data } = await getClient().get(path, config)
+      // This loop owns retries for these calls; turn off the client-level
+      // retry so a 503 is not retried by both layers.
+      const { data } = await getClient().get(path, { ...config, owRetry: false })
       return data as T
     } catch (err) {
       const res = (err as { response?: { status: number; headers?: Record<string, unknown> } }).response
