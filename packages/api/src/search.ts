@@ -9,10 +9,9 @@ import type { SearchResult } from './types.js'
  */
 export async function search(input: string, limit = 16): Promise<SearchResult> {
   try {
-    const { data } = await getClient().get(`/v2/search/${encodeURIComponent(input)}`, {
+    return await getClient().get<SearchResult>(`/search/${encodeURIComponent(input)}`, {
       params: { limit },
     })
-    return data
   } catch (err) {
     if (isOwApiError(err) && err.status === 404) return { collections: [] }
     throw err

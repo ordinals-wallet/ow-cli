@@ -1,3 +1,5 @@
+import type { FungibleAmount } from './types-feeds.js'
+
 /** Candle bucket size for `/collection/:slug/ohlcv`. */
 export type OhlcvInterval = '5m' | '15m' | '1h' | '4h' | '12h' | '1d' | '1w'
 /** Price denomination: sats, USD, or market cap (USD × supply). */
@@ -47,8 +49,8 @@ export interface OhlcvPrint {
   price: number
   price_sats: number
   inscription: string | null
-  /** Lot size for fungible tokens, otherwise null. */
-  amount: number | null
+  /** Lot size for fungible tokens, otherwise null (string or number, see `FungibleAmount`). */
+  amount: FungibleAmount
 }
 
 export interface Ohlcv {

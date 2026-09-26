@@ -1,4 +1,5 @@
 import { getClient } from './client.js'
+import { isSerializedOutpoint, outpointToTxidVout } from './outpoint.js'
 import type {
   BuildPurchaseResponse,
   BuildPurchaseBulkRequest,
@@ -23,45 +24,37 @@ import type {
 } from './types.js'
 
 export async function buildPurchaseBulk(params: BuildPurchaseBulkRequest): Promise<BuildPurchaseResponse> {
-  const { data } = await getClient().post('/wallet/purchase-bulk', params)
-  return data
+  return getClient().post<BuildPurchaseResponse>('/wallet/purchase-bulk', params)
 }
 
 export async function buildPurchaseRunes(params: BuildPurchaseRunesRequest): Promise<BuildPurchaseResponse> {
-  const { data } = await getClient().post('/wallet/purchase-bulk-runes', params)
-  return data
+  return getClient().post<BuildPurchaseResponse>('/wallet/purchase-bulk-runes', params)
 }
 
 export async function buildPurchaseAlkanes(params: BuildPurchaseAlkanesRequest): Promise<{ psbt: string }> {
-  const { data } = await getClient().post('/wallet/purchase-bulk-alkanes', params)
-  return data
+  return getClient().post<{ psbt: string }>('/wallet/purchase-bulk-alkanes', params)
 }
 
 export async function submitPurchase(params: SubmitPurchaseRequest): Promise<SubmitPurchaseResponse> {
-  const { data } = await getClient().post('/market/purchase', params)
-  return data
+  return getClient().post<SubmitPurchaseResponse>('/market/purchase', params)
 }
 
 export async function submitPurchaseRune(params: SubmitPurchaseRuneRequest): Promise<SubmitPurchaseResponse> {
-  const { data } = await getClient().post('/market/purchase-rune', params)
-  return data
+  return getClient().post<SubmitPurchaseResponse>('/market/purchase-rune', params)
 }
 
 export async function buildEscrow(params: BuildEscrowRequest): Promise<BuildEscrowResponse> {
-  const { data } = await getClient().post('/wallet/escrow', params)
-  return data
+  return getClient().post<BuildEscrowResponse>('/wallet/escrow', params)
 }
 
 export async function buildEscrowBulk(params: BuildEscrowBulkRequest): Promise<BuildEscrowResponse> {
-  const { data } = await getClient().post('/wallet/escrow-bulk', params)
-  return data
+  return getClient().post<BuildEscrowResponse>('/wallet/escrow-bulk', params)
 }
 
 export async function submitEscrow(params: SubmitEscrowRequest): Promise<SubmitEscrowResponse> {
   // Use escrow-bulk endpoint — handles single listings and is more resilient
   // (the non-bulk /market/escrow endpoint hard-fails if ord indexer is behind)
-  const { data } = await getClient().post('/market/escrow-bulk', params)
-  return data
+  return getClient().post<SubmitEscrowResponse>('/market/escrow-bulk', params)
 }
 
 /**
@@ -79,21 +72,34 @@ export async function cancelEscrow(params: CancelEscrowRequest): Promise<CancelE
   const body = hasOutpoint
     ? { outpoint: params.outpoint, signature: params.signature }
     : { inscription_id: params.inscription_id, signature: params.signature }
-  const { data } = await getClient().post('/market/cancel-escrow', body)
-  return data
+  return getClient().post<CancelEscrowResponse>('/market/cancel-escrow', body)
 }
 
 /** The live listing for an inscription, or null when it is not for sale. */
 export async function getListing(inscriptionId: string): Promise<MarketListing | null> {
-  const res = await getClient().get(`/market/escrow/${encodeURIComponent(inscriptionId)}`, {
-    validateStatus: (status) => (status >= 200 && status < 300) || status === 404,
-  })
+  const res = await getClient().request<(MarketListing & { error?: unknown }) | undefined>(
+    `/market/escrow/${encodeURIComponent(inscriptionId)}`,
+    { acceptStatus: (status) => status === 404 },
+  )
   if (res.status === 404 || !res.data || res.data.error) return null
-  return res.data
+  const listing: MarketListing = { ...res.data }
+  const normalized = normalizeOutpoint(listing.outpoint)
+  if (normalized) listing.outpoint_txid_vout = normalized
+  return listing
+}
+
+/** `txid:vout` from either `txid:vout` or the 72-hex serialized form; undefined otherwise. */
+function normalizeOutpoint(outpoint: unknown): string | undefined {
+  if (typeof outpoint !== 'string') return undefined
+  if (/^[0-9a-f]{64}:\d+$/i.test(outpoint)) return outpoint.toLowerCase()
+  if (isSerializedOutpoint(outpoint)) return outpointToTxidVout(outpoint)
+  return undefined
 }
 
 export async function getSecurePurchaseCapabilities(): Promise<SecurePurchaseCapabilities> {
-  const { data } = await getClient().get('/market/secure-purchase/capabilities')
+  const data = await getClient().get<{ error?: unknown; message?: string; secure_purchase?: SecurePurchaseCapabilities } | undefined>(
+    '/market/secure-purchase/capabilities',
+  )
   if (!data || data.error || !data.secure_purchase) {
     throw new Error(data?.message || 'Protected purchase capabilities unavailable')
   }
@@ -102,12 +108,10 @@ export async function getSecurePurchaseCapabilities(): Promise<SecurePurchaseCap
 
 /** Passthrough v4 build. The legacy `/wallet/purchase-bulk` cannot see protected listings. */
 export async function buildSecurePurchase(params: BuildSecurePurchaseRequest): Promise<BuildSecurePurchaseResponse> {
-  const { data } = await getClient().post('/wallet/secure-purchase/build', params)
-  return data
+  return getClient().post<BuildSecurePurchaseResponse>('/wallet/secure-purchase/build', params)
 }
 
 /** Hands back sale PSBTs with only the buyer's inputs signed; the marketplace co-signs and broadcasts. */
 export async function submitSecurePurchase(params: SubmitSecurePurchaseRequest): Promise<SubmitSecurePurchaseResponse> {
-  const { data } = await getClient().post('/market/secure-purchase/submit', params)
-  return data
+  return getClient().post<SubmitSecurePurchaseResponse>('/market/secure-purchase/submit', params)
 }

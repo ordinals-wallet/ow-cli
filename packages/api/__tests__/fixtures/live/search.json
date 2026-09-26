@@ -1,0 +1,47 @@
+{
+  "collections": [
+    {
+      "id": "6d4c4f24-06b4-4e4e-87b2-20b83c0c7a41",
+      "name": "PUPPETS",
+      "icon": "",
+      "banner_icon": null,
+      "icon_inscription": {
+        "id": "08740c46af325497068a5475deaeeb9e54e689706f40b982f6feedc8515ad69fi0",
+        "content_type": "image/gif"
+      },
+      "description": "",
+      "slug": "rune-PUPPETS",
+      "active": true,
+      "sponsored_priority": 0,
+      "featured_priority": 69420,
+      "highest_inscription_num": 0,
+      "lowest_inscription_num": 0,
+      "total_supply": 0,
+      "socials": {},
+      "creator_address": null,
+      "gallery_inscription_id": null,
+      "verified": false,
+      "floor_price": null,
+      "floor_price_per": null,
+      "volume_hour": null,
+      "volume_six_hour": null,
+      "volume_day": null,
+      "volume_week": null,
+      "volume_month": null,
+      "volume_all_time": null,
+      "global_volume_day": null,
+      "global_volume_week": null,
+      "global_volume_all_time": null,
+      "change_week": null,
+      "change_week_vwap": null,
+      "change_week_fair": null,
+      "change_day_fair": null,
+      "fair_sats": null,
+      "price_change_day": null,
+      "listed": 0,
+      "owners": 0,
+      "_search_weight": 1.0,
+      "_market_ranked": true
+    }
+  ]
+}

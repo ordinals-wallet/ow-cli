@@ -46,7 +46,7 @@ describe('secure listing API', () => {
     )
     await expect(
       secureListing.authorizeBulk([{ outpoint: OUTPOINT, protocol: 'ordinal', seller_public_key: '02', template_digest: '00', psbt: 'p', sale_psbt: 's' }]),
-    ).rejects.toMatchObject({ response: { status: 400, data: { code: 'invalid_batch_size' } } })
+    ).rejects.toMatchObject({ status: 400, code: 'invalid_batch_size', body: { code: 'invalid_batch_size' } })
   })
 
   it('reads listing status and returns null when there is none', async () => {

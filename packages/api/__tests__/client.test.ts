@@ -69,8 +69,8 @@ describe('client identification', () => {
     g.window = {}
     try {
       const client = createClient({ baseUrl: BASE })
-      expect(client.defaults.headers['User-Agent']).toBeUndefined()
-      expect(client.defaults.headers[CLIENT_HEADER]).toBe(SDK_CLIENT_TOKEN)
+      expect(client.headers['User-Agent']).toBeUndefined()
+      expect(client.headers[CLIENT_HEADER]).toBe(SDK_CLIENT_TOKEN)
     } finally {
       delete g.window
     }

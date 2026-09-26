@@ -12,18 +12,6 @@ export class CliError extends Error {
   }
 }
 
-interface AxiosErrorLike extends Error {
-  response?: {
-    status: number
-    statusText: string
-    data: unknown
-  }
-  config?: {
-    url?: string
-    data?: string
-  }
-}
-
 export function handleError(err: unknown): never {
   if (typeof err === 'object' && err !== null && 'cancelled' in err) {
     process.exit(0)
@@ -53,31 +41,13 @@ export function handleError(err: unknown): never {
       if (err.status === 0) {
         console.error(`\nNetwork Error${err.code ? ` (${err.code})` : ''}: ${err.message}`)
       } else {
-        console.error(`\nAPI Error: ${err.status}${err.response?.statusText ? ` ${err.response.statusText}` : ''}`)
+        console.error(`\nAPI Error: ${err.status}${err.statusText ? ` ${err.statusText}` : ''}`)
         console.error(`Message: ${err.message}`)
       }
       if (err.retries > 0) console.error(`(after ${err.retries} retr${err.retries === 1 ? 'y' : 'ies'})`)
       if (isDebug()) {
         if (where) console.error('Request:', where)
         console.error('Response:', JSON.stringify(err.body ?? null, null, 2))
-      }
-      process.exit(1)
-    }
-
-    if ('response' in err) {
-      const axiosErr = err as AxiosErrorLike
-      const responseData = axiosErr.response?.data
-      const detail = typeof responseData === 'string'
-        ? responseData
-        : typeof responseData === 'object' && responseData !== null && 'message' in (responseData as Record<string, unknown>)
-          ? (responseData as Record<string, unknown>).message
-          : null
-      console.error(`\nAPI Error: ${axiosErr.response?.status} ${axiosErr.response?.statusText}`)
-      if (detail) console.error(`Message: ${detail}`)
-      if (isDebug()) {
-        console.error('URL:', axiosErr.config?.url)
-        console.error('Request body:', JSON.stringify(axiosErr.config?.data ? JSON.parse(axiosErr.config.data) : null, null, 2))
-        console.error('Response:', JSON.stringify(responseData, null, 2))
       }
       process.exit(1)
     }

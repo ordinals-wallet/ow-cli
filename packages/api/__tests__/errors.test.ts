@@ -32,9 +32,8 @@ describe('OwApiError', () => {
     expect(err.status).toBe(400)
     expect(err.message).toBe('Invalid Address')
     expect(err.body).toEqual({ error: true, message: 'Invalid Address' })
-    // axios-compatible fields for existing handlers
-    expect(err.response.status).toBe(400)
-    expect(err.response.data).toEqual({ error: true, message: 'Invalid Address' })
+    expect(err.statusText).toBe('Bad Request')
+    expect(err.headers.get('content-type')).toMatch(/json/)
     expect(err.method).toBe('GET')
     expect(err.url).toBe('/x')
   })
@@ -77,7 +76,7 @@ describe('retries', () => {
 
   it('retries GETs on 429 and network errors', async () => {
     const calls = flaky('/x', [new HttpResponse(null, { status: 429 }), HttpResponse.error()], { ok: 1 })
-    const { data } = await createClient(FAST).get('/x')
+    const data = await createClient(FAST).get('/x')
     expect(data).toEqual({ ok: 1 })
     expect(calls.n).toBe(3)
   })
@@ -108,7 +107,7 @@ describe('retries', () => {
 
   it('retries a POST only when the request opts in', async () => {
     const calls = flaky('/y', [new HttpResponse('boom', { status: 503 })], { ok: true }, 'post')
-    const { data } = await createClient(FAST).post('/y', {}, { owRetry: true })
+    const data = await createClient(FAST).post('/y', {}, { retry: true })
     expect(data).toEqual({ ok: true })
     expect(calls.n).toBe(2)
   })
@@ -118,7 +117,7 @@ describe('retries', () => {
     await createClient({ ...FAST, retries: 0 }).get('/x').catch(() => {})
     expect(a.n).toBe(1)
     const b = flaky('/x', [new HttpResponse(null, { status: 500 })], {})
-    await createClient(FAST).get('/x', { owRetry: false }).catch(() => {})
+    await createClient(FAST).get('/x', { retry: false }).catch(() => {})
     expect(b.n).toBe(1)
   })
 

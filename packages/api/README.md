@@ -1,6 +1,6 @@
 # @ow-cli/api
 
-Typed client for the Ordinals Wallet API (`https://turbo.ordinalswallet.com`). Runs in Node 18+ and browsers.
+Typed client for the Ordinals Wallet API (`https://turbo.ordinalswallet.com`). Runs in Node 18+ and browsers. Zero runtime dependencies: HTTP is native `fetch`.
 
 ```ts
 import { setClient, charts, sales, feeds, quotes } from '@ow-cli/api'
@@ -54,6 +54,8 @@ const close = feeds.streamCollectionFeed('bitcoin-puppets', {
 // feeds.streamActivityFeed({ onRows }) for the whole market
 close()
 ```
+
+Rows come in two shapes: the per-collection feed names the item `inscription_id` with `seller_address` / `buyer_address` at the top level; the market-wide feed names it `id` and nests the parties under `escrow`. `feeds.rowItemId(row)`, `feeds.rowSeller(row)` and `feeds.rowBuyer(row)` read either.
 
 The stream applies the `snapshot` and each `delta` (`added` / `updated` / `removed`) for you and keeps up to `maxRows` (default 200) rows. `feeds.createFeedStore()` exposes the same reducer if you manage the connection yourself.
 

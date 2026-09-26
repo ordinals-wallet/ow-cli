@@ -88,16 +88,15 @@ function delistError(code: string, detail?: string, status?: number): ProtectedT
 interface ApiErrorLike {
   status?: number
   body?: unknown
-  response?: { status?: number; data?: unknown }
 }
 
 /** Map a failed `POST /market/cancel-escrow` to a typed error with user-facing copy. */
 export function toDelistError(err: unknown): Error {
   if (err instanceof ProtectedTradeError) return err
   const e = err as ApiErrorLike
-  const status = e?.status ?? e?.response?.status
+  const status = e?.status
   if (typeof status !== 'number' || status === 0) return err as Error
-  const raw = e.body ?? e.response?.data
+  const raw = e.body
   const body = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>
   const serverCode = typeof body.code === 'string' ? body.code : undefined
   const serverMessage = typeof body.message === 'string' ? body.message : typeof raw === 'string' ? raw : undefined

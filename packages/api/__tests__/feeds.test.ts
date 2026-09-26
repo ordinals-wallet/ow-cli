@@ -50,7 +50,7 @@ describe('feed pages', () => {
         return new HttpResponse('rebuilding', { status: 503, headers: { 'Retry-After': '0' } })
       }),
     )
-    await expect(feeds.getActivityFeed({}, { maxRetries: 2 })).rejects.toMatchObject({ response: { status: 503 } })
+    await expect(feeds.getActivityFeed({}, { maxRetries: 2 })).rejects.toMatchObject({ status: 503 })
     expect(calls).toBe(3)
   })
 

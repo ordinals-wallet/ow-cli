@@ -1,19 +1,24 @@
-import axios from 'axios'
-
-const MEMPOOL_URL = 'https://mempool.space'
-const EXCHANGE_RATE_URL = 'https://cloud-functions.twetch.app/api/btc-exchange-rate'
+import { getClient } from './client.js'
+import type { QuotesSnapshot } from './types-quotes.js'
 
 export interface ExchangeRate {
+  /** BTC/USD. */
   price: number
-  percent_change_24h?: number
+  /** Unix seconds of the price, when the API sent it. */
+  ts?: number
 }
 
+/** Current chain tip height. `GET /blockheight`. */
 export async function getBlockHeight(): Promise<number> {
-  const { data } = await axios.get(`${MEMPOOL_URL}/api/blocks/tip/height`, { timeout: 10000 })
-  return Number(data)
+  const height = Number(await getClient().get('/blockheight'))
+  if (!Number.isSafeInteger(height) || height <= 0) throw new Error('Unexpected /blockheight response')
+  return height
 }
 
+/** BTC/USD from the quotes feed. `GET /quotes` (`btc.usd`). */
 export async function getExchangeRate(): Promise<ExchangeRate> {
-  const { data } = await axios.get(EXCHANGE_RATE_URL, { timeout: 10000 })
-  return data
+  const snap = await getClient().get<QuotesSnapshot>('/quotes')
+  const btc = snap?.btc
+  if (!btc || typeof btc.usd !== 'number' || !Number.isFinite(btc.usd)) throw new Error('BTC/USD unavailable from /quotes')
+  return btc.ts !== undefined ? { price: btc.usd, ts: btc.ts } : { price: btc.usd }
 }

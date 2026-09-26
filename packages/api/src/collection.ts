@@ -2,13 +2,11 @@ import { getClient } from './client.js'
 import type { CollectionMetadata, Escrow, CollectionStats, SoldEscrowsParams } from './types.js'
 
 export async function getMetadata(slug: string): Promise<CollectionMetadata> {
-  const { data } = await getClient().get(`/collection/${slug}`)
-  return data
+  return getClient().get<CollectionMetadata>(`/collection/${slug}`)
 }
 
 export async function getEscrows(slug: string): Promise<Escrow[]> {
-  const { data } = await getClient().get(`/collection/${slug}/escrows`)
-  return data
+  return getClient().get<Escrow[]>(`/collection/${slug}/escrows`)
 }
 
 /**
@@ -17,13 +15,11 @@ export async function getEscrows(slug: string): Promise<Escrow[]> {
  */
 export async function getSoldEscrows(slug: string, params: SoldEscrowsParams | number = {}): Promise<Escrow[]> {
   const { limit = 20, offset } = typeof params === 'number' ? { limit: params } : params
-  const { data } = await getClient().get(`/collection/${slug}/sold-escrows`, {
+  return getClient().get<Escrow[]>(`/collection/${slug}/sold-escrows`, {
     params: offset === undefined ? { limit } : { limit, offset },
   })
-  return data
 }
 
 export async function getStats(slug: string): Promise<CollectionStats> {
-  const { data } = await getClient().get(`/collection/${slug}/stats`)
-  return data
+  return getClient().get<CollectionStats>(`/collection/${slug}/stats`)
 }

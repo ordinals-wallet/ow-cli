@@ -22,7 +22,14 @@ const api = vi.hoisted(() => ({
     return `${txid}:${vout}`
   },
 }))
-vi.mock('@ow-cli/api', () => api)
+vi.mock('@ow-cli/api', async (importOriginal) => {
+  const real = await importOriginal<typeof import('@ow-cli/api')>()
+  return { ...api, OwApiError: real.OwApiError, isOwApiError: real.isOwApiError }
+})
+
+import { OwApiError } from '@ow-cli/api'
+const apiError = (status: number, body: Record<string, unknown>) =>
+  new OwApiError({ status, message: typeof body.message === 'string' ? body.message : `HTTP ${status}`, body })
 
 import { planListing, executeProtectedListing, recoverProtectedListing } from '../src/protected-listing.js'
 import { ProtectedTradeError } from '../src/protected-errors.js'
@@ -162,7 +169,7 @@ describe('executeProtectedListing', () => {
     api.secureListing.authorizeBulk.mockResolvedValue({ items: [{ outpoint: ITEM, error: true, code: 'template_digest_mismatch' }] })
     expect((await list()).failures[0]).toMatchObject({ code: 'template_digest_mismatch', message: 'The listing changed while signing. Try again.' })
 
-    api.secureListing.buildBulk.mockRejectedValue({ response: { status: 400, data: { error: true, code: 'postage_too_small' } } })
+    api.secureListing.buildBulk.mockRejectedValue(apiError(400, { error: true, code: 'postage_too_small' }))
     const err = await list().catch((e) => e)
     expect(err).toBeInstanceOf(ProtectedTradeError)
     expect(err).toMatchObject({ code: 'postage_too_small', stage: 'listing build', status: 400, retryable: false })

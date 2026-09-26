@@ -222,7 +222,7 @@ export const handlers = [
   }),
 
   // Search: free text -> {collections}, address/id -> {url}, no match -> 404
-  http.get(`${BASE}/v2/search/:input`, ({ params }) => {
+  http.get(`${BASE}/search/:input`, ({ params }) => {
     const input = String(params.input)
     if (input.startsWith('bc1')) return HttpResponse.json(searchUrlFx)
     if (input === 'zzqqxxnomatch123') {

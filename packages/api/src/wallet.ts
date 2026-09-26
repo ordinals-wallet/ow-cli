@@ -18,41 +18,34 @@ import type {
 } from './types.js'
 
 export async function getWallet(address: string): Promise<WalletInfo> {
-  const { data } = await getClient().get(`/wallet/${address}`)
-  return data
+  return getClient().get<WalletInfo>(`/wallet/${address}`)
 }
 
 /** Balance fields only (no holdings). Cached ~30s server side. */
 export async function getBalance(address: string): Promise<WalletBalance> {
-  const { data } = await getClient().get(`/wallet/${address}/balance`)
-  return data
+  return getClient().get<WalletBalance>(`/wallet/${address}/balance`)
 }
 
 /** Every inscription the address holds (same list as `getWallet().inscriptions`). */
 export async function getWalletInscriptions(address: string): Promise<WalletInscription[]> {
-  const { data } = await getClient().get(`/wallet/${address}/inscriptions`)
-  return data
+  return getClient().get<WalletInscription[]>(`/wallet/${address}/inscriptions`)
 }
 
 export async function getUtxos(address: string): Promise<Utxo[]> {
-  const { data } = await getClient().get(`/wallet/${address}/utxos`)
-  return data
+  return getClient().get<Utxo[]>(`/wallet/${address}/utxos`)
 }
 
 export async function getRuneBalance(address: string): Promise<RuneBalance[]> {
-  const { data } = await getClient().get(`/wallet/${address}/rune-balance`)
-  return data
+  return getClient().get<RuneBalance[]>(`/wallet/${address}/rune-balance`)
 }
 
 /** Coins holding a rune. `runeId` is `block:tx`. */
 export async function getRuneOutpoints(address: string, runeId: string): Promise<TokenOutpoint[]> {
-  const { data } = await getClient().get(`/wallet/${address}/rune-outpoints/${runeId}`)
-  return data
+  return getClient().get<TokenOutpoint[]>(`/wallet/${address}/rune-outpoints/${runeId}`)
 }
 
 export async function getBrc20Balance(address: string): Promise<Brc20Balance[]> {
-  const { data } = await getClient().get(`/wallet/${address}/brc20-balance`)
-  return data
+  return getClient().get<Brc20Balance[]>(`/wallet/${address}/brc20-balance`)
 }
 
 /**
@@ -60,19 +53,16 @@ export async function getBrc20Balance(address: string): Promise<Brc20Balance[]> 
  * while it is indexed; an empty result does not prove a zero balance.
  */
 export async function getAlkanesBalance(address: string): Promise<AlkanesBalance[]> {
-  const { data } = await getClient().get(`/wallet/${address}/alkanes-balance`)
-  return data
+  return getClient().get<AlkanesBalance[]>(`/wallet/${address}/alkanes-balance`)
 }
 
 /** Coins holding an alkane. `alkaneId` is `block:tx` (e.g. `2:0`). */
 export async function getAlkanesOutpoints(address: string, alkaneId: string): Promise<TokenOutpoint[]> {
-  const { data } = await getClient().get(`/wallet/${address}/alkanes-outpoints/${alkaneId}`)
-  return data
+  return getClient().get<TokenOutpoint[]>(`/wallet/${address}/alkanes-outpoints/${alkaneId}`)
 }
 
 export async function getInscription(id: string): Promise<InscriptionDetail> {
-  const { data } = await getClient().get(`/inscription/${id}`)
-  return data
+  return getClient().get<InscriptionDetail>(`/inscription/${id}`)
 }
 
 /**
@@ -80,26 +70,21 @@ export async function getInscription(id: string): Promise<InscriptionDetail> {
  * `getInscription()` (cached up to 24h) for ownership checks.
  */
 export async function getInscriptionOutpoint(id: string): Promise<InscriptionOutpoint> {
-  const { data } = await getClient().get(`/inscription/${id}/outpoint`)
-  return data
+  return getClient().get<InscriptionOutpoint>(`/inscription/${id}/outpoint`)
 }
 
 export async function getFeeEstimates(): Promise<FeeEstimates> {
-  const { data } = await getClient().get('/wallet/fee-estimates')
-  return data
+  return getClient().get<FeeEstimates>('/wallet/fee-estimates')
 }
 
 export async function broadcast(rawtx: string): Promise<BroadcastResult> {
-  const { data } = await getClient().post('/wallet/broadcast', { rawtx })
-  return data
+  return getClient().post<BroadcastResult>('/wallet/broadcast', { rawtx })
 }
 
 export async function buildConsolidate(params: BuildConsolidateRequest): Promise<BuildConsolidateResponse> {
-  const { data } = await getClient().post('/wallet/build', params)
-  return data
+  return getClient().post<BuildConsolidateResponse>('/wallet/build', params)
 }
 
 export async function broadcastBulk(rawtxs: string[]): Promise<BroadcastBulkResult> {
-  const { data } = await getClient().post('/wallet/broadcast-bulk', { rawtxs })
-  return data
+  return getClient().post<BroadcastBulkResult>('/wallet/broadcast-bulk', { rawtxs })
 }

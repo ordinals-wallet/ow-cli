@@ -1,6 +1,5 @@
 import { Command } from 'commander'
-import * as api from '@ow-cli/api'
-import type { TapToken } from '@ow-cli/api'
+import type { TapToken } from '../utils/tap.js'
 import { buildTapPayload } from '@ow-cli/shared'
 import { requirePublicInfo } from '../keystore.js'
 import { formatTable, formatJson } from '../output.js'
@@ -19,7 +18,8 @@ export function registerTapCommands(parent: Command): void {
     .action(async (opts) => {
       try {
         const info = requirePublicInfo()
-        const tokens = await api.tap.getTapBalance(info.address)
+        const { getTapBalance } = await import('../utils/tap.js')
+        const tokens = await getTapBalance(info.address)
 
         if (opts.json) {
           console.log(formatJson(tokens))

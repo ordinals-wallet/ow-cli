@@ -157,3 +157,18 @@ export function streamCollectionFeed(slug: string, handlers: FeedStreamHandlers,
 export function streamActivityFeed(handlers: FeedStreamHandlers, options?: FeedStreamOptions): Unsubscribe {
   return streamFeed('/inscriptions/activity/feed/stream', handlers, options)
 }
+
+/** The inscription a feed row sold, from either feed shape (`inscription_id` or `id`). Undefined for rune/alkane rows. */
+export function rowItemId(row: FeedRow): string | undefined {
+  return row.inscription_id ?? row.id ?? undefined
+}
+
+/** Seller address from either feed shape (top level, or under `escrow`). */
+export function rowSeller(row: FeedRow): string | undefined {
+  return row.seller_address ?? row.escrow?.seller_address ?? undefined
+}
+
+/** Buyer address from either feed shape (top level, or under `escrow`). */
+export function rowBuyer(row: FeedRow): string | undefined {
+  return row.buyer_address ?? row.escrow?.buyer_address ?? undefined
+}

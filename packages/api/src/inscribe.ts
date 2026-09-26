@@ -2,8 +2,7 @@ import { getClient } from './client.js'
 import type { InscribeEstimateRequest, InscribeEstimateResponse, InscribeUploadResponse } from './types.js'
 
 export async function estimate(params: InscribeEstimateRequest): Promise<InscribeEstimateResponse> {
-  const { data } = await getClient().post('/inscribe/estimate', params)
-  return data
+  return getClient().post<InscribeEstimateResponse>('/inscribe/estimate', params)
 }
 
 export async function upload(file: Uint8Array, params: { fee_rate: number; receive_address: string; content_type: string }): Promise<InscribeUploadResponse> {
@@ -13,8 +12,6 @@ export async function upload(file: Uint8Array, params: { fee_rate: number; recei
   formData.append('receive_address', params.receive_address)
   formData.append('content_type', params.content_type)
 
-  const { data } = await getClient().post('/inscribe/upload', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  })
-  return data
+  // fetch sets the multipart Content-Type (with boundary) for FormData.
+  return getClient().post<InscribeUploadResponse>('/inscribe/upload', formData)
 }

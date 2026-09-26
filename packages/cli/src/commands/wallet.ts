@@ -9,11 +9,12 @@ import {
   bytesToHex,
 } from '@ow-cli/core'
 import * as api from '@ow-cli/api'
-import type { WalletInscription, RuneBalance, Brc20Balance, TapToken } from '@ow-cli/api'
+import type { WalletInscription, RuneBalance, Brc20Balance } from '@ow-cli/api'
+import type { TapToken } from '../utils/tap.js'
 import { alkanesBalanceRows, ALKANES_COLUMNS } from './alkane.js'
 import { saveKeystore, requirePublicInfo, unlockKeypair, listWallets, migrateKeystore } from '../keystore.js'
 import { loadConfig, saveConfig } from '../config.js'
-import { promptPassword, promptConfirm, requireConfirm } from '../utils/prompts.js'
+import { promptPassword, promptConfirm, requireConfirm, promptInput, promptSecret, promptSelect } from '../utils/prompts.js'
 import { formatTable, formatJson, formatSats } from '../output.js'
 import { handleError } from '../utils/errors.js'
 import { validateFeeRate, validateOutpointWithSats, validateOutputPair, validateSplits, validateSats } from '../utils/validate.js'
@@ -39,10 +40,7 @@ export function registerWalletCommands(parent: Command): void {
         if (existing.length === 0) {
           walletName = 'default'
         } else {
-          const { default: inquirer } = await import('inquirer')
-          const { name } = await inquirer.prompt([
-            { type: 'input', name: 'name', message: 'Wallet name:' },
-          ])
+          const name = await promptInput('Wallet name:')
           walletName = name.trim() || 'default'
         }
       }
@@ -82,23 +80,12 @@ export function registerWalletCommands(parent: Command): void {
         if (existing.length === 0) {
           walletName = 'default'
         } else {
-          const { default: inquirer } = await import('inquirer')
-          const { name } = await inquirer.prompt([
-            { type: 'input', name: 'name', message: 'Wallet name:' },
-          ])
+          const name = await promptInput('Wallet name:')
           walletName = name.trim() || 'default'
         }
       }
 
-      const { default: inquirer } = await import('inquirer')
-      const { seed } = await inquirer.prompt([
-        {
-          type: 'password',
-          name: 'seed',
-          message: 'Enter mnemonic or WIF:',
-          mask: '*',
-        },
-      ])
+      const seed = await promptSecret('Enter mnemonic or WIF:')
 
       let kp
       const trimmed = seed.trim()
@@ -182,20 +169,14 @@ export function registerWalletCommands(parent: Command): void {
         }
         selected = match.id
       } else {
-        const { default: inquirer } = await import('inquirer')
         const active = loadConfig().activeWallet
-        const { choice } = await inquirer.prompt([
-          {
-            type: 'list',
-            name: 'choice',
-            message: 'Select wallet:',
-            choices: wallets.map((w) => ({
-              name: `${w.name}${w.id === active ? ' *' : ''}  ${w.address}`,
-              value: w.id,
-            })),
-          },
-        ])
-        selected = choice
+        selected = await promptSelect(
+          'Select wallet:',
+          wallets.map((w) => ({
+            name: `${w.name}${w.id === active ? ' *' : ''}  ${w.address}`,
+            value: w.id,
+          })),
+        )
       }
 
       saveConfig({ activeWallet: selected })
@@ -271,7 +252,9 @@ export function registerWalletCommands(parent: Command): void {
           api.wallet.getRuneBalance(info.address),
           api.wallet.getBrc20Balance(info.address),
           api.wallet.getAlkanesBalance(info.address),
-          api.tap.getTapBalance(info.address).catch((): TapToken[] => []),
+          import('../utils/tap.js')
+            .then(({ getTapBalance }) => getTapBalance(info.address))
+            .catch((): TapToken[] => []),
         ])
 
         if (opts.json) {

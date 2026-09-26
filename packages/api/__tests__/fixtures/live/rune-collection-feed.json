@@ -1,0 +1,47 @@
+{
+  "scope": "rune-LIQUIDIUM•TOKEN",
+  "version": 1790442227446755,
+  "tip": 968721,
+  "built_at": 1790444139570,
+  "rows": [
+    {
+      "source": "global",
+      "inscription_id": null,
+      "name": null,
+      "marketplace": 0,
+      "price_sats": 456784,
+      "amount": 35830.0,
+      "seller_address": "bc1p2yeu3vxh0pu9568thw589zswjz5jvtj48tlmf58p72u6arfqkhtq68gcuy",
+      "buyer_address": "bc1pwgz88af090p73zeld46994zgdvj6jv8hctdhuh5rv7kvjqekwa3sk4j6pj",
+      "outpoint": "903a935ff2e6172c42683f059cfaafd38e111753d5092ec57a24571c0b929d30:0",
+      "escrow_id": "903a935f-f2e6-172c-4268-3f059cfaafd3",
+      "protected": false,
+      "inscriptions_in_tx": 1,
+      "key": "x:ow:903a935f-f2e6-172c-4268-3f059cfaafd3:35830:456784",
+      "status": "confirmed",
+      "ts": 1790442737000,
+      "txid": "903a935ff2e6172c42683f059cfaafd38e111753d5092ec57a24571c0b929d30",
+      "seen": 1790442737000
+    },
+    {
+      "source": "global",
+      "inscription_id": null,
+      "name": null,
+      "marketplace": 0,
+      "price_sats": 88475,
+      "amount": 8578.0,
+      "seller_address": "bc1pwgz88af090p73zeld46994zgdvj6jv8hctdhuh5rv7kvjqekwa3sk4j6pj",
+      "buyer_address": "bc1ph7psca3pcp2npg6l4wdq48cq9fj6f0rdqtd6qj80u2hnrprsp67quhdx2d",
+      "outpoint": "aa40d3205510ef8fa5f7c5b3d186d30f43e097d4cd60a2c2879a3510dcb784d8:2",
+      "escrow_id": "aa40d320-5510-ef8f-a5f7-c5b3d186d30f",
+      "protected": false,
+      "inscriptions_in_tx": 1,
+      "key": "x:ow:aa40d320-5510-ef8f-a5f7-c5b3d186d30f:8578:88475",
+      "status": "confirmed",
+      "ts": 1790442186000,
+      "txid": "aa40d3205510ef8fa5f7c5b3d186d30f43e097d4cd60a2c2879a3510dcb784d8",
+      "seen": 1790442186000
+    }
+  ],
+  "next": null
+}

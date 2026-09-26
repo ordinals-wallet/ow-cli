@@ -6,8 +6,8 @@ export {
   CLIENT_HEADER,
   SDK_CLIENT_TOKEN,
 } from './client.js'
-export type { ClientConfig } from './client.js'
-export { OwApiError, isOwApiError, toOwApiError, extractErrorMessage } from './errors.js'
+export type { ClientConfig, OwClient, OwResponse, RequestOptions, FullRequestOptions, QueryParams } from './client.js'
+export { OwApiError, isOwApiError, toOwApiError, extractErrorMessage, extractErrorCode } from './errors.js'
 export {
   isRetryableError,
   parseRetryAfter,
@@ -30,9 +30,7 @@ export * as securePurchase from './secure-purchase.js'
 export * as inscribe from './inscribe.js'
 export * as transfer from './transfer.js'
 export * as search from './search.js'
-export * as tap from './tap.js'
 export * as network from './network.js'
-export type { TapToken } from './tap.js'
 export type { ExchangeRate } from './network.js'
 export type * from './types.js'
 export * as charts from './charts.js'

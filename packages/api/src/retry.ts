@@ -1,16 +1,4 @@
-import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
-import { toOwApiError } from './errors.js'
-
-declare module 'axios' {
-  interface AxiosRequestConfig {
-    /**
-     * Per-request retry override. `false` disables retries; `true` enables
-     * them even for non-idempotent methods (POST); a number sets the retry
-     * count for this request. Default: retry GET/HEAD/OPTIONS only.
-     */
-    owRetry?: boolean | number
-  }
-}
+import { isOwApiError } from './errors.js'
 
 export interface RetryOptions {
   /** Max retries after the first attempt. Default 2. `0` disables retrying. */
@@ -30,15 +18,9 @@ export const DEFAULT_RETRY_OPTIONS: RetryOptions = {
   maxDelay: 10_000,
 }
 
-const IDEMPOTENT_METHODS = new Set(['get', 'head', 'options'])
-
-/** True when a failure is worth retrying: network error, 429 or 5xx. */
+/** True when a failure is worth retrying: network error or timeout, 429 or 5xx. Caller aborts are not. */
 export function isRetryableError(err: unknown): boolean {
-  if (!axios.isAxiosError(err)) return false
-  if (axios.isCancel(err) || err.code === 'ERR_CANCELED') return false
-  const status = err.response?.status
-  if (status === undefined) return true // network error / timeout
-  return status === 429 || status >= 500
+  return isOwApiError(err) && err.isTransient
 }
 
 /** Parses a `Retry-After` header (delta-seconds or HTTP-date) into ms. */
@@ -70,38 +52,4 @@ export function computeRetryDelay(
   }
   const exp = Math.min(opts.maxDelay, opts.retryDelay * 2 ** (attempt - 1))
   return Math.round(exp / 2 + random() * (exp / 2))
-}
-
-type RetryState = InternalAxiosRequestConfig & { __owRetryCount?: number }
-
-function allowedRetries(cfg: RetryState, opts: RetryOptions): number {
-  const override = cfg.owRetry
-  if (override === false) return 0
-  if (typeof override === 'number') return Math.max(0, override)
-  if (override === true) return opts.retries
-  return IDEMPOTENT_METHODS.has((cfg.method ?? 'get').toLowerCase()) ? opts.retries : 0
-}
-
-const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
-
-/**
- * Installs the response interceptor that retries transient failures and
- * converts every failure into an {@link OwApiError}.
- */
-export function installRetryAndErrors(instance: AxiosInstance, opts: RetryOptions): void {
-  instance.interceptors.response.use(undefined, async (error: unknown) => {
-    const ax = error as AxiosError
-    const cfg = ax?.config as RetryState | undefined
-    const done = cfg?.__owRetryCount ?? 0
-
-    if (cfg && isRetryableError(error) && done < allowedRetries(cfg, opts)) {
-      const delay = computeRetryDelay(done + 1, opts, ax.response?.headers?.['retry-after'])
-      if (delay !== undefined) {
-        cfg.__owRetryCount = done + 1
-        await sleep(delay)
-        return instance.request(cfg)
-      }
-    }
-    throw toOwApiError(error, done)
-  })
 }
