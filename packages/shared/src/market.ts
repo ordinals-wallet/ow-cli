@@ -1,5 +1,7 @@
 import { signPsbt, signPurchaseFlow } from '@ow-cli/core'
 import * as api from '@ow-cli/api'
+import { delistListing } from './delist.js'
+import type { DelistResult } from './delist.js'
 
 export interface PurchaseRuneParams {
   outpoint: string
@@ -97,34 +99,19 @@ export async function executeListInscriptions(params: ListInscriptionsParams): P
   return { result }
 }
 
-export interface DelistParams {
+/** @deprecated Use `delistListing`, which also cancels snipe-protected listings and reports what it cancelled. */
+export async function executeDelist(params: {
   inscriptionId: string
   address: string
   publicKey: string
   privateKey: Uint8Array
-  publicKeyBytes: Uint8Array
-}
-
-export async function executeDelist(params: DelistParams): Promise<{ result: unknown }> {
-  const { psbt } = await api.market.buildEscrow({
-    inscription: params.inscriptionId,
-    from: params.address,
-    price: 2.1e15,
-    public_key: params.publicKey,
-    dummy: false,
-  })
-
-  const signedPsbt = signPsbt({
-    psbt,
+  publicKeyBytes?: Uint8Array
+}): Promise<{ result: DelistResult }> {
+  const result = await delistListing({
+    inscriptionId: params.inscriptionId,
+    address: params.address,
+    publicKey: params.publicKey,
     privateKey: params.privateKey,
-    publicKey: params.publicKeyBytes,
-    disableExtract: true,
   })
-
-  const result = await api.market.cancelEscrow({
-    inscription_id: params.inscriptionId,
-    signature: signedPsbt,
-  })
-
   return { result }
 }

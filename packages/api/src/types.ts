@@ -383,6 +383,10 @@ export interface MarketListing {
   secure_purchase_version?: number | null
   secure_purchase_state?: string | null
   protected?: boolean
+  /** Value of the listing outpoint (postage), in sats. */
+  outpoint_sats?: number
+  /** Address that holds the listing outpoint on chain. */
+  outpoint_address?: string
 }
 
 export interface SecurePurchaseCapabilities {
@@ -634,9 +638,31 @@ export interface CreateEscrowResponse {
   escrow_id: string
 }
 
-export interface CancelEscrowRequest {
-  inscription_id: string
-  signature: string
+/**
+ * `POST /market/cancel-escrow`. Exactly one identifier: `outpoint` (`txid:vout`)
+ * for snipe-protected listings and outpoint-keyed (rune/alkane) listings,
+ * `inscription_id` for standard inscription listings. `signature` is the
+ * owner's finalized proof PSBT in hex (`@ow-cli/core` `buildCancelProof`);
+ * the API refuses ALL|ANYONECANPAY proofs.
+ */
+export type CancelEscrowRequest =
+  | { inscription_id: string; outpoint?: undefined; signature: string }
+  | { outpoint: string; inscription_id?: undefined; signature: string }
+
+/**
+ * Success body. Protected listings answer with `transition` and `listing`;
+ * standard listings answer `{ success: true }` only.
+ */
+export interface CancelEscrowResponse {
+  success: boolean
+  transition?: 'cancelled' | 'already_cancelled'
+  listing?: {
+    escrow_id: string
+    /** True when the cancelled row was a snipe-protected (passthrough v4) listing. */
+    secure_v2: boolean
+    previous_state?: string
+    state: string
+  }
 }
 
 // Inscribe types

@@ -73,3 +73,10 @@ export type {
   SaleChainLink,
   SaleChainVerification,
 } from './passthrough.js'
+export {
+  CANCEL_PROOF_OUTPUT_SATS,
+  CANCEL_PROOF_SIGHASH,
+  buildCancelProof,
+  inspectCancelProof,
+} from './cancel-proof.js'
+export type { CancelProofInput, CancelProofShape } from './cancel-proof.js'

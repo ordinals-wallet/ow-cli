@@ -16,8 +16,9 @@ import {
   planListing,
   executeProtectedListing,
   recoverProtectedListing,
+  delistListing,
 } from '@ow-cli/shared'
-import type { PassthroughQuote, ProtectedListingOutcome } from '@ow-cli/shared'
+import type { PassthroughQuote, ProtectedListingOutcome, DelistResult } from '@ow-cli/shared'
 import {
   validateInscriptionId,
   validateOutpoint,
@@ -391,7 +392,7 @@ Recovery ${result.broadcast ? 'broadcast' : 'signed'}: ${result.txid}`)
 
   market
     .command('delist <inscription_id>')
-    .description('Cancel a listing')
+    .description('Cancel a listing (standard or snipe-protected)')
     .option('--json', 'Output as JSON')
     .action(async (inscriptionId: string, opts) => {
       try {
@@ -404,33 +405,37 @@ Recovery ${result.broadcast ? 'broadcast' : 'signed'}: ${result.txid}`)
         const password = await promptPassword()
         const kp = unlockKeypair(password)
 
-        const { psbt } = await api.market.buildEscrow({
-          inscription: inscriptionId,
-          from: pubInfo.address,
-          price: 2.1e15,
-          public_key: pubInfo.publicKey,
-          dummy: false,
-        })
-
-        const signedPsbt = signPsbt({
-          psbt,
+        const result = await delistListing({
+          inscriptionId,
+          address: pubInfo.address,
+          publicKey: pubInfo.publicKey,
           privateKey: kp.privateKey,
-          publicKey: kp.publicKey,
-          disableExtract: true,
-        })
-
-        const result = await api.market.cancelEscrow({
-          inscription_id: inscriptionId,
-          signature: signedPsbt,
         })
 
         if (opts.json) {
-          console.log(formatJson(result))
+          const { response: _response, ...summary } = result
+          console.log(formatJson(summary))
         } else {
-          console.log(`\nListing cancelled!`)
+          console.log(formatDelistResult(result))
         }
       } catch (err) {
         handleError(err)
       }
     })
+}
+
+/** Human-readable summary of a delist. */
+export function formatDelistResult(result: DelistResult): string {
+  const kind = result.kind === 'protected' ? 'snipe-protected' : 'standard'
+  const lines = [
+    result.transition === 'already_cancelled'
+      ? `\nThe ${kind} listing was already cancelled.`
+      : `\nCancelled the ${kind} listing.`,
+    `  Outpoint: ${result.outpoint}`,
+  ]
+  const v = result.verification
+  if (v.listingGone === false) lines.push('  Note: the marketplace still shows the listing; it may take a moment to clear.')
+  if (v.protectionRetired === false) lines.push('  Note: the protected listing still shows as active; check again shortly.')
+  if (v.error) lines.push(`  Could not confirm: ${v.error}`)
+  return lines.join('\n')
 }

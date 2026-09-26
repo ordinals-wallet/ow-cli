@@ -19,6 +19,7 @@ export type ProtectedTradeStage =
   | 'listing sign'
   | 'listing authorize'
   | 'recovery'
+  | 'delist'
 
 /** Codes callers are expected to branch on. Any other server or verification code may also appear. */
 export type ProtectedErrorCode =
