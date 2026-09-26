@@ -9,8 +9,8 @@ import {
   lostToFeeWarning,
   printPsbtPreview,
 } from '../src/utils/psbt-preview.js'
-// Real, trimmed `/wallet/:address` response (see packages/api/__tests__/fixtures).
-import walletFx from '../../api/__tests__/fixtures/wallet.json' with { type: 'json' }
+// Real, trimmed `/wallet/:address` response (see fixtures/api).
+import walletFx from '../../../fixtures/api/wallet.json' with { type: 'json' }
 
 const inscriptions = walletFx.inscriptions as unknown as WalletInscription[]
 const punk = inscriptions[0] // 1324 sats, sat_offset 0

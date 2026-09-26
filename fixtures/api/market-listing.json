@@ -1,0 +1,17 @@
+{
+  "inscription_id": "4919ed9868a0c8b17d6875b383705b6eeec4ba9bf9fe9a9b537cb0078d0b43bci0",
+  "outpoint": "bc430b8d07b07c539b9afef99bbac4ee6e5b7083b375687db1c8a06898ed194900000000",
+  "outpoint_sats": 546,
+  "outpoint_address": "bc1p4fqn6d3ajhqrh45rmc45gmh7kv6u6ejufeepa8jd6zwjzk8suxxslpxz4t",
+  "seller_address": "bc1p4fqn6d3ajhqrh45rmc45gmh7kv6u6ejufeepa8jd6zwjzk8suxxslpxz4t",
+  "buyer_address": null,
+  "satoshi_price": 16000,
+  "escrow_price": 15000,
+  "market_royalty": 0.0625,
+  "creator_royalty": null,
+  "creator_address": null,
+  "secure_purchase_version": 2,
+  "secure_purchase_state": "listed",
+  "protected": true,
+  "private_relay": false
+}

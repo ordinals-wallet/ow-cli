@@ -1,0 +1,138 @@
+{
+  "description": "API error bodies (non-retried GET) and the error each SDK must produce: status, message, code, body (parsed JSON, raw text, or null when empty). message null means the SDK falls back to a message starting with message_prefix.",
+  "cases": [
+    {
+      "name": "{error:true,message}",
+      "status": 400,
+      "content_type": "application/json",
+      "body": "{\"error\": true, \"message\": \"Invalid Address\"}",
+      "expected": {
+        "message": "Invalid Address",
+        "code": null,
+        "body": {
+          "error": true,
+          "message": "Invalid Address"
+        }
+      }
+    },
+    {
+      "name": "plain text",
+      "status": 400,
+      "content_type": "text/plain",
+      "body": "Invalid URL: notanid invalid length: 7",
+      "expected": {
+        "message": "Invalid URL: notanid invalid length: 7",
+        "code": null,
+        "body": "Invalid URL: notanid invalid length: 7"
+      }
+    },
+    {
+      "name": "{error:\"...\"} only",
+      "status": 401,
+      "content_type": "application/json",
+      "body": "{\"error\": \"unauthorized\"}",
+      "expected": {
+        "message": "unauthorized",
+        "code": null,
+        "body": {
+          "error": "unauthorized"
+        }
+      }
+    },
+    {
+      "name": "{error:code,message} gives code",
+      "status": 409,
+      "content_type": "application/json",
+      "body": "{\"error\": \"offer_expired\", \"message\": \"Offer has expired\"}",
+      "expected": {
+        "message": "Offer has expired",
+        "code": "offer_expired",
+        "body": {
+          "error": "offer_expired",
+          "message": "Offer has expired"
+        }
+      }
+    },
+    {
+      "name": "{error:true,code} without message falls back to HTTP status",
+      "status": 400,
+      "content_type": "application/json",
+      "body": "{\"error\": true, \"code\": \"invalid_inscription_id\"}",
+      "expected": {
+        "message": null,
+        "message_prefix": "HTTP 400",
+        "code": "invalid_inscription_id",
+        "body": {
+          "error": true,
+          "code": "invalid_inscription_id"
+        }
+      }
+    },
+    {
+      "name": "explicit code wins over error string",
+      "status": 400,
+      "content_type": "application/json",
+      "body": "{\"error\": \"bad\", \"code\": \"no_outpoints\", \"message\": \"Select at least one item\"}",
+      "expected": {
+        "message": "Select at least one item",
+        "code": "no_outpoints",
+        "body": {
+          "error": "bad",
+          "code": "no_outpoints",
+          "message": "Select at least one item"
+        }
+      }
+    },
+    {
+      "name": "blank message falls back to error string",
+      "status": 500,
+      "content_type": "application/json",
+      "body": "{\"error\": \"db down\", \"message\": \"   \"}",
+      "expected": {
+        "message": "db down",
+        "code": "db down",
+        "body": {
+          "error": "db down",
+          "message": "   "
+        }
+      }
+    },
+    {
+      "name": "empty 404",
+      "status": 404,
+      "content_type": null,
+      "body": null,
+      "expected": {
+        "message": null,
+        "message_prefix": "HTTP 404",
+        "code": null,
+        "body": null
+      }
+    },
+    {
+      "name": "plain text is trimmed for the message but kept raw in body",
+      "status": 503,
+      "content_type": "text/plain",
+      "body": "  rebuilding \n",
+      "expected": {
+        "message": "rebuilding",
+        "code": null,
+        "body": "  rebuilding \n"
+      }
+    },
+    {
+      "name": "JSON text served as text/plain is still parsed",
+      "status": 400,
+      "content_type": "text/plain",
+      "body": "{\"error\": true, \"message\": \"Invalid Address\"}",
+      "expected": {
+        "message": "Invalid Address",
+        "code": null,
+        "body": {
+          "error": true,
+          "message": "Invalid Address"
+        }
+      }
+    }
+  ]
+}

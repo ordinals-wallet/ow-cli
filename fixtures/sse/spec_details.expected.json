@@ -1,0 +1,31 @@
+{
+  "source": "sse/spec_details.txt",
+  "events": [
+    {
+      "event": "message",
+      "data": "a\nb",
+      "id": "7"
+    },
+    {
+      "event": "x",
+      "data": "",
+      "id": "7"
+    },
+    {
+      "event": "y",
+      "data": " two spaces",
+      "id": "7"
+    },
+    {
+      "event": "message",
+      "data": "after-empty-id",
+      "id": ""
+    }
+  ],
+  "comments": [
+    "hi"
+  ],
+  "retries": [
+    2500
+  ]
+}

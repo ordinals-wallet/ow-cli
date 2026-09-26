@@ -5,8 +5,8 @@ import {
   isSerializedOutpoint,
   txidVoutToSerialized,
 } from '../src/outpoint.js'
-import inscriptionFx from './fixtures/inscription.json' with { type: 'json' }
-import outpointFx from './fixtures/inscription-outpoint.json' with { type: 'json' }
+import inscriptionFx from '../../../fixtures/api/inscription.json' with { type: 'json' }
+import outpointFx from '../../../fixtures/api/inscription-outpoint.json' with { type: 'json' }
 
 describe('serialized outpoints', () => {
   it('matches the satpoint the API reports for the same inscription', () => {

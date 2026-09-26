@@ -395,11 +395,23 @@ Error codes map to typed errors, all `OfferError` (an `OwApiError`):
 `reconcile`), `OfferUnauthorizedError` (`unauthorized`). Offer POSTs are never
 retried.
 
+## Rust SDK
+
+[`rust/ordinalswallet`](rust/ordinalswallet/README.md) is a blocking Rust client
+for the same API (reads, streams and sign-in today; signing comes next). It has
+four runtime dependencies and is not on crates.io yet; use it as a git dependency.
+
 ## Testing
 
+There is no CI; run the gates locally.
+
 ```bash
-pnpm test
+pnpm install --frozen-lockfile && pnpm build && pnpm test
+cd rust && cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test
 ```
+
+Both SDKs assert the shared vectors and recorded API responses in
+[`fixtures/`](fixtures/README.md).
 
 ## License
 

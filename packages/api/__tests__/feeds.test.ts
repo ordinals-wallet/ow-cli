@@ -108,7 +108,7 @@ describe('createFeedStore', () => {
 
 describe('streamActivityFeed (live capture over msw)', () => {
   it('replays snapshot + deltas into sorted rows and sends x-ow-client', async () => {
-    const text = sseFixture('activity_stream.sse')
+    const text = sseFixture('activity_stream.txt')
     let header: string | null = null
     server.use(
       http.get(`${BASE}/inscriptions/activity/feed/stream`, ({ request }) => {
@@ -187,7 +187,7 @@ describe('quotes', () => {
     server.use(
       http.get(`${BASE}/quotes/stream`, ({ request }) => {
         url = new URL(request.url)
-        return new HttpResponse(textStream(sseFixture('quotes_stream.sse'), [64]), {
+        return new HttpResponse(textStream(sseFixture('quotes_stream.txt'), [64]), {
           headers: { 'content-type': 'text/event-stream' },
         })
       }),

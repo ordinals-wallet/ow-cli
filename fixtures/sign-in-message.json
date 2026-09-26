@@ -1,0 +1,28 @@
+{
+  "description": "Exact BIP-322 sign-in message rebuilt by POST /auth/session. Must match byte for byte.",
+  "template": "Sign in to Ordinals Wallet\n\nThis proves you own this address. It does not move funds or cost a fee.\n\nAddress: {address}\nNonce: {nonce}\nIssued At: {issued_at_ms}",
+  "cases": [
+    {
+      "address": "bc1pnnaxl5v4sl6fzmwww53p9hsarcpyq3sl96vk8unxvc56dzt34tmsnxwmz0",
+      "nonce": "0123456789abcdef0123456789abcdef",
+      "issued_at_ms": 1790441079359,
+      "expected": "Sign in to Ordinals Wallet\n\nThis proves you own this address. It does not move funds or cost a fee.\n\nAddress: bc1pnnaxl5v4sl6fzmwww53p9hsarcpyq3sl96vk8unxvc56dzt34tmsnxwmz0\nNonce: 0123456789abcdef0123456789abcdef\nIssued At: 1790441079359"
+    },
+    {
+      "address": "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq",
+      "nonce": "ffffffffffffffff",
+      "issued_at_ms": 1700000000000,
+      "expected": "Sign in to Ordinals Wallet\n\nThis proves you own this address. It does not move funds or cost a fee.\n\nAddress: bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq\nNonce: ffffffffffffffff\nIssued At: 1700000000000"
+    },
+    {
+      "address": "bc1p5d7rjq7g6rdk2yhzks9smlaqtedr4dekq08ge8ztwac72sfr9rusxg3297",
+      "nonce": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "issued_at_ms": 0,
+      "expected": "Sign in to Ordinals Wallet\n\nThis proves you own this address. It does not move funds or cost a fee.\n\nAddress: bc1p5d7rjq7g6rdk2yhzks9smlaqtedr4dekq08ge8ztwac72sfr9rusxg3297\nNonce: deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef\nIssued At: 0"
+    }
+  ],
+  "nonce": {
+    "hex_length": 32,
+    "pattern": "^[0-9a-f]{32}$"
+  }
+}
