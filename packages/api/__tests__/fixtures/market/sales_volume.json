@@ -1,0 +1,75 @@
+{
+ "from_height": 960000,
+ "to_height": 968710,
+ "buckets": [
+  {
+   "date": "2026-07-28",
+   "block_height_first": 960008,
+   "block_height_last": 960008,
+   "by_marketplace": {},
+   "total": {
+    "count": 0,
+    "volume_sats": 0,
+    "count_with_price": 0,
+    "count_items": 0,
+    "item_volume_sats": 0
+   }
+  },
+  {
+   "date": "2026-09-25",
+   "block_height_first": 968472,
+   "block_height_last": 968592,
+   "by_marketplace": {
+    "1": {
+     "count": 1,
+     "volume_sats": 1700000,
+     "count_with_price": 1,
+     "count_items": 1,
+     "item_volume_sats": 1700000
+    },
+    "10": {
+     "count": 1,
+     "volume_sats": 1425000,
+     "count_with_price": 1,
+     "count_items": 1,
+     "item_volume_sats": 1425000
+    },
+    "2": {
+     "count": 5,
+     "volume_sats": 8945766,
+     "count_with_price": 5,
+     "count_items": 5,
+     "item_volume_sats": 8945766
+    }
+   },
+   "total": {
+    "count": 7,
+    "volume_sats": 12070766,
+    "count_with_price": 7,
+    "count_items": 7,
+    "item_volume_sats": 12070766
+   }
+  },
+  {
+   "date": "2026-09-26",
+   "block_height_first": 968646,
+   "block_height_last": 968675,
+   "by_marketplace": {
+    "2": {
+     "count": 2,
+     "volume_sats": 3248546,
+     "count_with_price": 2,
+     "count_items": 2,
+     "item_volume_sats": 3248546
+    }
+   },
+   "total": {
+    "count": 2,
+    "volume_sats": 3248546,
+    "count_with_price": 2,
+    "count_items": 2,
+    "item_volume_sats": 3248546
+   }
+  }
+ ]
+}

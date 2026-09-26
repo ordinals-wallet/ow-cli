@@ -150,6 +150,9 @@ ow collection info <slug>
 ow collection listings <slug>
 ow collection history <slug> --limit 10
 ow collection search "ordinal foxes"
+ow collection chart <slug> --interval 4h   # candles + fair line (--denom usd|mcap)
+ow collection value <slug>                 # fair value, range, confidence
+ow collection sales <slug> --limit 20      # sales across marketplaces
 ```
 
 ### Send & Fees

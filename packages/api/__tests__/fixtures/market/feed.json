@@ -1,0 +1,63 @@
+{
+ "scope": "bitcoin-puppets",
+ "version": 1790440941785102,
+ "tip": 968710,
+ "built_at": 1790440954737,
+ "rows": [
+  {
+   "inscription_id": "c31afa96aaad21f63385020163d6a41ccd9697dd24a449bd9325d2bad95c6ea6i0",
+   "marketplace": 2,
+   "price_sats": 1745546,
+   "amount": null,
+   "seller_address": "bc1qxsxpajwf53ykeva9kyc9a8x3vugvpr2r8gtn7z",
+   "buyer_address": "bc1qxysukuzgp0g8ccexmapnhlhal5pyzffqrx49kjs7zcjgwqxlw8lqw8ey8l",
+   "inscriptions_in_tx": 1,
+   "sighash": 129,
+   "signals": 9,
+   "key": "tx:1234376013f085024d47d5a50d1665474978e8f4aef4d0ce4e47f5779a290c4c:c31afa96aaad21f63385020163d6a41ccd9697dd24a449bd9325d2bad95c6ea6i0",
+   "source": "global",
+   "status": "confirmed",
+   "ts": 1790420677000,
+   "block_height": 968675,
+   "txid": "1234376013f085024d47d5a50d1665474978e8f4aef4d0ce4e47f5779a290c4c",
+   "seen": 1790420677000
+  },
+  {
+   "inscription_id": "70c0f490b3ce1418b66364281921d05ed2d736325422e0eabd466bc8c0dfe433i0",
+   "marketplace": 2,
+   "price_sats": 1503000,
+   "amount": null,
+   "seller_address": "3JW7qpiPwxMHpgRxMPwAgbbmsaJoibhnJn",
+   "buyer_address": "bc1pgcdznqzvxh5xsf8epmwu9ehfx7y2cq2laqua00tzdacjh48sl5ks370mpe",
+   "inscriptions_in_tx": 1,
+   "sighash": 1,
+   "signals": 16,
+   "key": "tx:b07eec6787ccfc0e56825fc3a031c019d6fa755bf016f246b6d8ac09c5ed4555:70c0f490b3ce1418b66364281921d05ed2d736325422e0eabd466bc8c0dfe433i0",
+   "source": "global",
+   "status": "confirmed",
+   "ts": 1790400988000,
+   "block_height": 968646,
+   "txid": "b07eec6787ccfc0e56825fc3a031c019d6fa755bf016f246b6d8ac09c5ed4555",
+   "seen": 1790400988000
+  },
+  {
+   "inscription_id": "6658995799d71809117e9a0599cbf5aa08ae381694b638caebd6926f02d3ceebi0",
+   "marketplace": 2,
+   "price_sats": 1740000,
+   "amount": null,
+   "seller_address": "bc1pngfe277g0dt67an9nuhetvm7ul4s3eqsf0ymn4kvwrgn0fpftczq6tz8qx",
+   "buyer_address": "bc1qqu0r3gee9wv66wxdht94m86ngssxhtha52qux2pf32r9vlze36lq0tnzk6",
+   "inscriptions_in_tx": 1,
+   "sighash": 129,
+   "signals": 9,
+   "key": "tx:501ad4250327f9e83fdb59a686ba21e9d8e69802f46808e0d50c2c0957198b29:6658995799d71809117e9a0599cbf5aa08ae381694b638caebd6926f02d3ceebi0",
+   "source": "global",
+   "status": "confirmed",
+   "ts": 1790377250000,
+   "block_height": 968592,
+   "txid": "501ad4250327f9e83fdb59a686ba21e9d8e69802f46808e0d50c2c0957198b29",
+   "seen": 1790377250000
+  }
+ ],
+ "next": "2~1789936827000000~74783a346134323838336664656332333836633461656630613834393833383461373434316362656532653038363231333034373230393262373331306661376662333a643539623066343666376361666637373463326135393638376433323339313261663739663064323837643531373932636433316537323332613564656432326930~5~967895"
+}

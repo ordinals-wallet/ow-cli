@@ -1,0 +1,91 @@
+[
+ {
+  "id": "4919ed9868a0c8b17d6875b383705b6eeec4ba9bf9fe9a9b537cb0078d0b43bci0",
+  "num": 10213528,
+  "content_type": "text/plain",
+  "meta": null,
+  "collection": {
+   "name": "XBT Names",
+   "description": null,
+   "slug": "xbt-names",
+   "creator_address": null,
+   "floor_price": null,
+   "icon": "https://media.ordinalswallet.com/42586bc8f4dd685635e3dac94b50867b09febb8b747ddf2769b5b1f926642adc.png",
+   "icon_inscription": null
+  },
+  "escrow": {
+   "protected": true,
+   "satoshi_price": 16000,
+   "seller_address": "bc1p4fqn6d3ajhqrh45rmc45gmh7kv6u6ejufeepa8jd6zwjzk8suxxslpxz4t",
+   "buyer_address": null,
+   "bought_at": "",
+   "purchase_txid": null,
+   "private_relay": false
+  },
+  "marketplace": 1,
+  "amount": null,
+  "rune_id": null,
+  "listed_at": "2026-09-26 16:02:20.08881+00"
+ },
+ {
+  "id": "62aa54c55637ed8125703fad6d7afa0124ae6be7311b047868edadd292588b27i0",
+  "num": 1024970,
+  "content_type": "image/png",
+  "meta": {
+   "name": "Bitamigo #19500",
+   "attributes": [
+    {
+     "trait_type": "Hair",
+     "value": "Long Pink",
+     "percent": null
+    },
+    {
+     "trait_type": "Hat/Helmet",
+     "value": "Backwards Cap Black",
+     "percent": null
+    },
+    {
+     "trait_type": "Mouth",
+     "value": "Flat",
+     "percent": null
+    },
+    {
+     "trait_type": "Shirt/Jacket",
+     "value": "Puffy Coat Green",
+     "percent": null
+    },
+    {
+     "trait_type": "Type",
+     "value": "Human Pumpkin Spice",
+     "percent": null
+    }
+   ],
+   "rank": null
+  },
+  "collection": {
+   "name": "Bitamigos",
+   "description": null,
+   "slug": "realbitamigos",
+   "creator_address": null,
+   "floor_price": null,
+   "icon": "https://bafkreicp66fmuw7uptn47mac5gyuzcj47pdljxtcwkblywvzkfwrjjwlty.ipfs.nftstorage.link/",
+   "icon_inscription": {
+    "id": "7ffe658d0b54a08b1a11b5b9299be6bb78d2f1a743d39a0d7e1a62c28110bcf5i0",
+    "content_type": "image/png"
+   }
+  },
+  "escrow": {
+   "protected": true,
+   "satoshi_price": 10400,
+   "seller_address": "bc1patcklwx3gwn42y466v9n0r5jj44jq4vc2uhsec2d3hd79cmzdqnsruzynt",
+   "buyer_address": null,
+   "bought_at": "",
+   "purchase_txid": null,
+   "private_relay": false
+  },
+  "marketplace": 1,
+  "amount": null,
+  "rune_id": null,
+  "listed_at": "2026-09-26 15:40:06.305504+00"
+ }
+]
