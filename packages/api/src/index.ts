@@ -1,4 +1,13 @@
-export { createClient, setClient, getClient } from './client.js'
+export {
+  createClient,
+  setClient,
+  getClient,
+  buildClientHeader,
+  CLIENT_HEADER,
+  SDK_CLIENT_TOKEN,
+} from './client.js'
+export type { ClientConfig } from './client.js'
+export { VERSION } from './version.js'
 export * as wallet from './wallet.js'
 export * as collection from './collection.js'
 export * as market from './market.js'

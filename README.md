@@ -173,6 +173,27 @@ Turborepo monorepo with three packages:
 | `@ow-cli/api` | Typed HTTP client for all Ordinals Wallet API endpoints |
 | `@ow-cli/cli` | Commander.js CLI wiring commands to core + api |
 
+### Client identification
+
+Every request from `@ow-cli/api` carries an `x-ow-client` header made of one or
+more space-separated `<name>/<version>` product tokens, most specific first. In
+Node the SDK also sets `User-Agent: ow-cli/<version>` (browsers do not allow it).
+
+| Caller | `x-ow-client` |
+|--------|---------------|
+| SDK, no app name | `ow-cli/0.1.0` |
+| `ow` CLI / TUI | `ow-cli-cli/0.1.0 ow-cli/0.1.0` |
+| Your app | `my-bot/1.2 ow-cli/0.1.0` |
+
+Identify your own integration with `appName`:
+
+```ts
+import { setClient, createClient } from '@ow-cli/api'
+
+setClient({ appName: 'my-bot/1.2' })          // default client used by the api helpers
+const client = createClient({ appName: 'my-bot/1.2' }) // standalone axios instance
+```
+
 ## Testing
 
 ```bash
