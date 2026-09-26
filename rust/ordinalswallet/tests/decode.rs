@@ -156,3 +156,17 @@ fn stream_captures_decode() {
         }
     }
 }
+
+#[test]
+fn attribute_percent_as_number_text_or_null() {
+    let v = serde_json::json!([
+        { "trait_type": "Background", "value": "Peach", "percent": "5.85%" },
+        { "trait_type": "Body", "value": "Yellow", "percent": 6.21 },
+        { "trait_type": "Mouth", "value": "Surprise", "percent": null },
+        { "trait_type": "Eyes", "value": "Laser" },
+        { "trait_type": "Hat", "value": "Cap", "percent": "n/a" }
+    ]);
+    let attrs: Vec<InscriptionAttribute> = serde_json::from_value(v).unwrap();
+    let got: Vec<Option<f64>> = attrs.iter().map(|a| a.percent).collect();
+    assert_eq!(got, [Some(5.85), Some(6.21), None, None, None]);
+}

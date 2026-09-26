@@ -56,7 +56,9 @@ pub struct TokenCollectionRef {
 pub struct InscriptionAttribute {
     pub trait_type: String,
     pub value: Value,
-    #[serde(default)]
+    /// Share of the collection with this value, in percent. Some collections
+    /// send it as text (`"5.85%"`); that is parsed, anything else is `None`.
+    #[serde(default, deserialize_with = "crate::de::opt_percent")]
     pub percent: Option<f64>,
 }
 

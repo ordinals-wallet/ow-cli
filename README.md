@@ -112,15 +112,30 @@ Reads retry on `5xx` and `429` with backoff and honour `Retry-After`. Writes nev
 
 ## Rust
 
+```toml
+ordinalswallet = { git = "https://github.com/ordinals-wallet/ow-cli", package = "ordinalswallet", features = ["signing"] }
+```
+
 ```rust
-let client = ordinalswallet::Client::builder()
-    .app_name("my-bot/1.0.0")
-    .build()?;
+let client = ordinalswallet::Client::builder().app_name("my-bot/1.0.0").build()?;
 let value = client.charts().valuation("bitcoin-puppets")?;
 println!("{} sats", value.fair_sats.unwrap_or_default());
 ```
 
-Reads, streams, sign-in sessions and the offer and protected-trading write routes. Signing (keys, BIP-322, offers, protected trading), verified against the same vectors as the TypeScript SDK, is behind the `signing` feature and adds only the `bitcoin` crate. See [rust/ordinalswallet](rust/ordinalswallet/README.md).
+With `features = ["signing"]`, sign in with a key and verify a protected purchase before signing anything:
+
+```rust
+use ordinalswallet::signing::{trade, SigningKey};
+
+let key = SigningKey::from_mnemonic(&std::env::var("MNEMONIC").expect("MNEMONIC"))?;
+let id = "<inscription id>";
+let session = trade::sign_in_with_key(&client, &key, None)?; // BIP-322, 24h token
+let item = trade::plan_item(id, client.market().listing(id)?.as_ref())?;
+let quote = trade::quote_protected_purchase(&client, &[item], 5.0, &key, 0)?; // builds, checks every PSBT, signs nothing
+println!("{} sats, read from the transactions", quote.verified.total_sat);
+```
+
+Blocking, no async runtime; streams are iterators. The `signing` feature adds only the `bitcoin` crate and replays the same vectors as the TypeScript SDK. Not on crates.io yet. See [rust/ordinalswallet](rust/ordinalswallet/README.md) and [docs/developers/tools/rust](https://blog.ordinalswallet.com/docs/developers/tools/rust).
 
 ## One behaviour, two languages
 
