@@ -7,6 +7,20 @@ export {
   SDK_CLIENT_TOKEN,
 } from './client.js'
 export type { ClientConfig } from './client.js'
+export { OwApiError, isOwApiError, toOwApiError, extractErrorMessage } from './errors.js'
+export {
+  isRetryableError,
+  parseRetryAfter,
+  computeRetryDelay,
+  DEFAULT_RETRY_OPTIONS,
+} from './retry.js'
+export type { RetryOptions } from './retry.js'
+export {
+  outpointToTxidVout,
+  parseSerializedOutpoint,
+  isSerializedOutpoint,
+  txidVoutToSerialized,
+} from './outpoint.js'
 export { VERSION } from './version.js'
 export * as wallet from './wallet.js'
 export * as collection from './collection.js'

@@ -6,6 +6,21 @@ import { formatTable, formatJson } from '../output.js'
 import { handleError } from '../utils/errors.js'
 import { registerEdictSend, registerEdictSplit } from './edict-transfer.js'
 
+export const ALKANES_COLUMNS = ['Ticker', 'ID', 'Balance', 'Available']
+
+/** Table rows for `/wallet/:address/alkanes-balance` (balances are whole units). */
+export function alkanesBalanceRows(tokens: AlkanesBalance[]): string[][] {
+  return tokens.map((t) => [
+    t.ticker || '',
+    t.rune_id || '',
+    t.overall_balance ?? '',
+    t.available_balance ?? '',
+  ])
+}
+
+export const ALKANES_COLD_WALLET_HINT =
+  'No Alkanes balances. (A wallet queried for the first time can return empty while it is indexed; retry in a few seconds.)'
+
 export function registerAlkaneCommands(parent: Command): void {
   const alkane = parent.command('alkane').description('Alkane commands')
 
@@ -24,12 +39,11 @@ export function registerAlkaneCommands(parent: Command): void {
         }
 
         if (tokens.length === 0) {
-          console.log('No Alkanes balances.')
+          console.log(ALKANES_COLD_WALLET_HINT)
           return
         }
 
-        const rows = tokens.map((t: AlkanesBalance) => [t.id || '', t.balance || ''])
-        console.log(formatTable(['ID', 'Balance'], rows))
+        console.log(formatTable(ALKANES_COLUMNS, alkanesBalanceRows(tokens)))
       } catch (err) {
         handleError(err)
       }

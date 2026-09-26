@@ -11,8 +11,9 @@ interface AlkanesPageProps {
 }
 
 const columns: Column[] = [
-  { header: 'ID', width: 16 },
-  { header: 'Balance', width: 18, align: 'right' },
+  { header: 'Ticker', width: 14 },
+  { header: 'ID', width: 12 },
+  { header: 'Balance', width: 20, align: 'right' },
 ]
 
 export function AlkanesPage({ address, cursor, height }: AlkanesPageProps) {
@@ -22,8 +23,8 @@ export function AlkanesPage({ address, cursor, height }: AlkanesPageProps) {
   useEffect(() => { useAlkaneStore.getState().fetch(address) }, [address])
 
   const rows = !alkanes && loading
-    ? [['Loading...', '']]
-    : (alkanes || []).map((a) => [a.id || '', a.balance || ''])
+    ? [['Loading...', '', '']]
+    : (alkanes || []).map((a) => [a.ticker || '', a.rune_id || '', a.overall_balance ?? ''])
 
   return <Table columns={columns} rows={rows} cursor={cursor} height={height} title="Alkanes" />
 }

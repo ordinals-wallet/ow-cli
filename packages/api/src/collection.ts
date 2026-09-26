@@ -1,5 +1,5 @@
 import { getClient } from './client.js'
-import type { CollectionMetadata, Escrow, CollectionStats } from './types.js'
+import type { CollectionMetadata, Escrow, CollectionStats, SoldEscrowsParams } from './types.js'
 
 export async function getMetadata(slug: string): Promise<CollectionMetadata> {
   const { data } = await getClient().get(`/collection/${slug}`)
@@ -11,9 +11,14 @@ export async function getEscrows(slug: string): Promise<Escrow[]> {
   return data
 }
 
-export async function getSoldEscrows(slug: string, limit = 20): Promise<Escrow[]> {
+/**
+ * Ordinals Wallet sales, most recent first. Accepts `{ limit, offset }`
+ * (limit max 100) or, for backward compatibility, a bare limit.
+ */
+export async function getSoldEscrows(slug: string, params: SoldEscrowsParams | number = {}): Promise<Escrow[]> {
+  const { limit = 20, offset } = typeof params === 'number' ? { limit: params } : params
   const { data } = await getClient().get(`/collection/${slug}/sold-escrows`, {
-    params: { limit },
+    params: offset === undefined ? { limit } : { limit, offset },
   })
   return data
 }

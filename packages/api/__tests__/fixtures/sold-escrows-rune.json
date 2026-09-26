@@ -1,0 +1,22 @@
+[
+  {
+    "id": "f2569352-99ee-1e73-4778-53dada831707",
+    "inscription_id": null,
+    "name": null,
+    "outpoint": "f256935299ee1e73477853dada831704f20a6e38dd83f9b944600b748c71228d:2",
+    "purchase_txid": "f256935299ee1e73477853dada831704f20a6e38dd83f9b944600b748c71228d",
+    "seller_address": "bc1pud2j5tpy5s3c5u6y7e2lqn8tp5208q0mmxjtjqncmzp9wyj5gssswnz8nk",
+    "buyer_address": "bc1pgnd3455fgeh9j4t6d48z4mctdktlgp47q0xjp0dn6l790v4cf6sq398ahq",
+    "satoshi_price": 119223,
+    "creator_address": null,
+    "bought_at": "2026-09-26 16:37:33+00",
+    "created": "2026-09-26 16:37:33+00",
+    "price_per": "1.27976654",
+    "amount": "93159.95974",
+    "secure_purchase_version": null,
+    "secure_purchase_state": null,
+    "protected": false,
+    "private_relay": false,
+    "marketplace": 12
+  }
+]

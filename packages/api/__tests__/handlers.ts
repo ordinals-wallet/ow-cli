@@ -1,4 +1,20 @@
 import { http, HttpResponse } from 'msw'
+// Fixtures are real, trimmed responses from turbo.ordinalswallet.com (GET only).
+import walletFx from './fixtures/wallet.json' with { type: 'json' }
+import walletInscriptionsFx from './fixtures/wallet-inscriptions.json' with { type: 'json' }
+import walletBalanceFx from './fixtures/wallet-balance.json' with { type: 'json' }
+import alkanesBalanceFx from './fixtures/alkanes-balance.json' with { type: 'json' }
+import alkanesOutpointsFx from './fixtures/alkanes-outpoints.json' with { type: 'json' }
+import runeBalanceFx from './fixtures/rune-balance.json' with { type: 'json' }
+import brc20BalanceFx from './fixtures/brc20-balance.json' with { type: 'json' }
+import inscriptionFx from './fixtures/inscription.json' with { type: 'json' }
+import inscriptionOutpointFx from './fixtures/inscription-outpoint.json' with { type: 'json' }
+import collectionFx from './fixtures/collection.json' with { type: 'json' }
+import collectionStatsFx from './fixtures/collection-stats.json' with { type: 'json' }
+import escrowsFx from './fixtures/escrows.json' with { type: 'json' }
+import soldEscrowsFx from './fixtures/sold-escrows.json' with { type: 'json' }
+import searchCollectionsFx from './fixtures/search-collections.json' with { type: 'json' }
+import searchUrlFx from './fixtures/search-url.json' with { type: 'json' }
 
 const BASE = 'https://turbo.ordinalswallet.com'
 
@@ -60,124 +76,53 @@ export const handlers = [
     ])
   }),
 
-  http.get(`${BASE}/wallet/:address/inscriptions`, () => {
-    return HttpResponse.json([
-      { id: 'abc123i0', number: 1, content_type: 'image/png' },
-    ])
-  }),
+  http.get(`${BASE}/wallet/:address/inscriptions`, () => HttpResponse.json(walletInscriptionsFx)),
 
-  http.get(`${BASE}/wallet/:address/rune-balance`, () => {
-    return HttpResponse.json([
-      { name: 'TESTRUNESTONE', rune_id: '100:1', amount: '1000', symbol: 'T', divisibility: 0 },
-    ])
-  }),
+  http.get(`${BASE}/wallet/:address/balance`, () => HttpResponse.json(walletBalanceFx)),
 
-  http.get(`${BASE}/wallet/:address/brc20-balance`, () => {
-    return HttpResponse.json([
-      {
-        ticker: 'ORDI',
-        overall_balance: '100.00',
-        available_balance: '80.00',
-        transferable_balance: '20.00',
-      },
-    ])
-  }),
+  http.get(`${BASE}/wallet/:address/rune-balance`, () => HttpResponse.json(runeBalanceFx)),
 
-  http.get(`${BASE}/wallet/:address/alkanes-balance`, () => {
-    return HttpResponse.json([
-      {
-        rune_id: '200:1',
-        id: 'alk1',
-        outpoint: 'abc123:0',
-        amount: '500',
-        balance: '500',
-        address: 'bc1ptest',
-        sats: 546,
-      },
-    ])
-  }),
+  http.get(`${BASE}/wallet/:address/brc20-balance`, () => HttpResponse.json(brc20BalanceFx)),
+
+  http.get(`${BASE}/wallet/:address/alkanes-balance`, () => HttpResponse.json(alkanesBalanceFx)),
+
+  http.get(`${BASE}/wallet/:address/alkanes-outpoints/:id`, () => HttpResponse.json(alkanesOutpointsFx)),
+
+  // Inscription location (must be before /inscription/:id)
+  http.get(`${BASE}/inscription/:id/outpoint`, () => HttpResponse.json(inscriptionOutpointFx)),
 
   // Inscription detail
-  http.get(`${BASE}/inscription/:id`, () => {
-    return HttpResponse.json({
-      id: 'abc123i0',
-      num: 1,
-      content_type: 'image/png',
-      content_length: 12345,
-      genesis_height: 800000,
-      genesis_fee: 5000,
-      sat: { value: 1234567890, rarity: 'common' },
-      meta: { name: 'Test Inscription' },
-      collection: { slug: 'test-collection', name: 'Test Collection' },
-    })
-  }),
+  http.get(`${BASE}/inscription/:id`, () => HttpResponse.json(inscriptionFx)),
 
   // Wildcard wallet address route (must be AFTER all specific /wallet/* GET routes)
-  http.get(`${BASE}/wallet/:address`, () => {
-    return HttpResponse.json({
-      address: 'bc1ptest',
-      balance: 100000,
-      unconfirmed_balance: 0,
-      confirmed_balance: 100000,
-      inscription_balance: 0,
-      frozen_balance: 0,
-      inscription_count: 1,
-      utxo_count: 2,
-      inscriptions: [
-        { id: 'abc123i0', num: 1, content_type: 'image/png', meta: { name: 'Test' } },
-      ],
-      brc20: [],
-    })
+  http.get(`${BASE}/wallet/:address`, ({ params }) => {
+    if (params.address === 'notanaddress') {
+      return HttpResponse.json({ error: true, message: 'Invalid Address' }, { status: 400 })
+    }
+    return HttpResponse.json(walletFx)
   }),
 
   // Collection
-  http.get(`${BASE}/collection/:slug/escrows`, () => {
-    return HttpResponse.json([
-      {
-        id: 'esc1',
-        inscription_id: 'abc123i0',
-        name: 'Test #1',
-        satoshi_price: 50000,
-        price: 50000,
-        seller_address: 'bc1ptest',
-      },
-    ])
+  http.get(`${BASE}/collection/:slug/escrows`, () => HttpResponse.json(escrowsFx)),
+
+  http.get(`${BASE}/collection/:slug/sold-escrows`, ({ request }) => {
+    const url = new URL(request.url)
+    const limit = Number(url.searchParams.get('limit') ?? 100)
+    const offset = Number(url.searchParams.get('offset') ?? 0)
+    return HttpResponse.json(soldEscrowsFx.slice(offset, offset + limit))
   }),
 
-  http.get(`${BASE}/collection/:slug/sold-escrows`, () => {
-    return HttpResponse.json([
-      {
-        id: 'sold1',
-        inscription_id: 'def456i0',
-        name: 'Test #2',
-        satoshi_price: 60000,
-        price: 60000,
-        buyer_address: 'bc1pbuyer',
-      },
-    ])
-  }),
-
-  http.get(`${BASE}/collection/:slug/stats`, () => {
-    return HttpResponse.json({
-      floor_price: 50000,
-      total_volume: 1000000,
-      total_supply: 100,
-      listed_count: 10,
-      listed: 10,
-      sales: 50,
-      owners: 42,
-    })
-  }),
+  http.get(`${BASE}/collection/:slug/stats`, () => HttpResponse.json(collectionStatsFx)),
 
   http.get(`${BASE}/collection/:slug`, ({ params }) => {
-    return HttpResponse.json({
-      slug: params.slug,
-      name: 'Test Collection',
-      description: 'A test',
-      image_url: 'https://example.com/img.png',
-      banner_url: 'https://example.com/banner.png',
-      supply: 100,
-    })
+    if (params.slug !== collectionFx.slug) {
+      // Live API: 404 with a JSON error body for unknown slugs.
+      return HttpResponse.json(
+        { error: true, message: 'no rows returned by a query that expected to return at least one row' },
+        { status: 404 },
+      )
+    }
+    return HttpResponse.json(collectionFx)
   }),
 
   // Market
@@ -227,12 +172,13 @@ export const handlers = [
     return HttpResponse.json({ psbt: 'alkane_transfer_psbt_hex' })
   }),
 
-  // Search
-  http.get(`${BASE}/v2/search/:input`, () => {
-    return HttpResponse.json({
-      collections: [{ slug: 'test', name: 'Test', icon: 'https://example.com/icon.png' }],
-      inscriptions: [],
-      addresses: [],
-    })
+  // Search: free text -> {collections}, address/id -> {url}, no match -> 404
+  http.get(`${BASE}/v2/search/:input`, ({ params }) => {
+    const input = String(params.input)
+    if (input.startsWith('bc1')) return HttpResponse.json(searchUrlFx)
+    if (input === 'zzqqxxnomatch123') {
+      return HttpResponse.json({ error: true, message: 'not found' }, { status: 404 })
+    }
+    return HttpResponse.json(searchCollectionsFx)
   }),
 ]

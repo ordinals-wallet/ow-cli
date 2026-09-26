@@ -1,0 +1,47 @@
+{
+  "collections": [
+    {
+      "id": "7b7af1ca-bdc6-408f-a6db-b6cc20269046",
+      "name": "Bitcoin Puppets",
+      "icon": "https://ord-mirror.magiceden.dev/content/170e13d878efecabbe2f3f31fedf28bc16c31d0ee4292c61829d43a067627ae5i0",
+      "banner_icon": null,
+      "icon_inscription": null,
+      "description": "Not intended for use as anything but art. No roadmap, promises or guarantees or ",
+      "slug": "bitcoin-puppets",
+      "active": true,
+      "sponsored_priority": 0,
+      "featured_priority": 999,
+      "highest_inscription_num": 55543825,
+      "lowest_inscription_num": 53105612,
+      "total_supply": 10001,
+      "socials": {
+        "discord": "",
+        "twitter": "https://x.com/foufoufou67",
+        "website": ""
+      },
+      "creator_address": null,
+      "gallery_inscription_id": null,
+      "verified": false,
+      "floor_price": 2045220,
+      "floor_price_per": null,
+      "volume_hour": null,
+      "volume_six_hour": null,
+      "volume_day": null,
+      "volume_week": 5483655,
+      "volume_month": 8036583,
+      "volume_all_time": 128602874,
+      "global_volume_day": 3248546,
+      "global_volume_week": 210798475,
+      "global_volume_all_time": 322584884511,
+      "change_week": 315.22174190573327,
+      "change_week_vwap": 45.42348419144392,
+      "change_week_fair": 82.12861635012925,
+      "fair_sats": 1859630.943623893,
+      "price_change_day": null,
+      "listed": 13,
+      "owners": null,
+      "_search_weight": 8496240438.0,
+      "_market_ranked": true
+    }
+  ]
+}

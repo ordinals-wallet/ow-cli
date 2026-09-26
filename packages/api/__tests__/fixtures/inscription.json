@@ -1,0 +1,61 @@
+{
+  "id": "cb5dbbf27058872e59888f8e34136059775e5021f8e479a4f6d4fb9bdefe0a37i0",
+  "num": 53149085,
+  "content_length": 7498,
+  "content_type": "image/webp",
+  "effective_content_type": "image/webp",
+  "delegate": null,
+  "created": 1704344747,
+  "genesis_height": 824265,
+  "genesis_fee": 166800,
+  "sat": null,
+  "address": "bc1pnnaxl5v4sl6fzmwww53p9hsarcpyq3sl96vk8unxvc56dzt34tmsnxwmz0",
+  "value": 10000,
+  "satpoint": "f5c605b464aa837634f996fe8794fc2b314de112791374e569850379b35f2873:0:0",
+  "charms": [],
+  "parents": [],
+  "properties": {
+    "gallery": [],
+    "attributes": {
+      "title": null,
+      "traits": {}
+    }
+  },
+  "meta": {
+    "name": "Bitcoin Puppet #7780",
+    "attributes": [
+      {
+        "trait_type": "Attributes",
+        "value": "None",
+        "percent": null
+      },
+      {
+        "trait_type": "Background",
+        "value": "Horizon",
+        "percent": null
+      }
+    ],
+    "rank": null
+  },
+  "collection": {
+    "name": "Bitcoin Puppets",
+    "description": null,
+    "slug": "bitcoin-puppets",
+    "creator_address": null,
+    "floor_price": null,
+    "icon": null,
+    "icon_inscription": null
+  },
+  "collections": [
+    {
+      "name": "Bitcoin Puppets",
+      "description": null,
+      "slug": "bitcoin-puppets",
+      "creator_address": null,
+      "floor_price": null,
+      "icon": null,
+      "icon_inscription": null
+    }
+  ],
+  "escrow": null
+}

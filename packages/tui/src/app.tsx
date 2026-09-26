@@ -638,6 +638,17 @@ export function App() {
     return false
   }
 
+  /**
+   * The balance row carries no outpoints; fetch the coins holding this alkane,
+   * skipping any that back an active listing.
+   */
+  async function alkaneInputs(address: string, alkaneId: string) {
+    const coins = await api.wallet.getAlkanesOutpoints(address, alkaneId)
+    const free = coins.filter((c) => !c.escrow)
+    if (free.length === 0) throw new Error(`No unlisted outpoints hold alkane ${alkaneId}`)
+    return free.map((c) => ({ outpoint: c.outpoint, sats: c.sats }))
+  }
+
   function handleAlkanesKey(input: string) {
     const wallet = activeWallet
     if (!wallet) return false
@@ -666,7 +677,7 @@ export function App() {
             fee_rate: parseInt(feeRate.trim(), 10),
             public_key: w.publicKey,
             edicts,
-            outpoints: [{ outpoint: alkane.outpoint, sats: alkane.sats }],
+            outpoints: await alkaneInputs(w.address, alkane.rune_id),
           })
           const { txid } = await signAndBroadcast(psbt, w.kp)
           actionSuccess(`Sent alkane! txid: ${txid}`, wallet.address)
@@ -691,7 +702,7 @@ export function App() {
             fee_rate: parseInt(feeRate.trim(), 10),
             public_key: w.publicKey,
             edicts,
-            outpoints: [{ outpoint: alkane.outpoint, sats: alkane.sats }],
+            outpoints: await alkaneInputs(w.address, alkane.rune_id),
           })
           const { txid } = await signAndBroadcast(psbt, w.kp)
           actionSuccess(`Split alkane into ${numSplits}! txid: ${txid}`, wallet.address)
