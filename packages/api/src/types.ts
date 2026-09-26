@@ -365,6 +365,238 @@ export interface SubmitPurchaseRuneRequest {
   wallet_type?: string
 }
 
+// Passthrough v4 (snipe-protected listings)
+
+/** `GET /market/escrow/:inscription_id`: the live listing, with its protection markers. */
+export interface MarketListing {
+  inscription_id: string
+  /** Either `txid:vout` or the 36-byte wire form in hex, depending on the endpoint. */
+  outpoint: string
+  seller_address: string
+  buyer_address?: string | null
+  /** What the buyer pays, marketplace fee included. */
+  satoshi_price: number
+  escrow_price?: number
+  market_royalty?: number | null
+  creator_royalty?: number | null
+  creator_address?: string | null
+  secure_purchase_version?: number | null
+  secure_purchase_state?: string | null
+  protected?: boolean
+}
+
+export interface SecurePurchaseCapabilities {
+  version?: number
+  mode?: string
+  customer_enabled?: boolean
+  listing_enabled?: boolean
+  build_enabled?: boolean
+  submit_enabled?: boolean
+  escrow_policy?: string
+  policy?: string
+  cosigner_public_key?: string
+  max_items_per_purchase?: number
+  /** Smallest postage a protected listing accepts (330). */
+  min_postage_sats?: number
+  settlement?: string
+  protocols?: string[]
+  protocol_status?: Record<string, string>
+}
+
+export interface SecurePurchaseCapabilitiesResponse {
+  secure_purchase?: SecurePurchaseCapabilities
+  error?: boolean
+  code?: string
+  message?: string
+}
+
+export interface BuildSecurePurchaseRequest {
+  outpoints: string[]
+  protocol: 'ordinal'
+  from: string
+  public_key: string
+  to?: string
+  fee_rate: number
+  wallet_type?: string
+}
+
+export interface SecurePurchaseParent {
+  txid: string
+  /** The passthrough, witness-stripped (same txid; not broadcastable until submit). */
+  raw: string
+  source_outpoint: string
+}
+
+export interface SecurePurchaseSale {
+  sale_txid: string
+  chain_index?: number
+  psbt: string
+  parent: SecurePurchaseParent
+  miner_fee_sats?: number
+}
+
+export interface BuildSecurePurchaseResponse {
+  version: number
+  policy: string
+  sale_txid: string
+  setup?: { txid: string; psbt: string; fee_sats?: number } | null
+  /** One single-item sale per outpoint, in order; each after the first spends the previous one. */
+  sales: SecurePurchaseSale[]
+  economics?: {
+    total_price_sats?: number
+    ow_fee_sats?: number
+    creator_royalty_sats?: number
+    miner_fee_sats?: number
+    setup_fee_sats?: number
+    /** Everything the purchase costs; the SDK refuses to sign a sale that spends more. */
+    buyer_total_sats?: number
+    fee_rate_sat_vb?: number
+    estimated_vbytes?: number
+  }
+  buyer_address?: string
+  recipient_address?: string
+  cosigner_public_key?: string
+  /** RFC 3339. Past it, the SDK refuses to sign or submit. */
+  expires_at?: string
+}
+
+export interface SubmitSecurePurchaseLink {
+  sale_txid: string
+  /** The sale PSBT with ONLY the buyer's inputs signed, unfinalized. */
+  psbt: string
+  /** The signed setup PSBT; first link only. */
+  setup_psbt?: string
+}
+
+export interface SubmitSecurePurchaseRequest {
+  sales: SubmitSecurePurchaseLink[]
+}
+
+export interface SubmitSecurePurchaseResponse {
+  accepted: boolean
+  txid: string
+  state?: string
+  parents?: string[]
+  sales?: unknown[]
+  /** Set when a chain was only partly broadcast. */
+  stopped_at?: number
+  stopped_code?: string
+}
+
+// Passthrough v4 listing (seller side)
+
+export type SecureAssetProtocol = 'ordinal' | 'rune' | 'alkane' | 'tap' | 'brc20'
+
+export interface SecureListingBuildBulkRequest {
+  protocol: SecureAssetProtocol
+  /** Where the sale pays the seller. */
+  seller_address: string
+  /** Compressed (33-byte) hex public key of the wallet holding the items. */
+  seller_public_key: string
+  items: Array<{ outpoint: string; escrow_price_sats: number }>
+  /** Correlation only; never authorizes a listing. */
+  attempt_id?: string
+}
+
+/** A per-item refusal inside a bulk response. */
+export interface SecureListingItemError {
+  outpoint: string
+  error: true
+  code: string
+  /** On `protocol_mismatch`: the protocol the server proved the item to be. */
+  protocol?: string
+}
+
+export interface SecureListingBuiltItem {
+  version: number
+  state: 'authorization_required'
+  outpoint: string
+  protocol: SecureAssetProtocol
+  policy: string
+  template_digest: string
+  /** Passthrough PSBT: the item into the seller's escrow. */
+  psbt: string
+  /** Sale template PSBT: the escrow paying the seller. */
+  sale_psbt: string
+  passthrough_txid: string
+  escrow_value: number
+  escrow_price_sats: number
+  escrow_script: string
+  cosigner_public_key: string
+  ordinal_offset?: number
+  error?: undefined
+}
+
+export interface SecureListingBuildBulkResponse {
+  version: number
+  policy: string
+  items: Array<SecureListingBuiltItem | SecureListingItemError>
+}
+
+export interface SecureListingAuthorizeItem {
+  outpoint: string
+  protocol: SecureAssetProtocol
+  seller_public_key: string
+  template_digest: string
+  /** Signed passthrough PSBT. */
+  psbt: string
+  /** Sale template PSBT carrying the seller's script-path pre-signature. */
+  sale_psbt: string
+  /** The price the templates were built for (required when repricing a live listing). */
+  escrow_price_sats?: number
+  attempt_id?: string
+}
+
+export interface SecureListingAuthorizedItem {
+  version: number
+  state: string
+  outpoint: string
+  protocol: SecureAssetProtocol
+  policy: string
+  template_digest: string
+  passthrough_txid: string
+  escrow_value: number
+  error?: undefined
+}
+
+export interface SecureListingAuthorizeBulkResponse {
+  version?: number
+  policy?: string
+  items: Array<SecureListingAuthorizedItem | SecureListingItemError>
+}
+
+/** `GET /market/secure-listing/:outpoint` */
+export interface SecureListingStatus {
+  version: number
+  state: string
+  outpoint: string
+  protocol: SecureAssetProtocol
+  policy: string
+  template_digest?: string
+}
+
+export interface SecureListingRecoverRequest {
+  /** Txid of the confirmed passthrough whose output 0 is the stranded escrow. */
+  passthrough_txid: string
+  fee_rate: number
+  /** Defaults to the listing's payout address. */
+  destination?: string
+}
+
+export interface SecureListingRecoverResponse {
+  version: number
+  /** Unsigned recovery PSBT: sign the recovery leaf, broadcast after 144 confirmations. */
+  psbt: string
+  recovery_txid: string
+  escrow_outpoint: string
+  escrow_value: number
+  value: number
+  fee: number
+  destination: string
+  sequence: number
+  spendable_after_confirmations: number
+}
+
 export interface BuildEscrowRequest {
   inscription: string
   from: string

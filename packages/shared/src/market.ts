@@ -1,41 +1,6 @@
 import { signPsbt, signPurchaseFlow } from '@ow-cli/core'
 import * as api from '@ow-cli/api'
 
-export interface PurchaseParams {
-  ids: string[]
-  feeRate: number
-  address: string
-  publicKey: string
-  privateKey: Uint8Array
-  publicKeyBytes: Uint8Array
-}
-
-export async function executePurchase(params: PurchaseParams): Promise<{ result: unknown }> {
-  const { setup, purchase } = await api.market.buildPurchaseBulk({
-    inscriptions: params.ids,
-    pay_address: params.address,
-    receive_address: params.address,
-    public_key: params.publicKey,
-    fee_rate: params.feeRate,
-    wallet_type: 'ow-cli',
-  })
-
-  const { signedSetup, signedPurchase } = signPurchaseFlow(
-    params.privateKey,
-    params.publicKeyBytes,
-    setup,
-    purchase,
-  )
-
-  const result = await api.market.submitPurchase({
-    setup_rawtx: signedSetup,
-    purchase_rawtx: signedPurchase,
-    wallet_type: 'ow-cli',
-  })
-
-  return { result }
-}
-
 export interface PurchaseRuneParams {
   outpoint: string
   feeRate: number

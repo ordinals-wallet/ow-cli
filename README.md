@@ -72,18 +72,84 @@ ow wallet split --fee-rate 10 --splits 5 --amount 10000  # 5 outputs of 10000 sa
 # Buy inscriptions (one or more)
 ow market buy --ids <id1>,<id2>,<id3> --fee-rate 10
 
+# Snipe-protected listings are detected and bought through the protected
+# flow automatically; one command can mix both kinds (see below).
+
 # Buy runes / alkanes
 ow market buy-rune <txid:vout> --fee-rate 10
 ow market buy-alkane --outpoints <txid:vout>,<txid:vout> --fee-rate 10
 
-# List for sale (one or more)
+# List for sale (one or more). Snipe-protected by default when the
+# marketplace offers it and the item has at least 330 sats of postage.
+# Running it again at a new price reprices a protected listing.
 ow market list --ids <id1>,<id2> --price 50000
 ow market list --collection bitmap --above-floor 30
 ow market list --collection bitmap --price 50000
+ow market list --ids <id> --price 50000 --unprotected   # standard escrow listing
+
+# Recover a protected listing whose escrow confirmed without a sale
+# (valid once the escrow has 144 confirmations)
+ow market recover <passthrough_txid> --fee-rate 5 [--to <address>] [--no-broadcast]
 
 # Cancel listing
 ow market delist <inscription_id>
 ```
+
+#### Snipe-protected listings (Passthrough v4)
+
+Listings come in two kinds, and `ow market buy` looks each id up and routes it:
+
+| Kind | Build | Submit |
+|------|-------|--------|
+| Standard escrow | `POST /wallet/purchase-bulk` | `POST /market/purchase` |
+| Snipe-protected | `POST /wallet/secure-purchase/build` | `POST /market/secure-purchase/submit` |
+
+A listing is protected when the API marks it `protected: true` (or `secure_purchase_version: 2` with state `listed`). The standard build cannot see protected listings, so older CLI versions fail on them with "no longer listed".
+
+For a protected purchase the CLI never signs what it has not checked. Before asking for your password it rebuilds the listing's escrow from the co-signer key pinned in this release and refuses unless, in every transaction:
+
+- each passthrough spends exactly the outpoint you chose into the escrow rebuilt from the seller key and the pinned co-signer (checked from the passthrough's txid, input and output, so the witness-stripped parent the API now serves verifies the same as a signed one)
+- the seller is paid exactly the listing's `escrow_price`, at the output matching the escrow input, and seller payout plus marketplace fee do not exceed the listed price
+- the inscription lands at your address, on its own sats
+- every other output is the marketplace fee (pinned address), the listed creator's royalty (capped at 10% of the listed price) or your change
+- your inputs sit only before and after the escrow input, and in a chain each later sale spends only the previous sale's change outputs
+- network fees are within a cap derived from `--fee-rate`
+- the verified total is no more than the build's `economics.buyer_total_sats` (plus `--max-over <sats>`, default 0)
+- the quote's `expires_at` has not passed, checked again before signing and before submitting
+- only your own inputs are left for you to sign, with `SIGHASH_DEFAULT`/`SIGHASH_ALL` (never ANYONECANPAY), and none arrives pre-signed
+
+It then signs only those inputs and submits the PSBTs unfinalized; Ordinals Wallet co-signs the escrow input and broadcasts. The amounts printed before the confirmation prompt are read from the verified transactions, not from the API's summary. Up to 12 protected items per purchase. A protected purchase needs at least two spendable UTXOs (`ow wallet split`).
+
+When one command mixes both kinds, the protected purchase is submitted first and the standard one is built afterwards; if the second fails the error says what was already bought.
+
+#### Listing with snipe protection
+
+`ow market list` lists protected by default. Per item it reads the live outpoint and postage (`/inscription/:id/outpoint`); items with less than 330 sats of postage, or everything when the marketplace has protected listing off, go through the standard escrow instead, and the CLI says so before you confirm. `--unprotected` opts out entirely. If the API reports a co-signer key other than the one pinned in this release, the command refuses rather than falling back.
+
+The flow is `POST /market/secure-listing/build-bulk` → verify → sign → `POST /market/secure-listing/authorize-bulk`. Nothing is broadcast. Before signing, each item's two templates are checked against an escrow rebuilt locally (`tr(NUMS, {multi_a(2, S, C), <144> CSV DROP <S> CHECKSIG})`, C pinned):
+
+- passthrough: one input, exactly your item at your address; one output, your escrow; the postage moved whole or less exactly 12 sats, never below 330; key path only, `SIGHASH_DEFAULT`/`SIGHASH_ALL`
+- sale template: one input spending `passthrough:0`, one output paying your address exactly your price; the NUMS internal key and only the sale leaf; `SIGHASH_SINGLE|ANYONECANPAY` (0x83)
+
+The passthrough is signed on the key path; the sale on the sale leaf only (untweaked), and any stray key-path signature is dropped. Repricing a live protected listing is the same build + authorize at the new price. Per-item refusals (`already_listed`, `postage_too_small`, `template_digest_mismatch`, `signed_template_mutated`, ...) are printed with the same copy the wallet shows, and the command exits 1.
+
+If a passthrough ever confirms without its sale, `ow market recover <passthrough_txid>` fetches the recovery template (`POST /market/secure-listing/recover`), checks it spends your escrow through the 144-block leaf to your address at a fee within `--fee-rate`, signs it and broadcasts it.
+
+#### SDK
+
+```ts
+import * as api from '@ow-cli/api'
+import { assertListingTemplates, assertSignedSaleTemplate, signListingTemplates, verifyPassthroughPurchase } from '@ow-cli/core'
+import { planListing, executeProtectedListing, recoverProtectedListing, buildPassthroughPurchase, ProtectedTradeError } from '@ow-cli/shared'
+
+await api.securePurchase.capabilities()
+await api.secureListing.buildBulk({ protocol: 'ordinal', seller_address, seller_public_key, items: [{ outpoint, escrow_price_sats }] })
+await api.secureListing.authorizeBulk(items)
+await api.secureListing.status(outpoint)
+await api.secureListing.recover({ passthrough_txid, fee_rate, destination })
+```
+
+Every protected-trading failure is a `ProtectedTradeError` (a `PassthroughError`) with a stable `code`, the `stage` it failed in, the HTTP `status` when it came from the API, and `retryable` for block/index races. None of these POSTs are retried automatically.
 
 ### Tokens
 
@@ -181,7 +247,7 @@ Turborepo monorepo with three packages:
 
 | Package | Description |
 |---------|-------------|
-| `@ow-cli/core` | Key management (BIP39/BIP32/WIF), P2TR address derivation, PSBT signing |
+| `@ow-cli/core` | Key management (BIP39/BIP32/WIF), P2TR address derivation, PSBT signing, passthrough v4 purchase verification |
 | `@ow-cli/api` | Typed HTTP client for all Ordinals Wallet API endpoints |
 | `@ow-cli/cli` | Commander.js CLI wiring commands to core + api |
 

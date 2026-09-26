@@ -27,3 +27,49 @@ export type {
   AcceptExpectations,
   CancelParams,
 } from './offers-verify.js'
+export {
+  PassthroughError,
+  PINNED_COSIGNER_XONLY_HEX,
+  NUMS_INTERNAL_KEY_HEX,
+  MARKET_FEE_ADDRESS,
+  PASSTHROUGH_POLICY,
+  MAX_PROTECTED_ITEMS_PER_PURCHASE,
+  MAX_CREATOR_ROYALTY_BPS,
+  passthroughEscrow,
+  parsePassthroughLeaf,
+  unsignedTxid,
+  verifySale,
+  verifySetup,
+  verifyPassthroughPurchase,
+  assertQuoteFresh,
+  signOwnInputs,
+} from './passthrough.js'
+export {
+  MIN_ESCROW_VALUE_SATS,
+  PASSTHROUGH_PARENT_FEE_SATS,
+  RECOVERY_DELAY_BLOCKS,
+  tapLeafHash,
+  assertListingTemplates,
+  assertSignedSaleTemplate,
+  signListingTemplates,
+  assertRecoveryTemplate,
+  signRecovery,
+} from './passthrough-listing.js'
+export type {
+  ListingTemplateCheck,
+  ListingTemplates,
+  SignedSaleTemplateExpectation,
+  SignListingTemplatesInput,
+  SignedListingTemplates,
+  RecoveryCheck,
+  RecoveryTemplate,
+} from './passthrough-listing.js'
+export type {
+  PassthroughEscrow,
+  SaleParent,
+  SaleListing,
+  SaleVerification,
+  SetupVerification,
+  SaleChainLink,
+  SaleChainVerification,
+} from './passthrough.js'
