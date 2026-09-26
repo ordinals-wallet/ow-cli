@@ -1,0 +1,267 @@
+{
+  "description": "Offer funding PSBTs: verifyFundingPsbt problems (exact strings) and, when there are none, signOfferFunding output (every input signed with SIGHASH_DEFAULT on the key path or SIGHASH_ALL for P2WPKH, then finalized). Buyer = buyer_wif.",
+  "generated_by": "packages/core/__tests__/shared-vectors/generate.ts",
+  "aux_rand": "0000000000000000000000000000000000000000000000000000000000000000",
+  "buyer_wif": "L3VFeEujGtevx9w18HD1fhRbCH67Az2dpCymeRE1SoPK6XQtaN2k",
+  "seller_wif": "KyrSGCFPhqZMjCe5fNTYddiLMp4tMj4gLKuJ26TsB2rvr1VJGPbt",
+  "buyer_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+  "seller_address": "bc1pss0zhytly75awhm6x2hhvd5lnzv3vssgrf9axfheq8ldyzn88ges79fler",
+  "delay": 1008,
+  "escrow_value": 262000,
+  "price_sats": 250000,
+  "market_fee_sats": 6750,
+  "item_outpoint": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef:1",
+  "cases": [
+    {
+      "description": "escrow plus change",
+      "psbt": "70736274ff010089020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff0270ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d1c190200000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872000000",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1008
+      },
+      "problems": [],
+      "signed": {
+        "psbt": "70736274ff010089020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff0270ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d1c190200000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e90108420140388a2056b9ef8630c203194bafb65e1ca2cdaf8b286f733c9c90bc166b36fdba74ea9e1b48b5c300eed8a76ac5ed4bc0e2db70dcd9e4e4209b10aea0da58b27c000000",
+        "inputs": [
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [],
+            "partial_sigs": [],
+            "final_script_witness": [
+              "388a2056b9ef8630c203194bafb65e1ca2cdaf8b286f733c9c90bc166b36fdba74ea9e1b48b5c300eed8a76ac5ed4bc0e2db70dcd9e4e4209b10aea0da58b27c"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "description": "two inputs, escrow plus change",
+      "psbt": "70736274ff0100b2020000000211111111111111111111111111111111111111111111111111111111111111110000000000ffffffff22222222222222222222222222222222222222222222222222222222222222220100000000ffffffff0270ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098dd4320800000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd588720001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872000000",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1008
+      },
+      "problems": [],
+      "signed": {
+        "psbt": "70736274ff0100b2020000000211111111111111111111111111111111111111111111111111111111111111110000000000ffffffff22222222222222222222222222222222222222222222222222222222222222220100000000ffffffff0270ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098dd4320800000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e901084201400e6856e3229d4251e6d324ab479f6426d322651ebf0827e0aeb2e19bce79ffd820a4b3783c04806b535a42bba1de3115d9fca7a026026e4fa73e0e19ad9356ff0001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9010842014074c9c280e06a6100f927c289ef15427ae38256bd6333a190a7de83b26f3d031d108857598cf6998efcacf1b0b2fee5e96cafd7c18b347fbecf638fe07875149f000000",
+        "inputs": [
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [],
+            "partial_sigs": [],
+            "final_script_witness": [
+              "0e6856e3229d4251e6d324ab479f6426d322651ebf0827e0aeb2e19bce79ffd820a4b3783c04806b535a42bba1de3115d9fca7a026026e4fa73e0e19ad9356ff"
+            ]
+          },
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [],
+            "partial_sigs": [],
+            "final_script_witness": [
+              "74c9c280e06a6100f927c289ef15427ae38256bd6333a190a7de83b26f3d031d108857598cf6998efcacf1b0b2fee5e96cafd7c18b347fbecf638fe07875149f"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "description": "P2WPKH funding (ECDSA)",
+      "psbt": "70736274ff01007d020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff0270ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d1c190200000000001600142b05d564e6a7a33c087f16e0f730d1440123799d000000000001011f801a0600000000001600142b05d564e6a7a33c087f16e0f730d1440123799d000000",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1q9vza2e8x573nczrlzms0wvx3gsqjx7vavgkx0l",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1008
+      },
+      "problems": [],
+      "signed": {
+        "psbt": "70736274ff01007d020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff0270ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d1c190200000000001600142b05d564e6a7a33c087f16e0f730d1440123799d000000000001011f801a0600000000001600142b05d564e6a7a33c087f16e0f730d1440123799d01086b0247304402204be1be7262ec3040ecb8b6877d3bf35b6ea85c2cfd1faa10bcf0f10843edc0f60220324af1c029c9123c905cdb3aac08461a73e9c3e8a542d0b992b9a2e6f4dcb38d012102c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872000000",
+        "inputs": [
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [],
+            "partial_sigs": [],
+            "final_script_witness": [
+              "304402204be1be7262ec3040ecb8b6877d3bf35b6ea85c2cfd1faa10bcf0f10843edc0f60220324af1c029c9123c905cdb3aac08461a73e9c3e8a542d0b992b9a2e6f4dcb38d01",
+              "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "description": "within a miner fee cap",
+      "psbt": "70736274ff010089020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff0270ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d1c190200000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872000000",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1008,
+        "max_miner_fee_sats": 500
+      },
+      "problems": [],
+      "signed": {
+        "psbt": "70736274ff010089020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff0270ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d1c190200000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e90108420140388a2056b9ef8630c203194bafb65e1ca2cdaf8b286f733c9c90bc166b36fdba74ea9e1b48b5c300eed8a76ac5ed4bc0e2db70dcd9e4e4209b10aea0da58b27c000000",
+        "inputs": [
+          {
+            "tap_key_sig": null,
+            "tap_script_sigs": [],
+            "partial_sigs": [],
+            "final_script_witness": [
+              "388a2056b9ef8630c203194bafb65e1ca2cdaf8b286f733c9c90bc166b36fdba74ea9e1b48b5c300eed8a76ac5ed4bc0e2db70dcd9e4e4209b10aea0da58b27c"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "description": "above the miner fee cap",
+      "psbt": "70736274ff01005e020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff0170ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd588720000",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1008,
+        "max_miner_fee_sats": 1000
+      },
+      "problems": [
+        "funding miner fee 138000 exceeds max 1000"
+      ],
+      "sign_problems": [
+        "funding miner fee 138000 exceeds max 1000"
+      ]
+    },
+    {
+      "description": "a foreign output",
+      "psbt": "70736274ff010089020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff0270ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098de803000000000000225120841e2b917f27a9d75f7a32af76369f98991642081a4bd326f901fed20a673a33000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872000000",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1008
+      },
+      "problems": [
+        "funding output 1 pays an unexpected script"
+      ],
+      "sign_problems": [
+        "funding output 1 pays an unexpected script"
+      ]
+    },
+    {
+      "description": "wrong escrow amount",
+      "psbt": "70736274ff01005e020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff0171ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd588720000",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1008
+      },
+      "problems": [
+        "escrow output 262001 != escrow_value 262000"
+      ],
+      "sign_problems": [
+        "escrow output 262001 != escrow_value 262000"
+      ]
+    },
+    {
+      "description": "no escrow output",
+      "psbt": "70736274ff01005e020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff01e8030000000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd588720000",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1008
+      },
+      "problems": [
+        "expected exactly one escrow output, found 0"
+      ],
+      "sign_problems": [
+        "expected exactly one escrow output, found 0"
+      ]
+    },
+    {
+      "description": "two escrow outputs",
+      "psbt": "70736274ff010089020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff0270ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d70ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872000000",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1008
+      },
+      "problems": [
+        "expected exactly one escrow output, found 2",
+        "funding outputs exceed inputs"
+      ],
+      "sign_problems": [
+        "expected exactly one escrow output, found 2",
+        "funding outputs exceed inputs"
+      ]
+    },
+    {
+      "description": "an input from another address",
+      "psbt": "70736274ff0100b2020000000211111111111111111111111111111111111111111111111111111111111111110000000000ffffffff22222222222222222222222222222222222222222222222222222222222222220100000000ffffffff0270ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9000000000001012b801a060000000000225120841e2b917f27a9d75f7a32af76369f98991642081a4bd326f901fed20a673a33011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd588720001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872000000",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1008
+      },
+      "problems": [
+        "funding input 0 is not from bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3"
+      ],
+      "sign_problems": [
+        "funding input 0 is not from bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3"
+      ]
+    },
+    {
+      "description": "outputs exceed inputs",
+      "psbt": "70736274ff010089020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff0270ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872000000",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1008
+      },
+      "problems": [
+        "funding outputs exceed inputs"
+      ],
+      "sign_problems": [
+        "funding outputs exceed inputs"
+      ]
+    },
+    {
+      "description": "escrow for another recovery delay",
+      "psbt": "70736274ff01005e020000000111111111111111111111111111111111111111111111111111111111111111110000000000ffffffff0170ff03000000000022512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d000000000001012b801a0600000000002251200b34f2cc6f60d54e3fdc2d1dd053fcc393bd2db9acc8de4a7c3cc28a83d4d8e9011720c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd588720000",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1009
+      },
+      "problems": [
+        "funding output 0 pays an unexpected script",
+        "expected exactly one escrow output, found 0"
+      ],
+      "sign_problems": [
+        "funding output 0 pays an unexpected script",
+        "expected exactly one escrow output, found 0"
+      ]
+    },
+    {
+      "description": "garbage instead of a PSBT",
+      "psbt": "not a psbt",
+      "expect": {
+        "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+        "payment_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+        "escrow_value": 262000,
+        "recovery_delay_blocks": 1008
+      },
+      "error": "Reader(magic): bytes: cannot find terminator",
+      "sign_error": "Reader(magic): bytes: cannot find terminator"
+    }
+  ]
+}

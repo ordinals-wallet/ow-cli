@@ -16,8 +16,8 @@ name = "ordinalswallet"
 
 [features]
 default = []
-# Reserved for stage 2 (PSBT/BIP-322 signing with rust-bitcoin 0.32 + secp256k1).
-signing = []
+# Key derivation, BIP-322 and PSBT verification/signing (rust-bitcoin 0.32 + libsecp256k1).
+signing = ["dep:bitcoin"]
 
 [dependencies]
 # Blocking HTTP/1.1 client with rustls + webpki roots. No async runtime.
@@ -29,3 +29,7 @@ serde_json = { version = "=1.0.151", default-features = false, features = ["std"
 # CSPRNG for sign-in nonces; already in the tree via ring.
 getrandom = { version = "=0.2.17", default-features = false }
 idna_adapter = { version = "=1.0.0", default-features = false }
+# `signing` only: transactions, PSBTs, BIP-32, sighashes, addresses and
+# libsecp256k1. No rand/serde/base64/consensus features: entropy comes from
+# getrandom (above) and is passed in explicitly.
+bitcoin = { version = "=0.32.11", default-features = false, features = ["std"], optional = true }

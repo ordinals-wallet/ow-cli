@@ -1,0 +1,89 @@
+{
+  "description": "Wallet keys as @ow-cli/core derives them: BIP-39 mnemonic (no passphrase) -> BIP-32 m/86'/0'/0'/0/0 -> key, its BIP-86 taproot address and the P2WPKH address of the same key; and WIF -> the same fields.",
+  "generated_by": "packages/core/__tests__/shared-vectors/generate.ts",
+  "path": "m/86'/0'/0'/0/0",
+  "bip86_official": {
+    "mnemonic": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+    "p2tr_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr"
+  },
+  "mnemonics": [
+    {
+      "mnemonic": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+      "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+      "public_key": "03cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "x_only_public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "p2tr_address": "bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr",
+      "p2wpkh_address": "bc1qalwlmdxd2ggue4290ekzxl9tetg56neexr6amw"
+    },
+    {
+      "mnemonic": "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong",
+      "private_key": "970637f46e7d5bed115e0533dbd43058114971f29bdd333599a483d215caaa64",
+      "public_key": "02fec0f5d04ea9fa6c47aabaebd5cc3d5bb03941a36470f77fc4ccccd4dfa9bcef",
+      "x_only_public_key": "fec0f5d04ea9fa6c47aabaebd5cc3d5bb03941a36470f77fc4ccccd4dfa9bcef",
+      "p2tr_address": "bc1p7hycyt2u4m90sm8fnchmuupwn40l6qmm42f3eqj5m30yyw6g4w2sxjyytr",
+      "p2wpkh_address": "bc1qnawtpzz6ppzvup0jtk4m9zzjvpswkwnqd6rjwl"
+    },
+    {
+      "mnemonic": "legal winner thank year wave sausage worth useful legal winner thank yellow",
+      "private_key": "adfb2a883a8fd142e55caad757cf1fce6d324240d2ed3f88c4c972892f777fd3",
+      "public_key": "02ee57d7981c8489be23cecdc96f30596c700d7f55090029e8a94aeca780a31170",
+      "x_only_public_key": "ee57d7981c8489be23cecdc96f30596c700d7f55090029e8a94aeca780a31170",
+      "p2tr_address": "bc1pgp80xvc97ssyphukzd5w6gmz2z45dzawl8sn3g6r9e95l90yvdfqa9879z",
+      "p2wpkh_address": "bc1qwtqdtgkzuh4w48nswn94uzchdpdqnnuj4xk7hh"
+    },
+    {
+      "mnemonic": "legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth useful legal will",
+      "private_key": "a4da7f1cf8178614c2ff6822a91d2e54094c5dc341645cab5de64d89f0ca495c",
+      "public_key": "028985d5cf108c8fb2b0499194fe59bbabafe551b1017c6ab4c6d6044099731241",
+      "x_only_public_key": "8985d5cf108c8fb2b0499194fe59bbabafe551b1017c6ab4c6d6044099731241",
+      "p2tr_address": "bc1pfp6z626luykksxmhxkmut8m0zplykwhqad0rs99mtsu9ljyx046q40kzyx",
+      "p2wpkh_address": "bc1q33w2pkgkhum5jrkjv6rjgyfy5auneswf0j5yag"
+    },
+    {
+      "mnemonic": "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo vote",
+      "private_key": "b833713a1842c7273c5247136d39ea54816eb361493192d4efeccbc17700e8fd",
+      "public_key": "0237287bfafb9edfc02a816eeac7ea43f46669f79b4872e22e54f8efaa369a38dd",
+      "x_only_public_key": "37287bfafb9edfc02a816eeac7ea43f46669f79b4872e22e54f8efaa369a38dd",
+      "p2tr_address": "bc1pawdw93cxa44vyht9ujks086znenqhlykz3jursx0z677eycdjj6shug7aa",
+      "p2wpkh_address": "bc1qz796udecyzj0gg5hluyj4mgzkycd0gkfhsvgxx"
+    },
+    {
+      "mnemonic": "void come effort suffer camp survey warrior heavy shoot primary clutch crush open amazing screen patrol group space point ten exist slush involve unfold",
+      "private_key": "8a1818c65adef86fd07620c8128fcc7a474b02f5fd0d29bd634c5910cfe7de3a",
+      "public_key": "037d9a10448e1269501a3655750668fd2ecef145f7b36e07924da50d1fd963e5ab",
+      "x_only_public_key": "7d9a10448e1269501a3655750668fd2ecef145f7b36e07924da50d1fd963e5ab",
+      "p2tr_address": "bc1ph77pj57gxe7ggff27k4l7l5nkumgel8pmylw2lkvacpntzctqnfq30nwqt",
+      "p2wpkh_address": "bc1quw6xt2725nx9rfqln5tn6pcpz5n299kts5gp6g"
+    }
+  ],
+  "wif": [
+    {
+      "wif": "L3VFeEujGtevx9w18HD1fhRbCH67Az2dpCymeRE1SoPK6XQtaN2k",
+      "private_key": "bb051cd0dda0246f33c5a9e133ebd8e7bc02a92af6c41adc131ccd7826c5b004",
+      "public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "x_only_public_key": "c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "p2tr_address": "bc1ppv609nr0vr25u07u95waq5lucwfm6tde4nydujnu8npg4q75mr5sxq8lt3",
+      "p2wpkh_address": "bc1q9vza2e8x573nczrlzms0wvx3gsqjx7vavgkx0l"
+    },
+    {
+      "wif": "KyrSGCFPhqZMjCe5fNTYddiLMp4tMj4gLKuJ26TsB2rvr1VJGPbt",
+      "private_key": "4e9159a8a0f5f20606364cd9b23c1e6df363367c29a658ef4a881444afb0164e",
+      "public_key": "02a0c989dbab24a9bb93c292f80cd3acde2b2e9eaf3d68a9716303c089bf586476",
+      "x_only_public_key": "a0c989dbab24a9bb93c292f80cd3acde2b2e9eaf3d68a9716303c089bf586476",
+      "p2tr_address": "bc1pss0zhytly75awhm6x2hhvd5lnzv3vssgrf9axfheq8ldyzn88ges79fler",
+      "p2wpkh_address": "bc1qpc2uwnjndnn2hxycyw7nwkhv59mzcnd2rc52w4"
+    },
+    {
+      "wif": "KwFfNUhSDaASSAwtG7ssQM1uVX8RgX5GHWnnLfhfiQDigjioWXHH",
+      "private_key": "0101010101010101010101010101010101010101010101010101010101010101",
+      "public_key": "031b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078f",
+      "x_only_public_key": "1b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078f",
+      "p2tr_address": "bc1p33wm0auhr9kkahzd6l0kqj85af4cswn276hsxg6zpz85xe2r0y8syx4e5t",
+      "p2wpkh_address": "bc1q0xcqpzrky6eff2g52qdye53xkk9jxkvrh6yhyw"
+    }
+  ],
+  "invalid_mnemonics": [
+    "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+    "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
+  ]
+}

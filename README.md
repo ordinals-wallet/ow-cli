@@ -27,7 +27,7 @@ This code signs Bitcoin transactions, so every dependency is something that coul
 | `@ow-cli/api` | **none** | HTTP is the built-in `fetch`. |
 | `@ow-cli/core` | `@noble/hashes`, `@noble/secp256k1`, `@scure/bip32`, `@scure/bip39`, `@scure/btc-signer` | Key derivation and signing. Audited libraries from one author that depend only on each other. |
 | `@ow-cli/cli` | `commander`, `@scure/btc-signer` | Argument parsing. Prompts are built in. |
-| `ordinalswallet` (Rust) | `ureq`, `serde`, `serde_json`, `getrandom` | Blocking HTTP with rustls, JSON, nonces. No async runtime. |
+| `ordinalswallet` (Rust) | `ureq`, `serde`, `serde_json`, `getrandom`; `bitcoin` with the `signing` feature | Blocking HTTP with rustls, JSON, nonces. No async runtime. `bitcoin` (rust-bitcoin 0.32, `std` only) for keys, PSBTs and libsecp256k1. |
 
 The whole TypeScript tree installs nine production packages: the five above, `@noble/curves`, `@scure/base`, `micro-packed` (all the same author) and `commander`. Every version is pinned exactly, the lockfile is authoritative, and install scripts are off (`ignore-scripts=true`). Rust adds `cargo-deny` rules that allow only crates.io.
 
@@ -120,7 +120,7 @@ let value = client.charts().valuation("bitcoin-puppets")?;
 println!("{} sats", value.fair_sats.unwrap_or_default());
 ```
 
-Reads, streams and sign-in sessions today. Signing (keys, BIP-322, offers, protected trading) is behind the `signing` feature and adds only the `bitcoin` crate. See [rust/ordinalswallet](rust/ordinalswallet/README.md).
+Reads, streams, sign-in sessions and the offer and protected-trading write routes. Signing (keys, BIP-322, offers, protected trading), verified against the same vectors as the TypeScript SDK, is behind the `signing` feature and adds only the `bitcoin` crate. See [rust/ordinalswallet](rust/ordinalswallet/README.md).
 
 ## One behaviour, two languages
 

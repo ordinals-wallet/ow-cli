@@ -299,7 +299,7 @@ fn valuations_dedupe_and_batch_at_200() {
 #[test]
 fn not_found_reads_map_to_none_or_empty() {
     let server = Server::start(|r, _| match r.path.as_str() {
-        p if p.starts_with("/v2/search/") => Reply::empty(404),
+        p if p.starts_with("/search/") => Reply::empty(404),
         p if p.starts_with("/market/escrow/0") => {
             Reply::json(404, &json!({"error": true, "message": "not found"}))
         }
@@ -320,7 +320,7 @@ fn not_found_reads_map_to_none_or_empty() {
         c.search("nothing here", None).unwrap().collections,
         Some(vec![])
     );
-    assert_eq!(server.requests()[0].path, "/v2/search/nothing%20here");
+    assert_eq!(server.requests()[0].path, "/search/nothing%20here");
     assert_eq!(server.requests()[0].param("limit"), Some("16".into()));
     assert!(c.market().listing("0abc").unwrap().is_none());
     assert!(c.market().listing("eabc").unwrap().is_none());

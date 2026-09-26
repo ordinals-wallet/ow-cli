@@ -19,6 +19,9 @@ allow = [
     "Unicode-3.0",      # unicode-ident (proc-macro, build time only)
     "Unlicense",        # memchr (dual MIT)
     "CDLA-Permissive-2.0", # webpki-roots (Mozilla root store data)
+    # `signing` feature (rust-bitcoin 0.32):
+    "CC0-1.0",          # bitcoin, bitcoin_hashes, bitcoin-io, bitcoin-units, base58ck, hex-conservative, secp256k1(-sys)
+    "MITNFA",           # hex_lit (MIT + no-false-attribs)
 ]
 
 [bans]

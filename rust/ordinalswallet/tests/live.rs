@@ -114,3 +114,44 @@ fn live_get_smoke() {
     println!("quotes stream: BTC ${:?}", btc);
     assert!(snapshot && btc.unwrap_or(0.0) > 0.0);
 }
+
+/// Signing-feature smoke: the live co-signer and policy match what this build
+/// pins, and the wallet key derivation yields addresses the API accepts.
+/// GET requests only; nothing is signed for or sent to the API.
+#[cfg(feature = "signing")]
+#[test]
+#[ignore = "hits the live API"]
+fn live_signing_smoke() {
+    use ordinalswallet::signing::passthrough::{PASSTHROUGH_POLICY, PINNED_COSIGNER_XONLY_HEX};
+    use ordinalswallet::signing::SigningKey;
+
+    let c = Client::builder()
+        .app_name("ordinalswallet-rs-smoke/1")
+        .build()
+        .unwrap();
+    let caps = c.secure_purchase().capabilities().unwrap();
+    println!(
+        "capabilities: policy {:?}, co-signer {:?}, min postage {:?}",
+        caps.escrow_policy, caps.cosigner_public_key, caps.min_postage_sats
+    );
+    assert_eq!(caps.escrow_policy.as_deref(), Some(PASSTHROUGH_POLICY));
+    assert_eq!(
+        caps.cosigner_public_key.as_deref(),
+        Some(PINNED_COSIGNER_XONLY_HEX)
+    );
+
+    let key = SigningKey::from_mnemonic(
+        "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+    )
+    .unwrap();
+    for address in [key.p2tr_address(), key.p2wpkh_address()] {
+        let balance = c.wallet().balance(&address).unwrap();
+        println!("balance of test address {address}: {balance:?}");
+    }
+    let offers = c.offers().for_wallet(&key.p2tr_address()).unwrap();
+    println!(
+        "offers for test address: {} received, {} sent",
+        offers.received.len(),
+        offers.sent.len()
+    );
+}

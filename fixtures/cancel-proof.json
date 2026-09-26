@@ -1,0 +1,219 @@
+{
+  "description": "Cancel proofs for POST /market/cancel-escrow: buildCancelProof output (one input spending the listed outpoint, one 21M BTC output to the owner, key-path SIGHASH_DEFAULT signature, finalized) or the refusal code, and inspectCancelProof shapes.",
+  "generated_by": "packages/core/__tests__/shared-vectors/generate.ts",
+  "aux_rand": "0000000000000000000000000000000000000000000000000000000000000000",
+  "output_sats": 2100000000000000,
+  "cases": [
+    {
+      "description": "listed outpoint",
+      "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:3",
+      "value_sats": 546,
+      "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+      "public_key": "03cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "expect": {
+        "ok": true,
+        "psbt": "70736274ff01005e0200000001cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdabababababababababababababababab0300000000ffffffff010040075af0750700225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c010304000000000108420140b59171dd5d356bd40267d1ba385a56f286f8eb2438932893b985978fbde6eaf738a0362f0cb17a08022ea94585601a29830e645ed2892283659dc5ae56da798d011340b59171dd5d356bd40267d1ba385a56f286f8eb2438932893b985978fbde6eaf738a0362f0cb17a08022ea94585601a29830e645ed2892283659dc5ae56da798d011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "signature": "b59171dd5d356bd40267d1ba385a56f286f8eb2438932893b985978fbde6eaf738a0362f0cb17a08022ea94585601a29830e645ed2892283659dc5ae56da798d",
+        "shape": {
+          "inputs": 1,
+          "outputs": 1,
+          "sighash": 0,
+          "signature_length": 64,
+          "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:3",
+          "output_sats": 2100000000000000
+        }
+      }
+    },
+    {
+      "description": "x-only public key",
+      "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:3",
+      "value_sats": 546,
+      "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+      "public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "expect": {
+        "ok": true,
+        "psbt": "70736274ff01005e0200000001cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdabababababababababababababababab0300000000ffffffff010040075af0750700225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c010304000000000108420140b59171dd5d356bd40267d1ba385a56f286f8eb2438932893b985978fbde6eaf738a0362f0cb17a08022ea94585601a29830e645ed2892283659dc5ae56da798d011340b59171dd5d356bd40267d1ba385a56f286f8eb2438932893b985978fbde6eaf738a0362f0cb17a08022ea94585601a29830e645ed2892283659dc5ae56da798d011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "signature": "b59171dd5d356bd40267d1ba385a56f286f8eb2438932893b985978fbde6eaf738a0362f0cb17a08022ea94585601a29830e645ed2892283659dc5ae56da798d",
+        "shape": {
+          "inputs": 1,
+          "outputs": 1,
+          "sighash": 0,
+          "signature_length": 64,
+          "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:3",
+          "output_sats": 2100000000000000
+        }
+      }
+    },
+    {
+      "description": "upper-case txid",
+      "outpoint": "ABABABABABABABABABABABABABABABABCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD:3",
+      "value_sats": 546,
+      "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+      "public_key": "03cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "expect": {
+        "ok": true,
+        "psbt": "70736274ff01005e0200000001cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdabababababababababababababababab0300000000ffffffff010040075af0750700225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c010304000000000108420140b59171dd5d356bd40267d1ba385a56f286f8eb2438932893b985978fbde6eaf738a0362f0cb17a08022ea94585601a29830e645ed2892283659dc5ae56da798d011340b59171dd5d356bd40267d1ba385a56f286f8eb2438932893b985978fbde6eaf738a0362f0cb17a08022ea94585601a29830e645ed2892283659dc5ae56da798d011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "signature": "b59171dd5d356bd40267d1ba385a56f286f8eb2438932893b985978fbde6eaf738a0362f0cb17a08022ea94585601a29830e645ed2892283659dc5ae56da798d",
+        "shape": {
+          "inputs": 1,
+          "outputs": 1,
+          "sighash": 0,
+          "signature_length": 64,
+          "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:3",
+          "output_sats": 2100000000000000
+        }
+      }
+    },
+    {
+      "description": "vout 0, large value",
+      "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:0",
+      "value_sats": 2099999999999999,
+      "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+      "public_key": "03cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "expect": {
+        "ok": true,
+        "psbt": "70736274ff01005e0200000001cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdabababababababababababababababab0000000000ffffffff010040075af0750700225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012bff3f075af0750700225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0103040000000001084201409f3f284c4e74fa7eb90e995d17a72022fec93adad53c0695c7fc12999c6821f54f0dc8500fe7bd9e3d54430f82ca4dfa75ade1192f0dce124264ace0aa6b816f0113409f3f284c4e74fa7eb90e995d17a72022fec93adad53c0695c7fc12999c6821f54f0dc8500fe7bd9e3d54430f82ca4dfa75ade1192f0dce124264ace0aa6b816f011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "signature": "9f3f284c4e74fa7eb90e995d17a72022fec93adad53c0695c7fc12999c6821f54f0dc8500fe7bd9e3d54430f82ca4dfa75ade1192f0dce124264ace0aa6b816f",
+        "shape": {
+          "inputs": 1,
+          "outputs": 1,
+          "sighash": 0,
+          "signature_length": 64,
+          "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:0",
+          "output_sats": 2100000000000000
+        }
+      }
+    },
+    {
+      "description": "vout at the u32 limit",
+      "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:4294967295",
+      "value_sats": 546,
+      "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+      "public_key": "03cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "expect": {
+        "ok": true,
+        "psbt": "70736274ff01005e0200000001cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdababababababababababababababababffffffff00ffffffff010040075af0750700225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0103040000000001084201407725df86a48a23fefbc6fa77e2c65bf98b727368f754708d34c5724def81f0cacc8eb06cb601b568d999a310becc0910b9a4e35610a4cde7f1560adc66031a140113407725df86a48a23fefbc6fa77e2c65bf98b727368f754708d34c5724def81f0cacc8eb06cb601b568d999a310becc0910b9a4e35610a4cde7f1560adc66031a14011720cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc1150000",
+        "signature": "7725df86a48a23fefbc6fa77e2c65bf98b727368f754708d34c5724def81f0cacc8eb06cb601b568d999a310becc0910b9a4e35610a4cde7f1560adc66031a14",
+        "shape": {
+          "inputs": 1,
+          "outputs": 1,
+          "sighash": 0,
+          "signature_length": 64,
+          "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:4294967295",
+          "output_sats": 2100000000000000
+        }
+      }
+    },
+    {
+      "description": "another owner",
+      "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:3",
+      "value_sats": 546,
+      "private_key": "970637f46e7d5bed115e0533dbd43058114971f29bdd333599a483d215caaa64",
+      "public_key": "02fec0f5d04ea9fa6c47aabaebd5cc3d5bb03941a36470f77fc4ccccd4dfa9bcef",
+      "expect": {
+        "ok": true,
+        "psbt": "70736274ff01005e0200000001cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdabababababababababababababababab0300000000ffffffff010040075af0750700225120f5c9822d5caecaf86ce99e2fbe702e9d5ffd037baa931c8254dc5e423b48ab95000000000001012b2202000000000000225120f5c9822d5caecaf86ce99e2fbe702e9d5ffd037baa931c8254dc5e423b48ab95010304000000000108420140a8d41683c9281f8d7e970a1e7ddf271c453e2b3c14c6d47390443851b595ed953a31182706816a0a0f4b5769f393d69234a03f8a5e2f98c6ebaba5807ce89e7c011340a8d41683c9281f8d7e970a1e7ddf271c453e2b3c14c6d47390443851b595ed953a31182706816a0a0f4b5769f393d69234a03f8a5e2f98c6ebaba5807ce89e7c011720fec0f5d04ea9fa6c47aabaebd5cc3d5bb03941a36470f77fc4ccccd4dfa9bcef0000",
+        "signature": "a8d41683c9281f8d7e970a1e7ddf271c453e2b3c14c6d47390443851b595ed953a31182706816a0a0f4b5769f393d69234a03f8a5e2f98c6ebaba5807ce89e7c",
+        "shape": {
+          "inputs": 1,
+          "outputs": 1,
+          "sighash": 0,
+          "signature_length": 64,
+          "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:3",
+          "output_sats": 2100000000000000
+        }
+      }
+    },
+    {
+      "description": "mismatched key pair",
+      "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:3",
+      "value_sats": 546,
+      "private_key": "970637f46e7d5bed115e0533dbd43058114971f29bdd333599a483d215caaa64",
+      "public_key": "03cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "expect": {
+        "ok": false,
+        "code": "key_mismatch"
+      }
+    },
+    {
+      "description": "not an outpoint",
+      "outpoint": "nope",
+      "value_sats": 546,
+      "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+      "public_key": "03cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "expect": {
+        "ok": false,
+        "code": "invalid_outpoint"
+      }
+    },
+    {
+      "description": "short txid",
+      "outpoint": "abababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:3",
+      "value_sats": 546,
+      "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+      "public_key": "03cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "expect": {
+        "ok": false,
+        "code": "invalid_outpoint"
+      }
+    },
+    {
+      "description": "negative vout",
+      "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:-1",
+      "value_sats": 546,
+      "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+      "public_key": "03cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "expect": {
+        "ok": false,
+        "code": "invalid_outpoint"
+      }
+    },
+    {
+      "description": "vout above u32",
+      "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:4294967296",
+      "value_sats": 546,
+      "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+      "public_key": "03cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "expect": {
+        "ok": false,
+        "code": "invalid_outpoint"
+      }
+    },
+    {
+      "description": "zero value",
+      "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:3",
+      "value_sats": 0,
+      "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+      "public_key": "03cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "expect": {
+        "ok": false,
+        "code": "invalid_outpoint_value"
+      }
+    },
+    {
+      "description": "value of 21M BTC",
+      "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:3",
+      "value_sats": 2100000000000000,
+      "private_key": "41f41d69260df4cf277826a9b65a3717e4eeddbeedf637f212ca096576479361",
+      "public_key": "03cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "expect": {
+        "ok": false,
+        "code": "invalid_outpoint_value"
+      }
+    }
+  ],
+  "inspect": [
+    {
+      "description": "ALL|ANYONECANPAY seal",
+      "psbt": "70736274ff01005e0200000001cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdabababababababababababababababab0300000000ffffffff010100000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c000000000001012b2202000000000000225120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0103048100000001084301410101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010181011720a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c0000",
+      "shape": {
+        "inputs": 1,
+        "outputs": 1,
+        "sighash": 129,
+        "signature_length": 65,
+        "outpoint": "ababababababababababababababababcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd:3",
+        "output_sats": 1
+      }
+    }
+  ]
+}

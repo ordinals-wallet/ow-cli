@@ -1,0 +1,290 @@
+{
+  "description": "Escrow scripts rebuilt locally. `offer`: tr(NUMS, {<buyer> CHECKSIG <OW> CHECKSIGADD 2 NUMEQUAL, <delay> CSV DROP <buyer> CHECKSIG}) for several buyer keys (compressed or x-only) and recovery delays (1-16 encode as OP_N). `protected`: passthrough v4 tr(NUMS, {multi_a(2,S,C), <144> CSV DROP <S> CHECKSIG}) with control blocks and the sale leaf hash.",
+  "generated_by": "packages/core/__tests__/shared-vectors/generate.ts",
+  "cosigner_x_only": "1d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7dee",
+  "nums_internal_key": "50929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0",
+  "market_fee_address": "bc1p6yd49679azsaxqgtr52ff6jjvj2wv5dlaqwhaxarkamevgle2jaqs8vlnr",
+  "offer": [
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 1,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "51b27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "51209f50a822b66f2c2aa3d02dfc8f6b134053f486aabd2190833f4a5baf7470e329",
+      "address": "bc1pnag2sg4kdukz4g7s9h7g76cngpflfp42h5sepqelffd67arsuv5ss9674c"
+    },
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 6,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "56b27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "51207dff18a01daa7b26dee23813a238c7dcec02caec6586b3f5f572ec174127fa52",
+      "address": "bc1p0hl33gqa4fajdhhz8qf6ywx8mnkq9jhvvkrt8a04wtkpwsf8lffqdd94ss"
+    },
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 16,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "60b27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "5120bba83dcbe5b8bbc6263aaf1556c08d1a1579024734d4e6da354bfdeb83004f9c",
+      "address": "bc1phw5rmjl9hzauvf364u24dsydrg2hjqj8xn2wdk34f077hqcqf7wqkeyste"
+    },
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 17,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "0111b27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "512011292007cc3bad534527df46746aa1975acd79d210566c1197c7e8d90be95459",
+      "address": "bc1pzy5jqp7v8wk4x3f8mar8g64pjadv67wjzptxcyvhcl5djzlf23vss77gda"
+    },
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 127,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "017fb27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "51209ac6bbc829402b0d38be64aa40207c465fba34c2836202c5f5781d9a510d5454",
+      "address": "bc1pntrthjpfgq4s6w97vj4yqgruge0m5dxzsd3q93040qwe55gd232q78qksd"
+    },
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 128,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "028000b27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "5120724306b98724bcd6662f7c6a941ef3fb9d7dc6630885b8541230534dc04b450f",
+      "address": "bc1pwfpsdwv8yj7dve30034fg8hnlwwhm3nrpzzms4qjxpf5msztg58ss34ct9"
+    },
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 144,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "029000b27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "5120dbbf99587f4c944ba4fceb54fb0b3493bdf403bc8b43132ed71a080af2e8ba69",
+      "address": "bc1pmwlejkrlfj2yhf8uad20kze5jw7lgqau3dp3xtkhrgyq4uhghf5sla8m3p"
+    },
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 255,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "02ff00b27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "51206323be23194ed50079c1357f735a85fc0287dd4a57e98e91675e5d9cb95cbf0c",
+      "address": "bc1pvv3mugcefm2sq7wpx4lhxk59lspg0h222l5cayt8teweew2uhuxq00v7xd"
+    },
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 256,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "020001b27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "5120c7b37378a068facbd3c2e2a9316901f71e64ad2f0b18c8b692535bfaa4f5d7f3",
+      "address": "bc1pc7ehx79qdravh57zu25nz6gp7u0xftf0pvvv3d5j2ddl4f846les8s4el6"
+    },
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 1008,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "02f003b27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "512055eefd909d644126ce56a1618268187dd7cc2bf19b645b9ccf2bcaf62d93098d",
+      "address": "bc1p2hh0myyav3qjdnjk59scy6qc0htuc2l3ndj9h8x09090vtvnpxxsn6stdq"
+    },
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 32767,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "02ff7fb27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "5120952375edbbfcc6f84b48773121903ee1afe3a0edd394da58513e5d7f0305cd3b",
+      "address": "bc1pj53htmdmlnr0sj6gwucjryp7uxh78g8d6w2d5kz38ewh7qc9e5asn3adwt"
+    },
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 32768,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "03008000b27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "5120cdb9fd73a5aee2cc90886e274fb0b5074697b9880fca32bcd52ac4b208229aa5",
+      "address": "bc1pekul6ua94m3veyygdcn5lv94qarf0wvgpl9r90x49tztyzpzn2jslletpk"
+    },
+    {
+      "buyer_public_key": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "recovery_delay_blocks": 65535,
+      "sale_leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "03ffff00b27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "51208ec44c8be35beb44ec8c7dc478da294a59865fe7fc125bf556043047fdc07fcd",
+      "address": "bc1p3mzyezlrt045fmyv0hz83k3fffvcvhl8lsf9ha2kqscy0lwq0lxsjdzpvm"
+    },
+    {
+      "buyer_public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "recovery_delay_blocks": 1,
+      "sale_leaf": "20cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "51b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac",
+      "script": "5120b9a56a1cf77efd015068a9f2642f70e02647adef210b969cc2bb1a367a6a6583",
+      "address": "bc1phxjk588h0m7sz5rg48exgtmsuqny0t00yy9ed8xzhvdrv7n2vkpshhcqml"
+    },
+    {
+      "buyer_public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "recovery_delay_blocks": 17,
+      "sale_leaf": "20cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "0111b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac",
+      "script": "512006374a112603fe93dc5b4b328cb1fc0f38f6b13380390671d0f90f2968a3acde",
+      "address": "bc1pqcm55yfxq0lf8hzmfvegev0upuu0dvfnsqusvuwsly8jj69r4n0q2fv9qj"
+    },
+    {
+      "buyer_public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "recovery_delay_blocks": 144,
+      "sale_leaf": "20cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac",
+      "script": "5120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7",
+      "address": "bc1pa4apnqdl3sa4r8v2aq65ljy2pr58nctggjfm2atax9ueagv4jjnsm0ynm4"
+    },
+    {
+      "buyer_public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "recovery_delay_blocks": 1008,
+      "sale_leaf": "20cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "02f003b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac",
+      "script": "5120cea9ab5c7d92a31d38c8d250d9cf594c8ebd7d44f476e371aa05ddfa52d90c9d",
+      "address": "bc1pe656khraj2336wxg6fgdnn6efj8t6l2y73mwxud2qhwl55kepjws6pjn7g"
+    },
+    {
+      "buyer_public_key": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "recovery_delay_blocks": 65535,
+      "sale_leaf": "20cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "03ffff00b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac",
+      "script": "5120739b0d6b2eae69b7219998ceed7eb1e60d8d279c5781ae3338cd37730e884cb1",
+      "address": "bc1pwwds66ew4e5mwgvenr8w6l43ucxc6fuu27q6uvece5mhxr5gfjcspv0pvp"
+    },
+    {
+      "buyer_public_key": "62c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7",
+      "recovery_delay_blocks": 1,
+      "sale_leaf": "2062c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "51b2752062c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7ac",
+      "script": "512040490b8a2953df0bc2cd5788f427b262ea3cfd2205e60cbcca3b3016fdebb675",
+      "address": "bc1pgpyshz3f200shskd27y0gfajvt4relfzqhnqe0x28vcpdl0tke6spnkat2"
+    },
+    {
+      "buyer_public_key": "62c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7",
+      "recovery_delay_blocks": 17,
+      "sale_leaf": "2062c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "0111b2752062c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7ac",
+      "script": "5120a3b0188e1ac69256652f67f18d474964569b285fd84aabe23d875eaa01007e00",
+      "address": "bc1p5wcp3rs6c6f9vef0vlcc636fv3tfk2zlmp92hc3asa025qgq0cqqmd53wj"
+    },
+    {
+      "buyer_public_key": "62c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7",
+      "recovery_delay_blocks": 144,
+      "sale_leaf": "2062c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "029000b2752062c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7ac",
+      "script": "51204b685afa4d1dc6e9be87eabaf50da4158b7dc55534b14f3c8d5a6078feaded3d",
+      "address": "bc1pfd5947jdrhrwn058a2a02rdyzk9hm324xjc570ydtfs83l4da57sll46gd"
+    },
+    {
+      "buyer_public_key": "62c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7",
+      "recovery_delay_blocks": 1008,
+      "sale_leaf": "2062c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "02f003b2752062c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7ac",
+      "script": "5120866a6adc9b13e8071ea848b1b76edf7aa41f3b02fb3903c3305b9ea6230e7b31",
+      "address": "bc1pse4x4hymz05qw84gfzcmwmkl02jp7wczlvus8sestw02vgcw0vcsdvw95u"
+    },
+    {
+      "buyer_public_key": "62c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7",
+      "recovery_delay_blocks": 65535,
+      "sale_leaf": "2062c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "03ffff00b2752062c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7ac",
+      "script": "512038e2a9f78578bc3265b4ba938f486af64da5f59683e5699439a9869c97cc5098",
+      "address": "bc1p8r32nau90z7ryed5h2fc7jr27ex6tavks0jkn9pe4xrfe97v2zvqssghy3"
+    }
+  ],
+  "protected": [
+    {
+      "seller_x_only": "cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115",
+      "leaf": "20cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "029000b27520cc8a4bc64d897bddc5fbc2f670f7a8ba0b386779106cf1223c6fc5d7cd6fc115ac",
+      "script": "5120ed7a1981bf8c3b519d8ae8354fc88a08e879e1684493b5757d31799ea19594a7",
+      "address": "bc1pa4apnqdl3sa4r8v2aq65ljy2pr58nctggjfm2atax9ueagv4jjnsm0ynm4",
+      "leaf_control_block": "c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06269a08f6b10607651882e35cbe9c08d4ab14e6ba2f1a0ccf7e4766fe015a5b9",
+      "recovery_control_block": "c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d800",
+      "leaf_hash": "196706a95508ea8d0982d8a7674435ce06d3dbae1e71e45d2135f4f209f8d800"
+    },
+    {
+      "seller_x_only": "1b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078f",
+      "leaf": "201b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078fac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "029000b275201b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078fac",
+      "script": "51209d6f5e01d34162874b126f25903cbb594b46c3a86fa47c08a885e4e85b0fdb2d",
+      "address": "bc1pn4h4uqwng93gwjcjdujeq09mt995dsagd7j8cz9gshjwskc0mvksav82ft",
+      "leaf_control_block": "c150929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0d64bb3d08fc325df2cb872ac9d87ee20eeb97ea2d6aace0dcc2579c81e626cb2",
+      "recovery_control_block": "c150929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac00ca86efb7fe13a50a6bbee37be755f19dcccf4c6c9d0c9bb812cc5940a65a7cc",
+      "leaf_hash": "0ca86efb7fe13a50a6bbee37be755f19dcccf4c6c9d0c9bb812cc5940a65a7cc"
+    },
+    {
+      "seller_x_only": "62c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7",
+      "leaf": "2062c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "029000b2752062c0a046dacce86ddd0343c6d3c7c79c2208ba0d9c9cf24a6d046d21d21f90f7ac",
+      "script": "51204b685afa4d1dc6e9be87eabaf50da4158b7dc55534b14f3c8d5a6078feaded3d",
+      "address": "bc1pfd5947jdrhrwn058a2a02rdyzk9hm324xjc570ydtfs83l4da57sll46gd",
+      "leaf_control_block": "c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac025c01b9aeffe4bcf28ca946c7d9fe7e31d8cb3cfbee8c5a7048da732d2ad09d4",
+      "recovery_control_block": "c050929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06d8edefba2c199214a83e6deae5e2594e5d613e2c25c1b662da6460d0d62f758",
+      "leaf_hash": "6d8edefba2c199214a83e6deae5e2594e5d613e2c25c1b662da6460d0d62f758"
+    },
+    {
+      "seller_x_only": "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5",
+      "leaf": "20c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "029000b27520c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5ac",
+      "script": "512028745191b3e8dfa72dfb553a6931e922bafd3acd4082e4af1a51046a6b915f69",
+      "address": "bc1p9p69rydnar06wt0m25axjv0fy2a06wkdgzpwftc62yzx56u3ta5ssxklk7",
+      "leaf_control_block": "c150929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac049b170c98e175f70e07e8d33734f8a2d8f3763529ce2a67aeca952038925299c",
+      "recovery_control_block": "c150929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac001ed519c765762b8015c891df62357a1b8deca878c64a3f9f8a28ff992a8cde1",
+      "leaf_hash": "01ed519c765762b8015c891df62357a1b8deca878c64a3f9f8a28ff992a8cde1"
+    },
+    {
+      "seller_x_only": "c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "leaf": "20c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "recovery_leaf": "029000b27520c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872ac",
+      "script": "5120dbbf99587f4c944ba4fceb54fb0b3493bdf403bc8b43132ed71a080af2e8ba69",
+      "address": "bc1pmwlejkrlfj2yhf8uad20kze5jw7lgqau3dp3xtkhrgyq4uhghf5sla8m3p",
+      "leaf_control_block": "c150929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0189c4decd8ee05452e2162414932bee79aa24c101652a70ad6ce8257d4205bc4",
+      "recovery_control_block": "c150929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac06931e04e2c5640d208728d6b47503a90fed5fa372c50cd6100b83ba78046f3d4",
+      "leaf_hash": "6931e04e2c5640d208728d6b47503a90fed5fa372c50cd6100b83ba78046f3d4"
+    }
+  ],
+  "protected_errors": [
+    {
+      "description": "seller key equal to the co-signer",
+      "seller_x_only": "1d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7dee",
+      "ok": false,
+      "code": "escrow_keys_identical"
+    },
+    {
+      "description": "31-byte key",
+      "seller_x_only": "84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078f",
+      "ok": false,
+      "code": "invalid_public_key"
+    },
+    {
+      "description": "33-byte key",
+      "seller_x_only": "02c7f12003196442943d8588e01aee840423cc54fc1521526a3b85c2b0cbd58872",
+      "ok": false,
+      "code": "invalid_public_key"
+    }
+  ],
+  "passthrough_leaf_parse": [
+    {
+      "description": "exact 2-of-2 leaf",
+      "leaf": "201b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078fac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba529c",
+      "keys": {
+        "seller": "1b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078f",
+        "cosigner": "1d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7dee"
+      }
+    },
+    {
+      "description": "truncated",
+      "leaf": "201b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078fac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba52",
+      "keys": null
+    },
+    {
+      "description": "OP_1 instead of OP_2",
+      "leaf": "201b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078fac201d08b7c71f6f1e97a0a4cf005db7a977c85e34652a0c9365842aee25997c7deeba519c",
+      "keys": null
+    },
+    {
+      "description": "recovery leaf",
+      "leaf": "029000b275201b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078fac",
+      "keys": null
+    }
+  ]
+}
